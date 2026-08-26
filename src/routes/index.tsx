@@ -5,12 +5,13 @@ import {
   CircleDot,
   MapPin,
   PaintBucket,
+  Play,
   ShieldCheck,
   Tag,
   Truck,
   Wrench,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import serviceConsultant from "@/assets/service-consultant.jpg";
 import showroomPoster from "@/assets/showroom-poster.jpg";
@@ -234,14 +235,95 @@ function VehicleTile({ vehicle }: { vehicle: Vehicle }) {
 
 function HomePage() {
   const heroVideoRef = useRef<HTMLVideoElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const testDriveVideoRef = useRef<HTMLVideoElement>(null);
+  const [heroPlaybackBlocked, setHeroPlaybackBlocked] = useState(false);
 
-  // Safari/iOS refuză uneori autoplay-ul declarativ; cerem explicit redarea și
-  // ignorăm respingerea (rămâne posterul, un cadru din același film).
-  useEffect(() => {
-    heroVideoRef.current?.play().catch(() => {});
-    videoRef.current?.play().catch(() => {});
+  const startHeroVideo = useCallback(async () => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+
+    try {
+      await video.play();
+      setHeroPlaybackBlocked(false);
+    } catch {
+      setHeroPlaybackBlocked(true);
+    }
   }, []);
+
+  // Pe mobil pornim doar clipul vizibil. Safari poate refuza primul play()
+  // până când media e pregătită sau utilizatorul atinge pagina.
+  useEffect(() => {
+    const heroVideo = heroVideoRef.current;
+    const testDriveVideo = testDriveVideoRef.current;
+    if (!heroVideo || !testDriveVideo) return;
+
+    const isVisible = (video: HTMLVideoElement) => {
+      const bounds = video.getBoundingClientRect();
+      return bounds.bottom > 0 && bounds.top < window.innerHeight;
+    };
+
+    const startTestDriveVideo = () => {
+      testDriveVideo.defaultMuted = true;
+      testDriveVideo.muted = true;
+      testDriveVideo.playsInline = true;
+      void testDriveVideo.play().catch(() => {});
+    };
+
+    const startVisibleVideo = (video: HTMLVideoElement) => {
+      if (video === heroVideo) {
+        void startHeroVideo();
+      } else {
+        startTestDriveVideo();
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting && document.visibilityState === "visible") {
+            startVisibleVideo(video);
+          } else {
+            video.pause();
+          }
+        }
+      },
+      { threshold: 0.12 },
+    );
+
+    const resumeVisibleVideos = () => {
+      if (document.visibilityState !== "visible") {
+        heroVideo.pause();
+        testDriveVideo.pause();
+        return;
+      }
+
+      if (isVisible(heroVideo)) void startHeroVideo();
+      if (isVisible(testDriveVideo)) startTestDriveVideo();
+    };
+
+    observer.observe(heroVideo);
+    observer.observe(testDriveVideo);
+    heroVideo.addEventListener("canplay", resumeVisibleVideos);
+    window.addEventListener("pageshow", resumeVisibleVideos);
+    window.addEventListener("pointerdown", resumeVisibleVideos, { passive: true });
+    window.addEventListener("touchstart", resumeVisibleVideos, { passive: true });
+    document.addEventListener("visibilitychange", resumeVisibleVideos);
+    resumeVisibleVideos();
+
+    return () => {
+      observer.disconnect();
+      heroVideo.removeEventListener("canplay", resumeVisibleVideos);
+      window.removeEventListener("pageshow", resumeVisibleVideos);
+      window.removeEventListener("pointerdown", resumeVisibleVideos);
+      window.removeEventListener("touchstart", resumeVisibleVideos);
+      document.removeEventListener("visibilitychange", resumeVisibleVideos);
+    };
+  }, [startHeroVideo]);
 
   // Un singur raft: mașinile cu cea mai mare reducere față de prețul de listă,
   // completat cu restul stocului dacă nu sunt destule.
@@ -290,6 +372,17 @@ function HomePage() {
             />
           </div>
           <div className="hero-copy-scrim absolute inset-0 bg-primary/10" aria-hidden />
+          {heroPlaybackBlocked ? (
+            <button
+              type="button"
+              aria-label="Pornește video-ul din fundal"
+              title="Pornește video-ul"
+              onClick={() => void startHeroVideo()}
+              className="press absolute right-6 top-24 z-10 flex size-12 items-center justify-center rounded-full border border-primary-foreground/40 bg-primary/55 text-primary-foreground shadow-lg backdrop-blur-sm hover:bg-primary/75 md:right-8 lg:right-10 lg:top-28"
+            >
+              <Play className="ml-0.5 size-5" fill="currentColor" aria-hidden />
+            </button>
+          ) : null}
 
           <div className="relative mx-auto flex min-h-[86svh] w-full max-w-7xl flex-col justify-end px-6 pb-12 pt-28 md:px-8 md:pb-16 lg:px-10">
             <h1
@@ -528,12 +621,11 @@ function HomePage() {
           {/* Scalat și ancorat jos: sursa are subtitrări arse în banda de sus. */}
           <div className="absolute inset-0 overflow-hidden" aria-hidden>
             <video
-              ref={videoRef}
+              ref={testDriveVideoRef}
               className="size-full object-cover opacity-70"
               style={{ transform: "scale(1.32)", transformOrigin: "50% 100%" }}
               src={showroomVideo}
               poster={showroomPoster}
-              autoPlay
               muted
               loop
               playsInline
