@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import heroGrila from "@/assets/hero-grila.jpg";
 import serviceConsultant from "@/assets/service-consultant.jpg";
 import showroomPoster from "@/assets/showroom-poster.jpg";
 import showroomVideo from "@/assets/showroom.mp4";
@@ -234,11 +233,13 @@ function VehicleTile({ vehicle }: { vehicle: Vehicle }) {
 }
 
 function HomePage() {
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Safari/iOS refuză uneori autoplay-ul declarativ; cerem explicit redarea și
   // ignorăm respingerea (rămâne posterul, un cadru din același film).
   useEffect(() => {
+    heroVideoRef.current?.play().catch(() => {});
     videoRef.current?.play().catch(() => {});
   }, []);
 
@@ -274,14 +275,21 @@ function HomePage() {
           id="acasa-hero"
           className="relative isolate -mt-16 overflow-hidden bg-primary text-primary-foreground lg:-mt-20"
         >
-          <img
-            src={heroGrila}
-            alt=""
-            width={1920}
-            height={1280}
-            className="hero-media absolute inset-0 size-full object-cover object-[36%_50%] md:object-[50%_46%] lg:object-[center_36%]"
-          />
-          <div className="hero-copy-scrim absolute inset-0" aria-hidden />
+          <div className="hero-media absolute inset-0 overflow-hidden" aria-hidden>
+            <video
+              ref={heroVideoRef}
+              className="size-full object-cover"
+              style={{ transform: "scale(1.32)", transformOrigin: "50% 100%" }}
+              src={showroomVideo}
+              poster={showroomPoster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
+          </div>
+          <div className="hero-copy-scrim absolute inset-0 bg-primary/10" aria-hidden />
 
           <div className="relative mx-auto flex min-h-[86svh] w-full max-w-7xl flex-col justify-end px-6 pb-12 pt-28 md:px-8 md:pb-16 lg:px-10">
             <h1
