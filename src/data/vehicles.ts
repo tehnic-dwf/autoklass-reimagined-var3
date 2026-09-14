@@ -323,6 +323,7 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: "mercedes-benz-glc-200-4matic-vu149616",
+    hybrid: true,
     title: "Mercedes-Benz GLC 200 4MATIC",
     brand: "Mercedes-Benz",
     condition: "nou",

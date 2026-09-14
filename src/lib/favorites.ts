@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
  * Prototip static (GitHub Pages) — nu există backend, deci totul stă în
  * localStorage. Citirea se face după hidratare, ca să nu apară mismatch SSR.
  */
-const STORAGE_KEY = "autoklass:favorites";
+const STORAGE_KEY = "autoklass:v3:favorites";
 const EVENT = "autoklass:favorites-changed";
 
 function read(): string[] {

@@ -31,3 +31,6 @@ dist-ssr
 *.sln
 *.sw?
 autoklass-static/
+
+# Local review scratch and private source documents
+tmp/

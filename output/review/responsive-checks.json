@@ -1,0 +1,128 @@
+[
+  {
+    "path": "/",
+    "content": 360,
+    "h1": "Un Mercedes-Benz nu se alege dintr-o poză.",
+    "width": 360,
+    "pass": true
+  },
+  {
+    "path": "/autoturisme",
+    "content": 360,
+    "h1": "Găsește-ți următorul Mercedes-Benz.",
+    "width": 360,
+    "pass": true
+  },
+  {
+    "path": "/autoturisme/mercedes-benz-glc-200-4matic-vu149616",
+    "content": 360,
+    "h1": "GLC 200 4MATIC",
+    "width": 360,
+    "pass": true
+  },
+  {
+    "path": "/service/tarife",
+    "content": 360,
+    "h1": "Tariful potrivit mașinii tale.",
+    "width": 360,
+    "pass": true
+  },
+  {
+    "path": "/service/programare",
+    "content": 360,
+    "h1": "Solicită o programare.",
+    "width": 360,
+    "pass": true
+  },
+  {
+    "path": "/comparatie",
+    "content": 360,
+    "h1": "Compară ce contează.",
+    "width": 360,
+    "pass": true
+  },
+  {
+    "path": "/",
+    "content": 390,
+    "h1": "Un Mercedes-Benz nu se alege dintr-o poză.",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "path": "/autoturisme",
+    "content": 390,
+    "h1": "Găsește-ți următorul Mercedes-Benz.",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "path": "/autoturisme/mercedes-benz-glc-200-4matic-vu149616",
+    "content": 390,
+    "h1": "GLC 200 4MATIC",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "path": "/service/tarife",
+    "content": 390,
+    "h1": "Tariful potrivit mașinii tale.",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "path": "/service/programare",
+    "content": 390,
+    "h1": "Solicită o programare.",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "path": "/comparatie",
+    "content": 390,
+    "h1": "Compară ce contează.",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "path": "/",
+    "content": 430,
+    "h1": "Un Mercedes-Benz nu se alege dintr-o poză.",
+    "width": 430,
+    "pass": true
+  },
+  {
+    "path": "/autoturisme",
+    "content": 430,
+    "h1": "Găsește-ți următorul Mercedes-Benz.",
+    "width": 430,
+    "pass": true
+  },
+  {
+    "path": "/autoturisme/mercedes-benz-glc-200-4matic-vu149616",
+    "content": 430,
+    "h1": "GLC 200 4MATIC",
+    "width": 430,
+    "pass": true
+  },
+  {
+    "path": "/service/tarife",
+    "content": 430,
+    "h1": "Tariful potrivit mașinii tale.",
+    "width": 430,
+    "pass": true
+  },
+  {
+    "path": "/service/programare",
+    "content": 430,
+    "h1": "Solicită o programare.",
+    "width": 430,
+    "pass": true
+  },
+  {
+    "path": "/comparatie",
+    "content": 430,
+    "h1": "Compară ce contează.",
+    "width": 430,
+    "pass": true
+  }
+]

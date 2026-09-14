@@ -1,164 +1,198 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Heart, Phone, Trash2 } from "lucide-react";
-
-import { DemoNotice } from "@/components/DemoNotice";
-import { MobileStickyBar } from "@/components/layout/MobileStickyBar";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+import { Heart, ArrowRight, X } from "lucide-react";
+import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { Button } from "@/components/ui/button";
-import { contact } from "@/data/company";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { formatKm, formatPrice, vehicles, type Vehicle } from "@/data/vehicles";
+import { availabilityOf, shortTitle } from "@/lib/vehicle-search";
+import { demoSlug, equipment } from "@/data/demo-vehicle";
 import { useFavorites } from "@/lib/favorites";
-
 export const Route = createFileRoute("/comparatie")({
-  head: () => ({
-    meta: [
-      { title: "Compară mașinile salvate — Autoklass" },
-      {
-        name: "description",
-        content:
-          "Pune față în față mașinile salvate: preț final, regim TVA, kilometraj, motorizare și sucursală, fără presiune de decizie.",
-      },
-      { property: "og:title", content: "Compară mașinile salvate — Autoklass" },
-      {
-        property: "og:description",
-        content:
-          "Preț final, TVA, kilometraj și sucursală, unul lângă altul, pentru mașinile pe care le-ai salvat.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Compară mașini | Autoklass" }] }),
   component: ComparePage,
 });
-
-const rows: { label: string; value: (vehicle: Vehicle) => string }[] = [
-  { label: "Preț", value: (v) => `${formatPrice(v.priceEur)} €` },
-  { label: "TVA", value: (v) => (v.vat === "deductibil" ? "Deductibil" : "Nedeductibil") },
-  { label: "Stare", value: (v) => (v.condition === "nou" ? "Nouă" : "Rulată verificată") },
-  { label: "Kilometraj", value: (v) => (v.km === null ? "0 km" : formatKm(v.km)) },
-  { label: "An", value: (v) => `${v.registrationMonth} ${v.year}` },
-  { label: "Combustibil", value: (v) => `${v.fuel}${v.hybrid ? " hibrid" : ""}` },
-  { label: "Putere", value: (v) => `${v.powerHp} CP` },
-  { label: "Cutie de viteze", value: (v) => v.gearbox },
+const rows: { label: string; value: (v: Vehicle) => string }[] = [
+  { label: "Preț cu TVA", value: (v) => `${formatPrice(v.priceEur)} €` },
+  { label: "Regim TVA", value: (v) => (v.vat === "deductibil" ? "Deductibil" : "Nedeductibil") },
+  { label: "Stare", value: (v) => (v.condition === "nou" ? "Nouă" : "Rulată") },
+  { label: "An", value: (v) => String(v.year) },
+  { label: "Kilometraj", value: (v) => (v.km === null ? "Necomunicat" : formatKm(v.km)) },
+  { label: "Combustibil", value: (v) => v.fuel + (v.hybrid ? " · hibrid" : "") },
+  { label: "Putere motor", value: (v) => `${v.powerHp} CP` },
+  { label: "Transmisie", value: (v) => v.gearbox },
   { label: "Tracțiune", value: (v) => v.drive },
   { label: "Caroserie", value: (v) => v.bodyType },
-  { label: "Sucursală", value: (v) => v.branch.replace("Autoklass ", "") },
-  { label: "Disponibilitate", value: (v) => v.availability ?? "În stoc" },
+  { label: "Sucursală", value: (v) => v.branch },
+  { label: "Disponibilitate", value: availabilityOf },
+  {
+    label: "Dotări în exemplu",
+    value: (v) =>
+      v.slug === demoSlug
+        ? equipment
+            .filter((e) => e.status === "demo")
+            .map((e) => e.name)
+            .join("; ")
+        : "Date necomunicate",
+  },
 ];
-
 function ComparePage() {
-  const { slugs, ready, remove, clear } = useFavorites();
-  const selected = slugs
-    .map((slug) => vehicles.find((vehicle) => vehicle.slug === slug))
-    .filter((vehicle): vehicle is Vehicle => Boolean(vehicle));
-
+  const { slugs, ready, remove } = useFavorites();
+  const [picks, setPicks] = useState<string[] | null>(null);
+  const [differences, setDifferences] = useState(false);
+  const saved = slugs
+    .map((s) => vehicles.find((v) => v.slug === s))
+    .filter((v): v is Vehicle => Boolean(v));
+  const chosen = (picks ?? slugs.slice(0, 3)).filter((s) => slugs.includes(s));
+  const selected = saved.filter((v) => chosen.includes(v.slug));
+  const toggle = (slug: string) =>
+    setPicks(
+      chosen.includes(slug)
+        ? chosen.filter((s) => s !== slug)
+        : chosen.length < 3
+          ? [...chosen, slug]
+          : chosen,
+    );
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-0">
+    <div className="v3">
       <SiteHeader />
-
-      <main className="mx-auto w-full max-w-5xl px-6 py-12 md:px-8 md:py-20 lg:px-10">
-        <p className="eyebrow text-muted-foreground">Lista ta</p>
-        <h1 className="mt-3 text-2xl md:text-3xl">Compară fără grabă</h1>
-        <p className="mt-4 max-w-2xl text-muted-foreground">
-          Mașinile salvate rămân aici, în browserul tău. Nu îți cerem cont și nu îți trimitem
-          notificări. Când vrei, ceri un consultant sau un test drive.
+      <main id="main-content" className="v3-wrap v3-section">
+        <p className="v3-kicker">Mașinile tale</p>
+        <h1>Compară ce contează.</h1>
+        <p className="v3-intro">
+          Până la trei mașini, cu aceleași criterii, una lângă alta. Selecția rămâne salvată în
+          acest browser.
         </p>
-        <DemoNotice className="mt-4" />
-
-        {!ready ? null : selected.length === 0 ? (
-          <div className="mt-8 rounded-sm border border-dashed border-border bg-secondary p-10 text-center">
-            <Heart className="mx-auto size-6 text-muted-foreground" aria-hidden />
-            <p className="mt-3 text-lg">Nu ai salvat nicio mașină încă.</p>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-              Apasă inimioara de pe orice mașină din stoc, iar ea apare aici — gata de comparat.
+        {!ready ? (
+          <p role="status" className="mt-8">
+            Se încarcă mașinile salvate…
+          </p>
+        ) : saved.length === 0 ? (
+          <div className="v3-empty">
+            <Heart size={32} strokeWidth={1} className="mx-auto mb-6" />
+            <h2>Lista ta începe cu o mașină.</h2>
+            <p className="v3-muted">
+              Apasă inima de pe un card pentru a salva mașina și a o compara aici.
             </p>
-            <Button asChild className="mt-6 rounded-sm">
-              <Link to="/autoturisme">Vezi mașinile</Link>
-            </Button>
+            <Link to="/autoturisme" className="v3-button">
+              Explorează mașinile <ArrowRight size={18} />
+            </Link>
           </div>
         ) : (
           <>
-            {/* Prima coloană (eticheta) rămâne fixată la scroll orizontal pe mobil */}
-            <div className="mt-6 overflow-x-auto rounded-sm ring-1 ring-border/60">
-              <table className="w-full min-w-[640px] border-collapse text-sm">
-                <thead>
-                  <tr>
-                    <th className="sticky left-0 z-10 w-36 border-b border-border/70 bg-card p-3 text-left align-bottom text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                      Caracteristică
-                    </th>
-                    {selected.map((vehicle) => (
-                      <th
-                        key={vehicle.slug}
-                        className="border-b border-border/70 bg-card p-3 text-left align-bottom"
-                      >
-                        <Link
-                          to="/autoturisme/$slug"
-                          params={{ slug: vehicle.slug }}
-                          className="block"
-                        >
-                          <img
-                            src={vehicle.image}
-                            alt={vehicle.title}
-                            loading="lazy"
-                            className="aspect-[4/3] w-full rounded-sm object-cover"
-                          />
-                          <span className="mt-2 block leading-snug">{vehicle.title}</span>
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => remove(vehicle.slug)}
-                          className="mt-1 inline-flex min-h-11 items-center gap-2 text-xs text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="size-4" aria-hidden />
-                          Scoate
-                        </button>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row) => (
-                    <tr key={row.label} className="even:bg-secondary/60">
-                      <th className="sticky left-0 z-10 border-b border-border/70 bg-card p-3 text-left font-bold">
-                        {row.label}
-                      </th>
-                      {selected.map((vehicle) => (
-                        <td
-                          key={vehicle.slug}
-                          className="border-b border-border/70 p-3 tabular-nums"
-                        >
-                          {row.value(vehicle)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="my-8">
+              <p className="v3-small v3-muted mb-4">Alege 2 sau 3 mașini din lista salvată.</p>
+              <div className="v3-stack">
+                {saved.map((v) => (
+                  <div className="v3-row v3-rule pt-4" key={v.slug}>
+                    <label className="v3-check flex-1">
+                      <input
+                        type="checkbox"
+                        checked={chosen.includes(v.slug)}
+                        disabled={!chosen.includes(v.slug) && chosen.length >= 3}
+                        onChange={() => toggle(v.slug)}
+                      />
+                      <span>
+                        {shortTitle(v)}{" "}
+                        <span className="v3-muted">· {formatPrice(v.priceEur)} €</span>
+                      </span>
+                    </label>
+                    <button
+                      className="v3-icon"
+                      aria-label={`Elimină ${v.title}`}
+                      onClick={() => {
+                        remove(v.slug);
+                        setPicks(chosen.filter((s) => s !== v.slug));
+                      }}
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-              <Button asChild size="lg" className="rounded-sm">
-                <a href={contact.phoneHref}>
-                  <Phone className="mr-1 size-4" aria-hidden />
-                  Discută cu un consultant
-                </a>
-              </Button>
-              <Button variant="outline" size="lg" className="rounded-sm" onClick={() => clear()}>
-                Golește lista
-              </Button>
+            <div className="v3-row">
+              <label className="v3-check">
+                <input
+                  type="checkbox"
+                  checked={differences}
+                  onChange={(e) => setDifferences(e.target.checked)}
+                />
+                Arată doar diferențele
+              </label>
+              <Link to="/autoturisme" className="v3-link">
+                Adaugă o mașină <ArrowRight size={16} />
+              </Link>
             </div>
+            {selected.length < 2 && (
+              <p role="status" className="v3-notice my-6">
+                {selected.length === 0
+                  ? "Selectează două mașini pentru comparație."
+                  : "Mai adaugă o mașină ca să vezi diferențele."}
+              </p>
+            )}
+            {selected.length > 0 && (
+              <>
+                <p className="v3-small v3-muted mt-6 lg:hidden">
+                  Derulează tabelul orizontal pentru a vedea toate mașinile →
+                </p>
+                <div
+                  className="v3-table-scroll"
+                  role="region"
+                  aria-label="Tabel comparație mașini"
+                  tabIndex={0}
+                >
+                  <table className="v3-compare">
+                    <caption className="sr-only">Comparație între mașinile selectate</caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Caracteristică</th>
+                        {selected.map((v) => (
+                          <th scope="col" key={v.slug}>
+                            <img src={v.image} alt={v.title} />
+                            <h2>{shortTitle(v)}</h2>
+                            <Link
+                              className="v3-link"
+                              to="/autoturisme/$slug"
+                              params={{ slug: v.slug }}
+                            >
+                              Vezi mașina <ArrowRight size={16} />
+                            </Link>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row) => {
+                        const vals = selected.map(row.value);
+                        const differs = new Set(vals).size > 1;
+                        if (differences && !differs) return null;
+                        return (
+                          <tr key={row.label} className={differs ? "different" : ""}>
+                            <th scope="row">{row.label}</th>
+                            {vals.map((val, i) => (
+                              <td key={selected[i]!.slug}>{val}</td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {differences && selected.length < 2 && (
+                  <p className="v3-muted">
+                    Diferențele se afișează după selectarea a cel puțin două mașini.
+                  </p>
+                )}
+              </>
+            )}
+            <p className="v3-notice mt-8">
+              Prețuri de catalog demonstrative. „Date necomunicate” nu înseamnă că o dotare
+              lipsește.
+            </p>
           </>
         )}
       </main>
-
       <SiteFooter />
-
-      <MobileStickyBar
-        ctaLabel="Vezi mașinile"
-        ctaShortLabel="Vezi mașinile"
-        ctaTo="/autoturisme"
-      />
     </div>
   );
 }

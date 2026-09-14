@@ -19,16 +19,17 @@ const fetchEntry = fileURLToPath(
 
 /**
  * GH_PAGES=1 comută build-ul pe modul static pentru GitHub Pages
- * (repo autoklass-reimagined-var2). În Lovable rămâne build-ul
+ * (repo autoklass-reimagined-var3). În Lovable rămâne build-ul
  * normal cu SSR, deci preview-ul nu e afectat.
  */
 const isGithubPages = process.env["GH_PAGES"] === "1";
-const base = isGithubPages ? "/autoklass-reimagined-var2/" : "/";
+const base = isGithubPages ? "/autoklass-reimagined-var3/" : "/";
 
 const staticPages = [
   "/",
   "/autoturisme",
   "/service/programare",
+  "/service/tarife",
   "/service/dosar-daune",
   "/verificare-masini-rulate",
   "/comparatie",
