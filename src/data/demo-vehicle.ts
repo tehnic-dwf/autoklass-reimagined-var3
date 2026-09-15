@@ -37,23 +37,23 @@ export const equipment: EquipmentItem[] = [
   {
     name: "DIGITAL LIGHT",
     group: "Siguranță și asistență",
-    status: "demo",
+    status: "optional",
     aliases: "LED faruri lumini",
-    detail: "Sistem de iluminare adaptiv. Inclus în configurația demonstrativă.",
+    detail: "Sistem de iluminare adaptiv.",
   },
   {
     name: "Scaune față multicontur",
     group: "Confort și interior",
-    status: "demo",
+    status: "optional",
     aliases: "scaun masaj suport lombar",
-    detail: "Suport lombar reglabil și funcții de masaj, în configurația demonstrativă.",
+    detail: "Suport lombar reglabil și funcții de masaj.",
   },
   {
     name: "Pachet tehnic AIRMATIC",
     group: "Tehnică",
     status: "optional",
     aliases: "suspensie pneumatica directie spate",
-    detail: "Opțiune prezentată pentru model; nu este inclusă în configurația demonstrativă.",
+    detail: "Suspensie pneumatică pentru adaptarea confortului la drum.",
   },
   {
     name: "Pachet AIR-BALANCE",

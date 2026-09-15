@@ -55,6 +55,7 @@ export function BasicFilters({ value, onChange }: Props) {
         <span>Marcă</span>
         <select
           id={`${id}-brand`}
+          name="brand"
           value={value.brand || ""}
           onChange={(e) => set("brand", e.target.value)}
         >
@@ -68,6 +69,7 @@ export function BasicFilters({ value, onChange }: Props) {
         <span>Model</span>
         <select
           id={`${id}-model`}
+          name="model"
           value={value.model || ""}
           onChange={(e) => set("model", e.target.value)}
         >
@@ -81,6 +83,7 @@ export function BasicFilters({ value, onChange }: Props) {
         <span>Preț de la (€)</span>
         <input
           id={`${id}-min`}
+          name="minPrice"
           type="number"
           inputMode="numeric"
           min="0"
@@ -93,6 +96,7 @@ export function BasicFilters({ value, onChange }: Props) {
         <span>Preț până la (€)</span>
         <input
           id={`${id}-max`}
+          name="maxPrice"
           type="number"
           inputMode="numeric"
           min="0"
@@ -115,7 +119,7 @@ export function AdvancedFilters({ value, onChange }: Props) {
   const select = (key: SearchKey, label: string, options: string[] | [string, string][]) => (
     <label className="v3-field">
       <span>{label}</span>
-      <select value={value[key] || ""} onChange={(e) => set(key, e.target.value)}>
+      <select name={key} value={value[key] || ""} onChange={(e) => set(key, e.target.value)}>
         <option value="">Toate</option>
         {options.map((o) => {
           const [val, text] = Array.isArray(o) ? o : [o, o];
@@ -132,6 +136,7 @@ export function AdvancedFilters({ value, onChange }: Props) {
     <label className="v3-field">
       <span>{label}</span>
       <input
+        name={key}
         type="number"
         min="0"
         inputMode="numeric"
@@ -164,15 +169,13 @@ export function AdvancedFilters({ value, onChange }: Props) {
             <input
               id={`${id}-equipment`}
               type="search"
+              name="equipment"
+              autoComplete="off"
               placeholder="De exemplu: LED, trapă"
               value={value.equipment || ""}
               onChange={(e) => set("equipment", e.target.value)}
             />
           </label>
-          <p className="v3-small v3-muted mt-4">
-            În acest catalog, dotările sunt documentate doar pentru configurația demonstrativă GLC
-            200. Opțiunile neincluse nu apar în rezultate.
-          </p>
         </div>
       </details>
       {value.condition !== "nou" && (
@@ -220,10 +223,6 @@ export function AdvancedFilters({ value, onChange }: Props) {
           </p>
         </div>
       </details>
-      <p className="v3-small v3-muted v3-rule pt-6">
-        Culorile și certificarea Mercedes-Benz Certified vor putea fi filtrate după completarea
-        datelor de catalog.
-      </p>
     </div>
   );
 }

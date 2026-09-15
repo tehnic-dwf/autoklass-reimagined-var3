@@ -1,39 +1,43 @@
-import { NavigationLink } from "@/components/layout/NavigationLink";
-import { siteNavigation } from "@/data/site-navigation";
-
+import { ArrowUpRight } from "lucide-react";
+const services = [
+  [
+    "Test drive",
+    "Descoperă cum se simte la volan.",
+    "https://www.autoklass.ro/articole/programare-test-drive.html",
+  ],
+  [
+    "Buy-back",
+    "O evaluare pentru mașina ta actuală.",
+    "https://www.autoklass.ro/articole/cumparam.html",
+  ],
+  [
+    "Gestionarea daunelor",
+    "Sprijin pentru constatare și reparații.",
+    "https://www.autoklass.ro/articole/gestionarea-daunelor.html",
+  ],
+  ["Piese și accesorii", "Tot ce ai nevoie pentru mașina ta.", "https://piese.autoklass.ro/"],
+  [
+    "Pick-up service",
+    "Preluarea și livrarea mașinii tale.",
+    "https://www.autoklass.ro/articole/pick-up-service.html",
+  ],
+  ["Închirieri auto", "Mobilitate prin Axis Rent.", "https://axisrent.ro/"],
+];
 export function HomeServices() {
-  const groups = siteNavigation.filter((group) => group.id !== "autoklass");
   return (
-    <section id="servicii-autoklass" className="v3-wrap v3-section v3-service-directory">
-      <div className="v3-row mb-8">
-        <div>
-          <p className="v3-kicker">Mai mult pentru tine și mașina ta</p>
-          <h2>De ce ai nevoie astăzi?</h2>
-        </div>
-        <p className="v3-small v3-muted max-w-80">
-          Toate serviciile, grupate după ce vrei să faci. Deschide categoria potrivită.
-        </p>
-      </div>
-      <div className="v3-directory-grid">
-        {groups.map((group) => (
-          <details className="v3-disclosure" key={group.id}>
-            <summary>
-              <span>
-                <span className="v3-directory-title">{group.label}</span>
-                <span className="v3-small v3-muted block mt-2">{group.description}</span>
-              </span>
-            </summary>
-            <div className="flex flex-col items-start">
-              {group.items.map((item) => (
-                <NavigationLink key={item.label} item={item} className="v3-link v3-small" />
-              ))}
+    <section id="servicii-autoklass" className="v3-wrap v3-section">
+      <h2>Mai mult decât o mașină.</h2>
+      <div className="v3-service-links">
+        {services.map(([title, description, href]) => (
+          <a href={href} key={title}>
+            <div>
+              <h3>{title}</h3>
+              <p>{description}</p>
             </div>
-          </details>
+            <ArrowUpRight size={24} aria-hidden />
+          </a>
         ))}
       </div>
-      <p className="v3-small v3-muted mt-6">
-        Linkurile ↗ deschid site-ul Autoklass sau magazinele și serviciile partenere.
-      </p>
     </section>
   );
 }

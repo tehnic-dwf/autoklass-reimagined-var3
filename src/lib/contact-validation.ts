@@ -1,5 +1,11 @@
 export type ContactValues = { lastName: string; firstName: string; email: string; phone: string };
 export const emptyContact: ContactValues = { lastName: "", firstName: "", email: "", phone: "" };
+export const testContact: ContactValues = {
+  lastName: "Popescu",
+  firstName: "Andrei",
+  email: "andrei.popescu@example.com",
+  phone: "0700000000",
+};
 export function validateContact(v: ContactValues) {
   const e: Partial<Record<keyof ContactValues, string>> = {};
   if (!v.lastName.trim()) e.lastName = "Completează numele.";

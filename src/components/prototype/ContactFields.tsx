@@ -11,7 +11,7 @@ export function ContactFields({
   prefix?: string;
 }) {
   return (
-    <div className="v3-stack">
+    <div className="v3-contact-fields">
       {[
         { key: "lastName", label: "Nume", auto: "family-name", type: "text" },
         { key: "firstName", label: "Prenume", auto: "given-name", type: "text" },
@@ -28,12 +28,14 @@ export function ContactFields({
               aria-labelledby={`${id}-label`}
               name={key}
               type={f.type}
+              spellCheck={key === "email" ? false : undefined}
               autoComplete={f.auto}
               required
               maxLength={key === "phone" ? 25 : 100}
               value={value[key]}
               aria-invalid={Boolean(errors[key])}
               aria-describedby={errors[key] ? `${id}-error` : undefined}
+              onInput={(e) => onChange({ ...value, [key]: e.currentTarget.value })}
               onChange={(e) => onChange({ ...value, [key]: e.target.value })}
             />
             {errors[key] && (

@@ -7,10 +7,8 @@ import serviceImage from "@/assets/service-consultant.jpg";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Button } from "@/components/ui/button";
-import { VehicleCard } from "@/components/vehicle/VehicleCard";
+import { HomeVehicles } from "@/components/home/HomeVehicles";
 import { HomeSearch } from "@/components/search/HomeSearch";
-import { vehicles } from "@/data/vehicles";
-import { demoSlug } from "@/data/demo-vehicle";
 import { HomeServices } from "@/components/home/HomeServices";
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -71,7 +69,6 @@ function HomePage() {
       setPaused(true);
     }
   };
-  const shown = [vehicles.find((v) => v.slug === demoSlug)!, vehicles[2]!, vehicles[1]!];
   return (
     <div className="v3">
       <SiteHeader overlay />
@@ -157,30 +154,15 @@ function HomePage() {
         </section>
 
         <HomeSearch />
-        <HomeServices />
-        <section className="v3-wrap v3-section">
-          <p className="v3-kicker">Selecția Autoklass</p>
-          <div className="v3-row">
-            <h2>Alege mașina. Descoperă detaliile.</h2>
-            <Link className="v3-link" to="/autoturisme">
-              Vezi toate mașinile <ArrowRight size={18} />
-            </Link>
-          </div>
-          <div className="v3-cards">
-            {shown.map((v) => (
-              <VehicleCard key={v.slug} vehicle={v} />
-            ))}
-          </div>
-        </section>
+        <HomeVehicles />
         <section id="cum-soliciti-oferta" className="v3-rule v3-buying">
           <div className="v3-wrap v3-section">
             <div className="v3-grid items-start">
               <div>
-                <p className="v3-kicker">Cumpărare, cu repere clare</p>
                 <h2>
-                  De la prima căutare
+                  O alegere personală,
                   <br />
-                  la oferta pentru tine.
+                  cu sprijinul Autoklass.
                 </h2>
                 <p className="v3-intro">
                   Vezi prețul, echiparea și disponibilitatea mașinii înainte să începi discuția cu
@@ -190,9 +172,6 @@ function HomePage() {
                   <BadgeCheck size={24} strokeWidth={1.5} aria-hidden="true" />
                   <div>
                     <p>Dealer autorizat Mercedes-Benz</p>
-                    <p className="v3-small v3-muted mt-1">
-                      Autoturisme noi și rulate, cu sprijinul echipei Autoklass.
-                    </p>
                   </div>
                 </div>
                 <a href="https://www.autoklass.ro/articole/cumparam.html" className="v3-link mt-4">
@@ -212,7 +191,7 @@ function HomePage() {
                   <span aria-hidden="true">02</span>
                   <div>
                     <h3>Soliciți o ofertă</h3>
-                    <p>Din pagina mașinii, „Contactează-ne” deschide formularul cu datele tale.</p>
+                    <p>Primești o ofertă pentru modelul și configurația care te interesează.</p>
                   </div>
                 </li>
                 <li>
@@ -235,6 +214,8 @@ function HomePage() {
                 src={serviceImage}
                 alt="Discuție în service-ul Autoklass"
                 loading="lazy"
+                width={800}
+                height={600}
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="lg:pl-8">
@@ -253,18 +234,12 @@ function HomePage() {
                     <BadgeCheck size={22} strokeWidth={1.5} aria-hidden="true" />
                     <div>
                       <p>Service autorizat Mercedes-Benz</p>
-                      <p className="v3-small v3-muted mt-1">
-                        Întreținere și reparații în rețeaua Autoklass.
-                      </p>
                     </div>
                   </div>
                   <div className="v3-proof">
                     <FileText size={22} strokeWidth={1.5} aria-hidden="true" />
                     <div>
                       <p>Tarife pe sucursală, cu TVA inclus</p>
-                      <p className="v3-small v3-muted mt-1">
-                        Separăm manopera pe oră de costul total al lucrării.
-                      </p>
                     </div>
                   </div>
                   <div className="v3-proof">
@@ -293,10 +268,10 @@ function HomePage() {
             </div>
           </div>
         </section>
-        <section className="v3-wrap v3-section">
+        <HomeServices />
+        <section className="v3-wrap v3-section v3-rule">
           <div className="v3-location-callout">
             <div>
-              <p className="v3-kicker">Aproape de tine</p>
               <h2>Găsește sucursala potrivită.</h2>
               <p className="v3-intro">
                 Vezi adresa, programul și mărcile reprezentate în fiecare locație.

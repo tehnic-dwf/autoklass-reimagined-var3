@@ -25,14 +25,14 @@ const rows: { label: string; value: (v: Vehicle) => string }[] = [
   { label: "Sucursală", value: (v) => v.branch },
   { label: "Disponibilitate", value: availabilityOf },
   {
-    label: "Dotări în exemplu",
+    label: "Dotări",
     value: (v) =>
       v.slug === demoSlug
         ? equipment
-            .filter((e) => e.status === "demo")
+            .filter((e) => e.status === "series")
             .map((e) => e.name)
             .join("; ")
-        : "Date necomunicate",
+        : v.equipment?.join("; ") || "Date necomunicate",
   },
 ];
 function ComparePage() {
@@ -148,7 +148,7 @@ function ComparePage() {
                         <th scope="col">Caracteristică</th>
                         {selected.map((v) => (
                           <th scope="col" key={v.slug}>
-                            <img src={v.image} alt={v.title} />
+                            <img src={v.image} alt={v.title} width={800} height={600} />
                             <h2>{shortTitle(v)}</h2>
                             <Link
                               className="v3-link"
@@ -185,10 +185,7 @@ function ComparePage() {
                 )}
               </>
             )}
-            <p className="v3-notice mt-8">
-              Prețuri de catalog demonstrative. „Date necomunicate” nu înseamnă că o dotare
-              lipsește.
-            </p>
+            <p className="v3-notice mt-8">„Date necomunicate” nu înseamnă că o dotare lipsește.</p>
           </>
         )}
       </main>

@@ -2,8 +2,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { CheckCircle2, X, ArrowRight } from "lucide-react";
 import { useRef, useState } from "react";
 import { ContactFields } from "@/components/prototype/ContactFields";
-import { emptyContact, validateContact, type ContactValues } from "@/lib/contact-validation";
-import { type Vehicle } from "@/data/vehicles";
+import { testContact, validateContact, type ContactValues } from "@/lib/contact-validation";
+import { type Vehicle, formatPrice } from "@/data/vehicles";
 export function OfferDialog({
   vehicle,
   open,
@@ -17,7 +17,7 @@ export function OfferDialog({
   opener: React.RefObject<HTMLButtonElement | null>;
   simulateError?: boolean;
 }) {
-  const [value, setValue] = useState<ContactValues>(emptyContact);
+  const [value, setValue] = useState<ContactValues>(testContact);
   const [errors, setErrors] = useState<Partial<Record<keyof ContactValues, string>>>({});
   const [state, setState] = useState<"idle" | "sending" | "error" | "done">("idle");
   const attempts = useRef(0);
@@ -58,33 +58,38 @@ export function OfferDialog({
             </Dialog.Close>
           </div>
           <div className="v3-panel-body">
-            <Dialog.Description id="offer-description" className="v3-muted v3-small">
-              Pentru {vehicle.title}
+            <Dialog.Description id="offer-description" className="v3-offer-vehicle">
+              <img src={vehicle.image} alt="" width={120} height={90} />
+              <span>
+                <strong>{vehicle.title}</strong>
+                <span>{formatPrice(vehicle.priceEur)} € · TVA inclus</span>
+              </span>
             </Dialog.Description>
             {state === "done" ? (
               <div className="v3-success" role="status">
                 <CheckCircle2 size={40} strokeWidth={1.5} />
-                <h2>Solicitarea a fost înregistrată în demo.</h2>
-                <p>
-                  În varianta conectată, consultantul va reveni folosind datele tale de contact.
-                </p>
-                <p className="v3-notice">
-                  Acesta este un test. Datele nu au fost trimise către Autoklass.
-                </p>
+                <h2>Mulțumim pentru solicitare.</h2>
+                <p>Un consultant te va contacta pentru oferta mașinii alese.</p>
+
                 <Dialog.Close className="v3-button mt-6">Înapoi la mașină</Dialog.Close>
               </div>
             ) : (
               <form id="offer-form" className="mt-8" noValidate onSubmit={submit}>
-                <p className="v3-small v3-muted mb-6">Toate cele patru câmpuri sunt obligatorii.</p>
+                <p className="v3-muted mb-6">Lasă-ne datele tale pentru a discuta oferta.</p>
                 <ContactFields value={value} onChange={setValue} errors={errors} prefix="offer" />
                 {state === "error" && (
                   <p role="alert" className="v3-error mt-6">
                     Solicitarea nu a putut fi trimisă. Datele au rămas completate. Încearcă din nou.
                   </p>
                 )}
-                <p className="v3-notice mt-8">
-                  Prototip de design. Formularul poate fi testat, dar datele nu sunt trimise către
-                  Autoklass.
+                <p className="v3-small v3-muted mt-6">
+                  Datele tale sunt folosite pentru a răspunde solicitării.{" "}
+                  <a
+                    className="underline underline-offset-4"
+                    href="https://www.autoklass.ro/articole/politica-confidentialitate.html"
+                  >
+                    Confidențialitate
+                  </a>
                 </p>
               </form>
             )}

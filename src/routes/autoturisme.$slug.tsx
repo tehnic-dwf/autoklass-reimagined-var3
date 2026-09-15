@@ -19,7 +19,6 @@ import {
   demoSlug,
   equipment,
   officialImages,
-  modelSource,
   normalized,
   assignedConsultant,
 } from "@/data/demo-vehicle";
@@ -91,16 +90,20 @@ function VehiclePage() {
             <div className="v3-pdp-title">
               {" "}
               <p className="v3-kicker">
-                Mercedes-Benz · {v.condition === "nou" ? "Autoturism nou" : "Autoturism rulat"}
+                {v.brand} · {v.condition === "nou" ? "Autoturism nou" : "Autoturism rulat"}
               </p>
               <h1>{shortTitle(v)}</h1>
-              <p className="v3-intro">
-                {detailed ? "SUV · GLC 200 4MATIC · 2026" : `${v.bodyType} · ${v.year}`}
-              </p>
+              <p className="v3-intro">{detailed ? "SUV · 2026" : `${v.bodyType} · ${v.year}`}</p>
             </div>
             <div className="v3-pdp-gallery">
               <div className="v3-gallery">
-                <img src={selected.src} alt={selected.label} />
+                <img
+                  src={selected.src}
+                  alt={selected.label}
+                  width={1400}
+                  height={1000}
+                  fetchPriority="high"
+                />
                 <button
                   className="v3-icon absolute bottom-4 right-4 bg-white"
                   ref={galleryOpener}
@@ -137,15 +140,13 @@ function VehiclePage() {
                       aria-pressed={photo === i}
                       onClick={() => setPhoto(i)}
                     >
-                      <img src={p.src} alt="" />
+                      <img src={p.src} alt="" width={80} height={60} loading="lazy" />
                     </button>
                   ))}
                 </div>
               )}
               <p className="v3-small v3-muted mt-2 mb-8">
-                {detailed
-                  ? "Fotografii ilustrative. Echiparea poate diferi."
-                  : "Fotografie din catalogul demonstrativ."}
+                {detailed ? "Fotografii ilustrative. Echiparea poate diferi." : ""}
               </p>
             </div>
             <div>
@@ -162,6 +163,9 @@ function VehiclePage() {
                   {v.branch}
                 </p>
               </div>
+              <button className="v3-button w-full mt-6" onClick={contact}>
+                Contactează-ne <ArrowRight size={18} />
+              </button>
               <dl className="v3-specs">
                 {facts.slice(0, 4).map(([name, value]) => (
                   <div key={name}>
@@ -170,26 +174,20 @@ function VehiclePage() {
                   </div>
                 ))}
               </dl>
-              <button className="v3-button w-full" onClick={contact}>
-                Contactează-ne <ArrowRight size={18} />
-              </button>
+
               <ConsultantBlock />
-              <p className="v3-small v3-muted mt-6">
-                Preț din exemplul de catalog V2 (august 2026). Oferta și termenul de livrare se
-                confirmă pentru mașina aleasă.
-              </p>
             </div>
           </div>
           <div className="v3-pdp-content">
             <section className="v3-section">
               <div className="v3-row">
-                <h2>O privire de ansamblu.</h2>
+                <h2>Date tehnice</h2>
                 <FavoriteButton slug={v.slug} withLabel />
               </div>
               <p className="v3-intro">
                 {detailed
-                  ? "Un SUV cu cinci locuri, transmisie automată și sistem mild hybrid. Informațiile tehnice de mai jos descriu modelul GLC 200 4MATIC pentru piața din România."
-                  : "Datele disponibile în exemplul de catalog sunt prezentate mai jos. Informațiile suplimentare vor fi completate de Autoklass."}
+                  ? "Un SUV cu cinci locuri, transmisie automată și sistem mild hybrid."
+                  : ""}
               </p>
               <dl className="mt-8">
                 {facts.slice(4).map(([name, value]) => (
@@ -200,7 +198,9 @@ function VehiclePage() {
                 ))}
                 <div className="v3-data-row">
                   <dt>Cilindree</dt>
-                  <dd>{formatPrice(v.engineCc)} cm³</dd>
+                  <dd>
+                    {v.fuel === "Electric" ? "Nu se aplică" : `${formatPrice(v.engineCc)} cm³`}
+                  </dd>
                 </div>
                 {detailed &&
                   [
@@ -218,26 +218,25 @@ function VehiclePage() {
               </dl>
               {detailed && (
                 <p className="v3-small v3-muted mt-6">
-                  Date de model consultate la 11 septembrie 2026. Consumul real diferă în funcție de
-                  condițiile de utilizare și configurație.{" "}
-                  <a
-                    className="underline underline-offset-4"
-                    href={modelSource}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Sursa Mercedes-Benz
-                  </a>
+                  Consumul WLTP poate varia în funcție de configurație și condițiile de utilizare.
                 </p>
               )}
             </section>
+            {v.equipment && (
+              <section className="v3-rule v3-section">
+                <h2>Dotări</h2>
+                <ul className="v3-equipment-list">
+                  {v.equipment.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
             {detailed && (
               <section className="v3-rule v3-section">
-                <p className="v3-kicker">Echipare</p>
-                <h2>Detaliile fac diferența.</h2>
+                <h2>Dotări și opțiuni</h2>
                 <p className="v3-intro">
-                  Dotări de serie și o selecție demonstrativă de opțiuni. Această configurație nu
-                  confirmă echiparea unui exemplar Autoklass.
+                  Dotările de serie și opțiunile modelului. Echiparea exactă se confirmă în ofertă.
                 </p>
                 <label className="v3-field my-8">
                   <span>Caută în dotări</span>
@@ -265,7 +264,7 @@ function VehiclePage() {
                                 {e.status === "series"
                                   ? "De serie"
                                   : e.status === "demo"
-                                    ? "Inclusă în exemplu"
+                                    ? "Opțiune disponibilă"
                                     : "Opțiune disponibilă"}
                               </span>
                             </div>
@@ -291,8 +290,8 @@ function VehiclePage() {
                 <summary>Disponibilitate și garanție</summary>
                 <div className="v3-stack">
                   <p>
-                    Disponibilitatea și condițiile de garanție nu sunt confirmate în acest prototip.
-                    Consultantul le va preciza în ofertă.
+                    Consultantul îți confirmă disponibilitatea, termenul de livrare și garanția în
+                    ofertă.
                   </p>
                   <p>
                     O mașină „în stoc” nu are automat livrare imediată. Termenul exact se stabilește
@@ -302,7 +301,7 @@ function VehiclePage() {
               </details>
               {v.condition === "rulat" && (
                 <p className="v3-small v3-muted mt-6">
-                  Raportul de istoric nu a fost furnizat pentru acest exemplu.
+                  Solicită consultantului informații despre istoricul mașinii.
                 </p>
               )}
               <Link to="/comparatie" className="v3-link mt-6">
@@ -349,7 +348,13 @@ function VehiclePage() {
               </Dialog.Close>
             </div>
             <div className="v3-panel-body flex flex-col justify-center">
-              <img src={selected.src} alt={selected.label} className="w-full" />
+              <img
+                src={selected.src}
+                alt={selected.label}
+                width={1400}
+                height={1000}
+                className="w-full"
+              />
               <p className="v3-small v3-muted mt-4">
                 Imagine ilustrativă · {photo + 1} / {photos.length}
               </p>
@@ -394,7 +399,7 @@ function ConsultantBlock() {
       <div>
         <p>{consultant?.name || "Consultantul tău Autoklass"}</p>
         <p className="v3-small v3-muted">
-          {consultant?.role || "Numele și fotografia vor fi preluate din sistem."}
+          {consultant?.role || "Te ajutăm cu detalii despre mașină și ofertă."}
         </p>
       </div>
     </div>

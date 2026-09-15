@@ -11,9 +11,6 @@ export function SiteFooter() {
           <Link to="/" aria-label="Autoklass, acasă" className="inline-flex min-h-11 items-center">
             <img src={logo} alt="Autoklass" className="h-7 w-auto" />
           </Link>
-          <p className="text-[14px] text-[#c6c9cc]">
-            Linkurile cu ↗ deschid site-ul live în aceeași filă.
-          </p>
         </div>
         <nav
           className="my-8 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-5"
@@ -43,8 +40,7 @@ export function SiteFooter() {
           ))}
         </nav>
         <p className="border-t border-white/20 pt-6 text-[14px] text-[#c6c9cc]">
-          Autoklass · Prototip V3 pentru evaluarea designului. Catalog demonstrativ. Formularele din
-          prototip nu transmit solicitări către Autoklass.
+          © Autoklass. Toate drepturile rezervate.
         </p>
       </div>
     </footer>

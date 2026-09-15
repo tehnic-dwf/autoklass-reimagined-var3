@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
-import { ConditionTabs, FilterPanel } from "@/components/search/VehicleFilters";
+import { BasicFilters, ConditionTabs, FilterPanel } from "@/components/search/VehicleFilters";
 import {
   matchingVehicles,
   validateVehicleSearch,
@@ -15,7 +15,7 @@ import {
 import { useFavorites } from "@/lib/favorites";
 export const Route = createFileRoute("/autoturisme/")({
   validateSearch: validateVehicleSearch,
-  head: () => ({ meta: [{ title: "Autoturisme noi și rulate | Autoklass V3" }] }),
+  head: () => ({ meta: [{ title: "Autoturisme noi și rulate | Autoklass" }] }),
   component: Listing,
 });
 function Listing() {
@@ -32,27 +32,29 @@ function Listing() {
     <div className="v3">
       <SiteHeader />
       <main id="main-content" className="v3-wrap v3-section">
-        <p className="v3-kicker">Autoturisme / Catalog</p>
         <h1>
           {value.condition === "nou"
             ? "Autoturisme noi"
             : value.condition === "rulat"
               ? "Autoturisme rulate"
-              : "Găsește-ți următorul Mercedes-Benz."}
+              : "Autoturisme noi și rulate"}
         </h1>
-        <p className="v3-intro">Alege după buget, model și lucrurile de care ai nevoie la drum.</p>
+
         <form className="relative my-8 max-w-xl" onSubmit={(e) => e.preventDefault()}>
           <label className="v3-field">
             <span>Caută o mașină</span>
             <input
               type="search"
-              placeholder="Model sau versiune, de exemplu GLC"
+              placeholder="Marcă, model sau versiune…"
+              name="q"
+              autoComplete="off"
               value={value.q || ""}
               onChange={(e) => update({ ...value, q: e.target.value })}
             />
           </label>
         </form>
         <ConditionTabs value={value} onChange={update} />
+        <BasicFilters value={value} onChange={update} />
         <div className="v3-row py-6">
           <button
             className="v3-button secondary"
@@ -61,7 +63,7 @@ function Listing() {
             onClick={() => setOpen(true)}
           >
             <SlidersHorizontal size={18} />
-            Filtre{active.length ? ` (${active.length})` : ""}
+            Toate filtrele{active.length ? ` (${active.length})` : ""}
           </button>
           <label className="v3-field flex-1 sm:flex-none">
             <span className="sr-only">Sortează mașinile</span>
@@ -144,10 +146,7 @@ function Listing() {
           <div className="v3-empty">
             <Search className="mx-auto mb-6" size={32} strokeWidth={1} />
             <h2>Nicio mașină pentru aceste filtre.</h2>
-            <p className="v3-muted">
-              Încearcă un buget mai mare sau elimină un criteriu. Catalogul acestui prototip conține
-              18 exemple.
-            </p>
+            <p className="v3-muted">Încearcă un buget mai mare sau elimină un criteriu.</p>
             <button className="v3-button secondary" onClick={() => update({})}>
               Resetează filtrele
             </button>
@@ -159,10 +158,6 @@ function Listing() {
             ))}
           </div>
         )}
-        <p className="v3-notice mt-12">
-          Date preluate din catalogul V2, august 2026. Prețurile și disponibilitatea sunt exemple
-          pentru design, nu oferte actualizate.
-        </p>
         <FilterPanel
           value={value}
           onChange={update}

@@ -39,14 +39,13 @@ export function validateVehicleSearch(raw: Record<string, unknown>): VehicleSear
 }
 export function modelOf(v: Vehicle) {
   return (
+    v.model ??
     v.title.match(/Clasa [A-Z]|GLA|GLC|GLE|CLE/)?.[0] ??
     (v.title.includes(" C ") ? "Clasa C" : "Clasa E")
   );
 }
 export const availabilityOf = (v: Vehicle) =>
-  v.reserved
-    ? "Indisponibil în exemplul de catalog"
-    : v.availability || "Disponibilitate de confirmat";
+  v.reserved ? "Indisponibil" : v.availability || "Disponibilitate de confirmat";
 export const shortTitle = (v: Vehicle) =>
   v.title
     .replace(/^Mercedes-Benz /, "")
@@ -67,7 +66,8 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
     if (s.brand && v.brand !== s.brand) return false;
     if (s.model && modelOf(v) !== s.model) return false;
     if (s.fuel && (s.fuel === "Hibrid" ? !v.hybrid : v.fuel !== s.fuel)) return false;
-    if (s.body && v.bodyType !== s.body) return false;
+    if (s.body && v.bodyType !== s.body && !(s.body === "Limuzină" && v.bodyType === "Sedan"))
+      return false;
     if (s.branch && v.branch !== s.branch) return false;
     if (s.gearbox && v.gearbox !== s.gearbox) return false;
     if (s.drive && v.drive !== s.drive) return false;
@@ -100,12 +100,11 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
       return false;
     if (s.equipment) {
       const terms = normalized(s.equipment).split(/[ ,]+/).filter(Boolean);
-      const installed = equipment.filter((e) => e.status !== "optional");
-      if (
-        v.slug !== demoSlug ||
-        !terms.every((t) => installed.some((e) => normalized(e.name + " " + e.aliases).includes(t)))
-      )
-        return false;
+      const installed =
+        v.slug === demoSlug
+          ? equipment.filter((e) => e.status === "series").map((e) => e.name + " " + e.aliases)
+          : v.equipment || [];
+      if (!terms.every((t) => installed.some((name) => normalized(name).includes(t)))) return false;
     }
     return true;
   });

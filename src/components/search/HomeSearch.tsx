@@ -12,8 +12,7 @@ export function HomeSearch() {
   return (
     <section id="cauta-masina" className="v3 v3-search v3-section" style={{ minHeight: 0 }}>
       <div className="v3-wrap">
-        <p className="v3-kicker">Următoarea ta mașină</p>
-        <h2>Începe cu ce contează pentru tine.</h2>
+        <h2>Găsește-ți următoarea mașină.</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -43,9 +42,6 @@ export function HomeSearch() {
               <ArrowRight size={18} />
             </button>
           </div>
-          <p className="v3-small v3-muted mt-6">
-            Selecție demonstrativă de 18 autoturisme Mercedes-Benz.
-          </p>
         </form>
         <FilterPanel
           value={value}

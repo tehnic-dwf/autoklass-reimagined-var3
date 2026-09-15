@@ -8,6 +8,8 @@ export type Vehicle = {
   slug: string;
   title: string;
   brand: string;
+  model?: string;
+  equipment?: string[];
   condition: "nou" | "rulat";
   fuel: "Diesel" | "Benzină" | "Electric";
   hybrid?: boolean;
@@ -24,7 +26,7 @@ export type Vehicle = {
   branch: string;
   availability?: string;
   reserved?: boolean;
-  bodyType: "Sedan" | "Limuzină" | "SUV" | "Coupe";
+  bodyType: "Sedan" | "Limuzină" | "SUV" | "Coupe" | "Hatchback" | "SUV Coupé";
   image: string;
 };
 
@@ -405,6 +407,94 @@ export const vehicles: Vehicle[] = [
     reserved: true,
     bodyType: "Coupe",
     image: cdn("w1kmj6cb2vf135666_25735_1_1783990388213.jpg.webp"),
+  },
+  {
+    slug: "honda-civic-5d-hu025350",
+    title: "Honda Civic 5D 1.0 VTEC",
+    brand: "Honda",
+    model: "Civic",
+    condition: "rulat",
+    fuel: "Benzină",
+    powerHp: 129,
+    gearbox: "Manuală",
+    registrationMonth: "Ianuarie",
+    year: 2017,
+    km: 111082,
+    engineCc: 988,
+    drive: "FWD",
+    priceEur: 12000,
+    vat: "deductibil",
+    branch: "Autoklass Sibiu",
+    bodyType: "Hatchback",
+    equipment: [
+      "Lumini de zi LED",
+      "Scaune față încălzite",
+      "Bluetooth",
+      "Climatizare automată",
+      "Asistent menținere bandă",
+    ],
+    image: cdn("shhfk6740hu025350_24014_1_17642092930829.jpg.webp"),
+  },
+  {
+    slug: "xpeng-g6-awd-performance-sb179466",
+    title: "XPENG G6 AWD Performance",
+    brand: "XPENG",
+    model: "G6",
+    condition: "nou",
+    fuel: "Electric",
+    powerHp: 480,
+    gearbox: "Automată",
+    registrationMonth: "Ianuarie",
+    year: 2026,
+    km: null,
+    engineCc: 0,
+    drive: "AWD",
+    priceEur: 56040,
+    vat: "deductibil",
+    branch: "Autoklass Constanța",
+    bodyType: "SUV Coupé",
+    image: cdn("l1nnsgha7sb179466_25869_1_17819173930651.jpg.webp"),
+  },
+  {
+    slug: "xpeng-g9-rwd-standard-range-sd091009",
+    title: "XPENG G9 RWD Standard Range",
+    brand: "XPENG",
+    model: "G9",
+    condition: "nou",
+    fuel: "Electric",
+    powerHp: 346,
+    gearbox: "Automată",
+    registrationMonth: "Ianuarie",
+    year: 2026,
+    km: null,
+    engineCc: 0,
+    drive: "RWD",
+    priceEur: 63340,
+    vat: "deductibil",
+    branch: "Autoklass Constanța",
+    bodyType: "SUV",
+    image: cdn("l1nnsghb3sd091009_25874_1_17819174521003.jpg.webp"),
+  },
+  {
+    slug: "honda-zr-v-advance-r2012298",
+    title: "Honda ZR-V 2.0 e:HEV Advance",
+    brand: "Honda",
+    model: "ZR-V",
+    condition: "rulat",
+    fuel: "Benzină",
+    hybrid: true,
+    powerHp: 184,
+    gearbox: "Automată",
+    registrationMonth: "Ianuarie",
+    year: 2024,
+    km: 23001,
+    engineCc: 1993,
+    drive: "FWD",
+    priceEur: 37450,
+    vat: "deductibil",
+    branch: "Autoklass Timișoara",
+    bodyType: "SUV",
+    image: cdn("lhgrz4873r2012298_20299_1_1738374750897.jpg.webp"),
   },
 ];
 

@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import serviceImage from "@/assets/service-consultant.jpg";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ContactFields } from "@/components/prototype/ContactFields";
-import { emptyContact, validateContact, type ContactValues } from "@/lib/contact-validation";
+import { testContact, validateContact, type ContactValues } from "@/lib/contact-validation";
 import {
   serviceBranches,
   serviceItems,
@@ -13,7 +14,6 @@ import {
   serviceName,
   ratePrice,
   rateUnit,
-  tariffEffectiveDate,
 } from "@/data/service-prices";
 import { formatPrice } from "@/data/vehicles";
 type ServiceSearch = {
@@ -37,10 +37,10 @@ function ServiceRequest() {
   const search = Route.useSearch();
   const [intent, setIntent] = useState(search.intent === "estimate" ? "estimate" : "appointment");
   const [branch, setBranch] = useState(
-    serviceBranches.some((b) => b.id === search.branch) ? search.branch! : "",
+    serviceBranches.some((b) => b.id === search.branch) ? search.branch! : "pipera",
   );
   const [service, setService] = useState(
-    serviceItems.some((s) => s.id === search.service) ? search.service! : "",
+    serviceItems.some((s) => s.id === search.service) ? search.service! : "revizie",
   );
   const [rate, setRate] = useState(
     serviceRates.some(
@@ -53,34 +53,35 @@ function ServiceRequest() {
   const selectedRate = availableRates.find((item) => item.id === rate);
   const selectedPrice = selectedRate ? ratePrice(selectedRate, branch) : undefined;
   const rateSummary = selectedRate ? (
-    <div className="v3-notice" aria-live="polite">
-      <p>Categorie tarifară: {selectedRate.title}</p>
-      <p>{selectedRate.description}</p>
-      <p>
+    <div className="v3-rate-summary" aria-live="polite">
+      <p>{selectedRate.title}</p>
+      <strong>
         {selectedPrice !== undefined
           ? `${formatPrice(selectedPrice)} ${rateUnit(selectedRate)} · TVA inclus`
-          : branch
-            ? "Tarif nepublicat pentru sucursala aleasă"
-            : "Alege o sucursală pentru a vedea tariful"}
-      </p>
-      <p>
+          : "Tarif la cerere"}
+      </strong>
+      <p className="v3-small v3-muted">
         {selectedRate.unit === "hour"
-          ? "Referință pentru manoperă. Costul lucrării, orele și piesele se estimează separat."
-          : "Tarif pentru inspecția inițială; categoria se confirmă după datele mașinii."}
-        {selectedRate.unit === "inspection" &&
-          branch === "timisoara" &&
-          " ITP subcontractat la Timișoara."}
+          ? "Manoperă. Piesele și timpul de lucru se estimează separat."
+          : "Preț pentru inspecția inițială."}
       </p>
-      <p>Lista de tarife din {tariffEffectiveDate}.</p>
     </div>
   ) : null;
-  const [vin, setVin] = useState("");
-  const [km, setKm] = useState("");
+  const [vin, setVin] = useState("WDD00000000000000");
+  const [km, setKm] = useState("35000");
   const [unknown, setUnknown] = useState(false);
-  const [problem, setProblem] = useState("");
+  const [problem, setProblem] = useState("Revizie periodică.");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [contact, setContact] = useState<ContactValues>(emptyContact);
+  useEffect(() => {
+    const preferred = new Date();
+    preferred.setDate(preferred.getDate() + 7);
+    while ([0, 6].includes(preferred.getDay())) preferred.setDate(preferred.getDate() + 1);
+    setDate(
+      `${preferred.getFullYear()}-${String(preferred.getMonth() + 1).padStart(2, "0")}-${String(preferred.getDate()).padStart(2, "0")}`,
+    );
+  }, []);
+  const [time, setTime] = useState("Dimineața");
+  const [contact, setContact] = useState<ContactValues>(testContact);
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "error" | "done">("idle");
@@ -161,288 +162,326 @@ function ServiceRequest() {
     <div className="v3">
       <SiteHeader />
       <main id="main-content" className="v3-wrap v3-section">
-        <div className="v3-form">
-          <Link to="/service/tarife" className="v3-link v3-small mb-8">
-            <ArrowLeft size={16} />
-            Servicii și tarife
-          </Link>
-          <p className="v3-kicker">Service Autoklass</p>
-          <h1 ref={heading} tabIndex={-1} style={{ scrollMarginTop: 96 }}>
-            {status === "done" ? "Solicitarea ta, înregistrată în demo." : title}
-          </h1>
-          {status === "done" ? (
-            <div className="v3-success" role="status">
-              <CheckCircle2 size={40} />
-              <p>
-                {serviceName(service)} · {branchName(branch)}
-              </p>
-              {rateSummary}
-              <p>
-                {intent === "appointment"
-                  ? "Ziua și intervalul sunt preferințe. În fluxul propus, echipa service va reveni pentru confirmare."
-                  : "În fluxul propus, echipa service va reveni cu informații pentru mașina ta. Devizul final se stabilește în service."}
-              </p>
-              {intent === "appointment" && (
+        <div className="v3-service-layout">
+          <aside className="v3-service-intro">
+            <img src={serviceImage} alt="Consultant service Autoklass" width={800} height={600} />
+            <p className="v3-service-promise">Service autorizat Mercedes-Benz.</p>
+            <p>Întreținere, diagnoză și reparații pentru mașina ta, în rețeaua Autoklass.</p>
+            <Link to="/service/tarife" className="v3-link">
+              Consultă tarifele <ArrowRight size={18} aria-hidden />
+            </Link>
+          </aside>
+          <div className="v3-service-form">
+            <Link to="/service/tarife" className="v3-link v3-small mb-8">
+              <ArrowLeft size={16} />
+              Servicii și tarife
+            </Link>
+
+            <h1 ref={heading} tabIndex={-1} style={{ scrollMarginTop: 96 }}>
+              {status === "done" ? "Mulțumim pentru solicitare." : title}
+            </h1>
+            {status === "done" ? (
+              <div className="v3-success" role="status">
+                <CheckCircle2 size={40} />
                 <p>
-                  Preferință:{" "}
-                  {date
-                    ? new Date(`${date}T12:00:00`).toLocaleDateString("ro-RO", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })
-                    : "zi de stabilit"}
-                  {time ? ` · ${time}` : ""}.
+                  {serviceName(service)} · {branchName(branch)}
                 </p>
-              )}
-              <p className="v3-notice">
-                Test demonstrativ. Nicio solicitare nu a fost transmisă și niciun interval nu a fost
-                rezervat.
-              </p>
-              <Link className="v3-button mt-6" to="/service/tarife">
-                Înapoi la servicii
-              </Link>
-            </div>
-          ) : (
-            <>
-              <p className="v3-intro">
-                {intent === "estimate"
-                  ? "O estimare pornește de la mașina ta și de la lucrarea necesară."
-                  : "Spune-ne ce ai nevoie și când ai prefera să vii."}
-              </p>
-              <div className="v3-step mt-8" aria-label={`Pasul ${step} din 2`}>
-                <span className="active" />
-                <span className={step === 2 ? "active" : ""} />
+                {rateSummary}
+                <p>
+                  {intent === "appointment"
+                    ? "Echipa service te va contacta pentru a confirma ziua și ora."
+                    : "Echipa service te va contacta pentru estimare. Devizul final se stabilește după evaluarea mașinii."}
+                </p>
+                {intent === "appointment" && (
+                  <p>
+                    Preferință:{" "}
+                    {date
+                      ? new Date(`${date}T12:00:00`).toLocaleDateString("ro-RO", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                      : "zi de stabilit"}
+                    {time ? ` · ${time}` : ""}.
+                  </p>
+                )}
+                <Link className="v3-button mt-6" to="/service/tarife">
+                  Înapoi la servicii
+                </Link>
               </div>
-              <p className="v3-small v3-muted">
-                Pasul {step} din 2 · {step === 1 ? "Mașina și serviciul" : "Datele tale de contact"}
-              </p>
-              <form ref={form} noValidate onSubmit={submit}>
-                <div className="v3-stack">
-                  {step === 1 ? (
-                    <>
-                      <label className="v3-field">
-                        <span>Cu ce te putem ajuta?</span>
-                        <select value={intent} onChange={(e) => setIntent(e.target.value)}>
-                          <option value="appointment">Solicitare de programare</option>
-                          <option value="estimate">Estimare de cost</option>
-                        </select>
-                      </label>
-                      <label className="v3-field">
-                        <span>Sucursală</span>
-                        <select
-                          {...a11y("branch")}
-                          value={branch}
-                          onChange={(e) => setBranch(e.target.value)}
-                          required
+            ) : (
+              <>
+                <p className="v3-intro">
+                  {intent === "estimate"
+                    ? "O estimare pornește de la mașina ta și de la lucrarea necesară."
+                    : "Spune-ne ce ai nevoie și când ai prefera să vii."}
+                </p>
+                <div className="v3-step mt-8" aria-label={`Pasul ${step} din 2`}>
+                  <span className="active" />
+                  <span className={step === 2 ? "active" : ""} />
+                </div>
+                <h2 className="v3-form-step-title">
+                  {step === 1 ? "1. Mașina și serviciul" : "2. Datele tale de contact"}
+                </h2>
+                <form ref={form} noValidate onSubmit={submit}>
+                  <div className="v3-stack">
+                    {step === 1 ? (
+                      <>
+                        <div
+                          className="v3-request-intent"
+                          role="group"
+                          aria-label="Tipul solicitării"
                         >
-                          <option value="">Alege sucursala</option>
-                          {serviceBranches.map((b) => (
-                            <option value={b.id} key={b.id}>
-                              {b.name}
-                            </option>
-                          ))}
-                        </select>
-                        {err("branch")}
-                      </label>
-                      <label className="v3-field">
-                        <span>Serviciu</span>
-                        <select
-                          {...a11y("service")}
-                          value={service}
-                          onChange={(e) => {
-                            setService(e.target.value);
-                            setRate("");
-                          }}
-                          required
-                        >
-                          <option value="">Alege serviciul</option>
-                          {serviceItems.map((s) => (
-                            <option key={s.id} value={s.id}>
-                              {s.title}
-                            </option>
-                          ))}
-                          <option value="other">Altă problemă / nu sunt sigur</option>
-                        </select>
-                        {err("service")}
-                      </label>
-                      {availableRates.length > 0 && (
+                          <button
+                            type="button"
+                            aria-pressed={intent === "appointment"}
+                            onClick={() => setIntent("appointment")}
+                          >
+                            Programare service
+                          </button>
+                          <button
+                            type="button"
+                            aria-pressed={intent === "estimate"}
+                            onClick={() => setIntent("estimate")}
+                          >
+                            Estimare de cost
+                          </button>
+                        </div>
                         <label className="v3-field">
-                          <span>Categoria tarifară (opțional)</span>
-                          <select value={rate} onChange={(e) => setRate(e.target.value)}>
-                            <option value="">Categoria se va confirma în service</option>
-                            {availableRates.map((item) => (
-                              <option key={item.id} value={item.id}>
-                                {item.title}
-                                {item.id.endsWith("under-five") ? " · până la 5 ani inclusiv" : ""}
+                          <span>Sucursală</span>
+                          <select
+                            {...a11y("branch")}
+                            value={branch}
+                            onChange={(e) => setBranch(e.target.value)}
+                            required
+                          >
+                            <option value="">Alege sucursala</option>
+                            {serviceBranches.map((b) => (
+                              <option value={b.id} key={b.id}>
+                                {b.name}
                               </option>
                             ))}
                           </select>
+                          {err("branch")}
                         </label>
-                      )}
-                      {rateSummary}
-                      <label className="v3-field">
-                        <span>
-                          {service === "other"
-                            ? "Ce ai observat la mașină?"
-                            : "Detalii despre lucrare (opțional)"}
-                        </span>
-                        <textarea
-                          {...a11y("problem")}
-                          aria-label={
-                            service === "other"
+                        <label className="v3-field">
+                          <span>Serviciu</span>
+                          <select
+                            {...a11y("service")}
+                            value={service}
+                            onChange={(e) => {
+                              setService(e.target.value);
+                              setRate("");
+                            }}
+                            required
+                          >
+                            <option value="">Alege serviciul</option>
+                            {serviceItems.map((s) => (
+                              <option key={s.id} value={s.id}>
+                                {s.title}
+                              </option>
+                            ))}
+                            <option value="other">Altă problemă / nu sunt sigur</option>
+                          </select>
+                          {err("service")}
+                        </label>
+                        {availableRates.length > 0 && (
+                          <details className="v3-disclosure" open={Boolean(rate)}>
+                            <summary>Vezi tariful de manoperă</summary>
+                            <div>
+                              <label className="v3-field">
+                                <span>Categoria tarifară (opțional)</span>
+                                <select
+                                  name="rate"
+                                  value={rate}
+                                  onChange={(e) => setRate(e.target.value)}
+                                >
+                                  <option value="">Categoria se va confirma în service</option>
+                                  {availableRates.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                      {item.title}
+                                      {item.id.endsWith("under-five")
+                                        ? " · până la 5 ani inclusiv"
+                                        : ""}
+                                    </option>
+                                  ))}
+                                </select>
+                              </label>
+                              {rateSummary}
+                            </div>
+                          </details>
+                        )}
+                        <label className="v3-field">
+                          <span>
+                            {service === "other"
                               ? "Ce ai observat la mașină?"
-                              : "Detalii despre lucrare (opțional)"
-                          }
-                          placeholder={
-                            service === "roti"
-                              ? "Dimensiunea jantelor; schimb de anvelope sau roți complete…"
-                              : undefined
-                          }
-                          rows={3}
-                          value={problem}
-                          maxLength={1500}
-                          onChange={(e) => setProblem(e.target.value)}
-                          required={service === "other"}
-                        />
-                        {err("problem")}
-                      </label>
-                      <label className="v3-check">
-                        <input
-                          type="checkbox"
-                          checked={unknown}
-                          onChange={(e) => setUnknown(e.target.checked)}
-                        />
-                        Nu am VIN-ul sau kilometrajul la îndemână
-                      </label>
-                      {unknown ? (
-                        <p className="v3-notice">
-                          Poți continua cu o solicitare de contact. Pentru o estimare adaptată
-                          mașinii, echipa va avea nevoie ulterior de VIN și kilometraj.
-                        </p>
-                      ) : (
-                        <>
-                          <label className="v3-field">
-                            <span>VIN (serie de șasiu)</span>
-                            <input
-                              {...a11y("vin")}
-                              value={vin}
-                              onChange={(e) => setVin(e.target.value.toUpperCase())}
-                              maxLength={17}
-                              autoCapitalize="characters"
-                              spellCheck={false}
-                              required
-                            />
-                            {err("vin")}
-                            <small className="v3-small v3-muted">
-                              17 caractere, în talon la rubrica E. Ne ajută să identificăm exact
-                              mașina și piesele.
-                            </small>
-                          </label>
-                          <label className="v3-field">
-                            <span>Kilometraj actual (km)</span>
-                            <input
-                              {...a11y("km")}
-                              type="text"
-                              inputMode="numeric"
-                              value={km}
-                              onChange={(e) => setKm(e.target.value)}
-                              required
-                            />
-                            {err("km")}
-                          </label>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <div className="v3-notice">
-                        {serviceName(service)}
-                        <br />
-                        {branchName(branch)}
-                        <br />
-                        {unknown
-                          ? "Datele mașinii vor fi completate ulterior."
-                          : `${vin} · ${km} km`}
-                      </div>
-                      {rateSummary}
-                      {problem.trim() && <p className="v3-small v3-muted">Detalii: {problem}</p>}
-                      {intent === "appointment" && (
-                        <>
-                          <label className="v3-field">
-                            <span>Zi preferată (opțional)</span>
-                            <input
-                              {...a11y("date")}
-                              type="date"
-                              min={minDate}
-                              value={date}
-                              onInput={(e) => setDate(e.currentTarget.value)}
-                              onChange={(e) => setDate(e.target.value)}
-                            />
-                            {err("date")}
-                          </label>
-                          <label className="v3-field">
-                            <span>Interval preferat (opțional)</span>
-                            <select value={time} onChange={(e) => setTime(e.target.value)}>
-                              <option value="">Fără preferință</option>
-                              <option>Dimineața</option>
-                              <option>După-amiaza</option>
-                            </select>
-                          </label>
-                          <p className="v3-small v3-muted">
-                            Disponibilitatea se confirmă ulterior. Alegerea unei preferințe nu
-                            rezervă un interval.
+                              : "Detalii despre lucrare (opțional)"}
+                          </span>
+                          <textarea
+                            {...a11y("problem")}
+                            aria-label={
+                              service === "other"
+                                ? "Ce ai observat la mașină?"
+                                : "Detalii despre lucrare (opțional)"
+                            }
+                            placeholder={
+                              service === "roti"
+                                ? "Dimensiunea jantelor; schimb de anvelope sau roți complete…"
+                                : undefined
+                            }
+                            rows={3}
+                            value={problem}
+                            maxLength={1500}
+                            onChange={(e) => setProblem(e.target.value)}
+                            required={service === "other"}
+                          />
+                          {err("problem")}
+                        </label>
+                        <label className="v3-check">
+                          <input
+                            type="checkbox"
+                            checked={unknown}
+                            onChange={(e) => setUnknown(e.target.checked)}
+                          />
+                          Nu am VIN-ul sau kilometrajul la îndemână
+                        </label>
+                        {unknown ? (
+                          <p className="v3-notice">
+                            Poți continua. Consultantul îți va cere ulterior datele mașinii.
                           </p>
-                        </>
-                      )}
-                      <ContactFields
-                        value={contact}
-                        onChange={setContact}
-                        errors={errors}
-                        prefix="service"
-                      />
-                    </>
+                        ) : (
+                          <>
+                            <label className="v3-field">
+                              <span>VIN (serie de șasiu)</span>
+                              <input
+                                {...a11y("vin")}
+                                value={vin}
+                                onChange={(e) => setVin(e.target.value.toUpperCase())}
+                                maxLength={17}
+                                autoCapitalize="characters"
+                                spellCheck={false}
+                                required
+                              />
+                              {err("vin")}
+                              <small className="v3-small v3-muted">
+                                17 caractere. Îl găsești în talon, la rubrica E.
+                              </small>
+                            </label>
+                            <label className="v3-field">
+                              <span>Kilometraj actual (km)</span>
+                              <input
+                                {...a11y("km")}
+                                type="text"
+                                inputMode="numeric"
+                                value={km}
+                                onChange={(e) => setKm(e.target.value)}
+                                required
+                              />
+                              {err("km")}
+                            </label>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="v3-notice">
+                          {serviceName(service)}
+                          <br />
+                          {branchName(branch)}
+                          <br />
+                          {unknown
+                            ? "Datele mașinii vor fi completate ulterior."
+                            : `${vin} · ${km} km`}
+                        </div>
+
+                        {intent === "appointment" && (
+                          <>
+                            <label className="v3-field">
+                              <span>Zi preferată (opțional)</span>
+                              <input
+                                {...a11y("date")}
+                                type="date"
+                                min={minDate}
+                                value={date}
+                                onInput={(e) => setDate(e.currentTarget.value)}
+                                onChange={(e) => setDate(e.target.value)}
+                              />
+                              {err("date")}
+                            </label>
+                            <label className="v3-field">
+                              <span>Interval preferat (opțional)</span>
+                              <select
+                                name="time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                              >
+                                <option value="">Fără preferință</option>
+                                <option>Dimineața</option>
+                                <option>După-amiaza</option>
+                              </select>
+                            </label>
+                            <p className="v3-small v3-muted">
+                              Programarea este confirmată după discuția cu echipa service.
+                            </p>
+                          </>
+                        )}
+                        <ContactFields
+                          value={contact}
+                          onChange={setContact}
+                          errors={errors}
+                          prefix="service"
+                        />
+                      </>
+                    )}
+                  </div>
+                  {status === "error" && (
+                    <p role="alert" className="v3-error mt-6">
+                      Solicitarea nu a putut fi trimisă. Datele au rămas completate. Încearcă din
+                      nou.
+                    </p>
                   )}
-                </div>
-                {status === "error" && (
-                  <p role="alert" className="v3-error mt-6">
-                    Solicitarea nu a putut fi trimisă. Datele au rămas completate. Încearcă din nou.
-                  </p>
-                )}
-                <p className="v3-notice mt-8">
-                  Prototip: datele nu se trimit către Autoklass. Devizul final se stabilește după
-                  evaluarea în service.
-                </p>
-                <div className="v3-row mt-8">
                   {step === 2 && (
-                    <button
-                      type="button"
-                      className="v3-link"
-                      disabled={status === "sending"}
-                      onClick={() => next(1)}
-                    >
-                      <ArrowLeft size={16} />
-                      Înapoi
-                    </button>
+                    <p className="v3-small v3-muted mt-6">
+                      Datele tale sunt folosite pentru a răspunde solicitării.{" "}
+                      <a
+                        className="underline underline-offset-4"
+                        href="https://www.autoklass.ro/articole/politica-confidentialitate.html"
+                      >
+                        Confidențialitate
+                      </a>
+                    </p>
                   )}
-                  <button
-                    className="v3-button flex-1"
-                    type="submit"
-                    disabled={status === "sending"}
-                  >
-                    {status === "sending"
-                      ? "Se trimite…"
-                      : step === 1
-                        ? "Continuă"
-                        : intent === "estimate"
-                          ? "Solicită estimare"
-                          : "Solicită programare"}
-                    <ArrowRight size={18} />
-                  </button>
-                </div>
-              </form>
-            </>
-          )}
+                  <div className="v3-row mt-8">
+                    {step === 2 && (
+                      <button
+                        type="button"
+                        className="v3-link"
+                        disabled={status === "sending"}
+                        onClick={() => next(1)}
+                      >
+                        <ArrowLeft size={16} />
+                        Înapoi
+                      </button>
+                    )}
+                    <button
+                      className="v3-button flex-1"
+                      type="submit"
+                      disabled={status === "sending"}
+                    >
+                      {status === "sending"
+                        ? "Se trimite…"
+                        : step === 1
+                          ? "Continuă"
+                          : intent === "estimate"
+                            ? "Solicită estimare"
+                            : "Solicită programare"}
+                      <ArrowRight size={18} />
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
         </div>
       </main>
       <SiteFooter />
