@@ -73,7 +73,7 @@ export function HomeVehicles() {
       </nav>
       <section className="v3-wrap v3-section v3-discover" aria-labelledby="discover-title">
         <div className="v3-row">
-          <h2 id="discover-title">Ce îți place să conduci?</h2>
+          <h2 id="discover-title">Explorează după caroserie</h2>
           <Link className="v3-link" to="/autoturisme">
             Toate mașinile <ArrowRight size={18} aria-hidden />
           </Link>
@@ -119,7 +119,7 @@ export function HomeVehicles() {
       <section className="v3-inventory" aria-labelledby="inventory-title">
         <div className="v3-wrap v3-section">
           <div className="v3-row">
-            <h2 id="inventory-title">Următoarea ta mașină, aici.</h2>
+            <h2 id="inventory-title">Descoperă selecția Autoklass</h2>
             <span className="v3-muted">Prețuri cu TVA inclus</span>
           </div>
           <div className="v3-collection-tabs" role="group" aria-label="Selecții de mașini">

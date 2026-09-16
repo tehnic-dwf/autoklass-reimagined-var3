@@ -106,7 +106,7 @@ function HomePage() {
             )}
           </button>
 
-          <div className="relative mx-auto flex min-h-[86svh] w-full max-w-7xl flex-col justify-end px-6 pb-12 pt-28 md:px-8 md:pb-16 lg:px-10">
+          <div className="relative mx-auto flex v3-hero-content min-h-[86svh] w-full max-w-7xl flex-col justify-end px-6 pb-12 pt-28 md:px-8 md:pb-16 lg:px-10">
             <h1
               className="hero-rise font-display"
               style={{
@@ -123,8 +123,7 @@ function HomePage() {
               className="hero-rise mt-6 text-pretty text-base text-primary-foreground/85"
               style={{ animationDelay: "220ms", maxWidth: "44ch" }}
             >
-              Descoperă mașinile noi și rulate din selecția Autoklass. Găsește modelul potrivit și
-              solicită o ofertă.
+              Autoturisme noi și rulate. Service autorizat. Alege cu ce te putem ajuta.
             </p>
 
             <div
@@ -132,7 +131,7 @@ function HomePage() {
               style={{ animationDelay: "320ms" }}
             >
               <Button asChild size="lg" variant="secondary" className="press">
-                <a href="#cauta-masina">Găsește-ți mașina</a>
+                <a href="#cauta-masina">Caută o mașină</a>
               </Button>
               <Button
                 asChild
@@ -145,7 +144,7 @@ function HomePage() {
             </div>
 
             <p
-              className="hero-rise mt-8 text-xs text-primary-foreground/65"
+              className="hero-rise mt-6 text-sm text-primary-foreground/85"
               style={{ animationDelay: "400ms" }}
             >
               Dealer autorizat Mercedes-Benz

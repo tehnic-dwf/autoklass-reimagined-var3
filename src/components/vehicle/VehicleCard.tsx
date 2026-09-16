@@ -38,12 +38,12 @@ export function VehicleCard({
             )}
           </div>
           <Link
-            className="v3-icon"
+            className="v3-card-details"
             to="/autoturisme/$slug"
             params={{ slug: v.slug }}
             aria-label={`Detalii ${v.title}`}
           >
-            <ArrowUpRight size={24} strokeWidth={1.5} aria-hidden />
+            Detalii <ArrowUpRight size={18} strokeWidth={1.5} aria-hidden />
           </Link>
         </div>
         {!compact && (

@@ -26,7 +26,7 @@ const services = [
 export function HomeServices() {
   return (
     <section id="servicii-autoklass" className="v3-wrap v3-section">
-      <h2>Mai mult decât o mașină.</h2>
+      <h2>Alte servicii Autoklass</h2>
       <div className="v3-service-links">
         {services.map(([title, description, href]) => (
           <a href={href} key={title}>

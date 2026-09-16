@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Menu, Search, Heart, X } from "lucide-react";
+import { Menu, Search, Heart, X, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import logo from "@/assets/autoklass-logo.png";
 import { primaryNavigation, serviceAppointment, siteNavigation } from "@/data/site-navigation";
@@ -32,7 +32,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
         <Link to="/" aria-label="Autoklass, acasă" className="flex min-h-11 shrink-0 items-center">
           <img src={logo} alt="Autoklass" className="h-auto w-24 sm:w-28 lg:w-32" />
         </Link>
-        <nav className="hidden gap-6 text-[16px] lg:flex" aria-label="Navigație principală">
+        <nav className="hidden gap-5 text-[14px] lg:flex" aria-label="Navigație principală">
           {primaryNavigation.map((item) => (
             <NavigationLink
               key={item.label}
@@ -42,10 +42,13 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           ))}
         </nav>
         <div className="flex items-center gap-1">
+          <Link to="/service/programare" className="v3-header-appointment">
+            Programare service <ArrowRight size={16} aria-hidden />
+          </Link>
           <Link
             to="/autoturisme"
             aria-label="Caută o mașină"
-            className="flex size-11 items-center justify-center"
+            className="flex size-11 items-center justify-center lg:hidden"
           >
             <Search size={20} strokeWidth={1.5} aria-hidden="true" />
           </Link>
@@ -95,8 +98,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                     id="site-menu-description"
                     className="mb-5 text-[14px] text-[#5d6268]"
                   >
-                    Toate mărcile și serviciile Autoklass. Linkurile cu ↗ deschid site-ul live în
-                    aceeași filă.
+                    Toate mărcile și serviciile Autoklass.
                   </Dialog.Description>
                   {siteNavigation.map((group) => (
                     <details key={group.id} className="v3-disclosure">
@@ -137,6 +139,14 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           </Dialog.Root>
         </div>
       </div>
+      <nav className="v3-mobile-primary" aria-label="Acțiuni principale">
+        <Link to="/autoturisme">
+          <Search size={18} aria-hidden /> Caută mașini
+        </Link>
+        <Link to="/service/programare">
+          Programare service <ArrowRight size={18} aria-hidden />
+        </Link>
+      </nav>
     </header>
   );
 }
