@@ -1,0 +1,209 @@
+/* Typography only: brand display + one companion for all interface text. */
+:root {
+  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "MBCorpoTitle", Georgia, serif;
+  --type-ink: #202326;
+  --type-secondary: #5d6268;
+  --type-caption: 0.875rem;
+  --type-body: 1rem;
+  --type-intro: 1.125rem;
+  --type-title: 1.25rem;
+  --type-section: 1.75rem;
+  --type-page: 2rem;
+}
+body,
+.v3 {
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: 1.6;
+  font-weight: 400;
+}
+.v3 :is(button, input, select, textarea) {
+  font-family: var(--font-sans);
+}
+.v3.v3.v3 h1 {
+  font-family: var(--font-sans);
+  font-size: var(--type-page);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.v3.v3.v3 h2 {
+  font-family: var(--font-sans);
+  font-size: var(--type-section);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.v3.v3.v3 h3 {
+  font-family: var(--font-sans);
+  font-size: var(--type-title);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+/* Editorial hero retains the existing brand face and responsive display size. */
+.v3.ak-home #acasa-hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.08 !important;
+  letter-spacing: -0.025em;
+}
+/* Compact headings keep their functional role rather than inheriting section scale. */
+.v3.v3.v3 :is(.ak-wayfinding h2, .v3-form-step-title) {
+  font-size: var(--type-title);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.v3.v3.v3 :is(.v3-panel-head h2, .service-rate-group > h2, .service-tariff-content > h2) {
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+.v3.v3
+  :is(
+    .v3-intro,
+    .ak-product-section > p:not(.ak-section-label):not(.ak-product-footnote),
+    .ak-assurance > p,
+    .service-rate-description,
+    .service-recap
+  ) {
+  font-size: var(--type-body);
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+.v3.v3.v3 :is(.v3-button, .v3-tabs button, .ak-offer-button, .v3-collection-end > a) {
+  font-size: var(--type-body);
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.v3.v3
+  :is(
+    .v3-link,
+    .v3-card-details,
+    .ak-more-filters,
+    .ak-service-grid a,
+    .v3-collection-tabs button,
+    .v3-brands a
+  ) {
+  font-size: var(--type-caption);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.v3.v3.v3 .v3-field > span:first-child {
+  font-size: var(--type-caption);
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--type-ink);
+}
+.v3.v3.v3 .v3-field :is(input, select, textarea) {
+  font-size: var(--type-body);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--type-ink);
+  letter-spacing: 0;
+}
+.v3.v3
+  :is(
+    .ak-eyebrow,
+    .ak-section-label,
+    .v3-kicker,
+    .ak-budget-prefix,
+    .v3-car-condition,
+    .v3-car-specs,
+    .ak-product-eyebrow,
+    .ak-product-price > span,
+    .ak-product-facts dt,
+    .ak-product-consultant div > span,
+    .ak-offer-box > p,
+    .ak-product-download small,
+    .ak-product-footnote,
+    .ak-product-sticky > div > span,
+    .v3-small,
+    .service-results,
+    .service-tariff-date
+  ) {
+  font-size: var(--type-caption);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.v3.v3
+  :is(
+    .v3-muted,
+    .ak-eyebrow,
+    .ak-section-label,
+    .v3-kicker,
+    .v3-car-specs,
+    .ak-product-eyebrow,
+    .ak-product-trim,
+    .ak-product-price > span,
+    .ak-product-facts dt,
+    .ak-product-consultant div > span,
+    .ak-offer-box > p,
+    .ak-product-download small,
+    .ak-product-footnote,
+    .service-results,
+    .service-tariff-date,
+    .service-rate-description
+  ) {
+  color: var(--type-secondary);
+}
+.v3.v3.v3 :is(.ak-product-price > strong, .service-rate-price, .service-cost > strong) {
+  font-family: var(--font-sans);
+  font-size: var(--type-page);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+.v3.v3.v3 :is(.service-rate-price > span, .service-cost > strong > span) {
+  font-size: var(--type-body);
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.v3.v3.v3 .v3-car .v3-price {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.v3.v3.v3 .ak-product-sticky strong {
+  font-family: var(--font-sans);
+  font-size: var(--type-title);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.v3.ak-home #acasa-hero .v3-hero-content > p:first-of-type {
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+.v3.ak-home #acasa-hero .v3-hero-content > p:last-child {
+  font-size: var(--type-caption);
+  line-height: 1.5;
+}
+.v3.ak-home #acasa-hero .v3-hero-content > div a {
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: 1.4;
+  font-weight: 700;
+}
+@media (min-width: 768px) {
+  :root {
+    --type-page: 2.5rem;
+    --type-section: 2rem;
+  }
+}
+
+.v3.v3.v3 summary {
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: 0;
+}

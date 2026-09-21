@@ -1,6 +1,6 @@
 import { useId } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { vehicles } from "@/data/vehicles";
 import {
   modelOf,
@@ -13,21 +13,23 @@ type Props = { value: VehicleSearch; onChange: (value: VehicleSearch) => void };
 export function ConditionTabs({ value, onChange }: Props) {
   return (
     <div className="v3-tabs" aria-label="Starea mașinii">
-      {[
-        ["", "Toate"],
-        ["nou", "Noi"],
-        ["rulat", "Rulate"],
-      ].map(([key, label]) => (
+      {(
+        [
+          ["", "Toate"],
+          ["nou", "Noi"],
+          ["rulat", "Rulate"],
+        ] as const
+      ).map(([key, label]) => (
         <button
           type="button"
           key={label}
           aria-pressed={(value.condition || "") === key}
           onClick={() => {
-            const next = { ...value };
-            if (key) next.condition = key;
-            else delete next.condition;
-            if (key === "nou")
-              for (const k of ["minYear", "maxYear", "minKm", "maxKm"] as const) delete next[k];
+            const next = { ...value, condition: key };
+            if (key === "nou") {
+              delete next.minKm;
+              delete next.maxKm;
+            }
             onChange(next);
           }}
         >
@@ -37,89 +39,144 @@ export function ConditionTabs({ value, onChange }: Props) {
     </div>
   );
 }
+const budgets = [
+  ["25000", "25.000 €"],
+  ["40000", "40.000 €"],
+  ["60000", "60.000 €"],
+  ["", "Orice buget"],
+] as const;
+export function BudgetFilter({ value, onChange }: Props) {
+  return (
+    <fieldset className="ak-budget">
+      <legend>Buget maxim</legend>
+      <div>
+        {budgets.map(([max, label]) => (
+          <button
+            type="button"
+            key={label}
+            aria-pressed={!value.minPrice && (value.maxPrice || "") === max}
+            onClick={() => {
+              const next = { ...value, maxPrice: max };
+              delete next.minPrice;
+              onChange(next);
+            }}
+          >
+            <strong>{label}</strong>
+            {!value.minPrice && (value.maxPrice || "") === max && <Check size={16} aria-hidden />}
+          </button>
+        ))}
+      </div>
+      <details className="ak-budget-interval" open={Boolean(value.minPrice)}>
+        <summary>Alege un interval de preț</summary>
+        <label className="v3-field">
+          <span className="sr-only">Interval de preț</span>
+          <select
+            aria-label="Interval de preț"
+            value={`${value.minPrice || ""}:${value.maxPrice || ""}`}
+            onChange={(e) => {
+              const [min = "", max = ""] = e.target.value.split(":");
+              onChange({ ...value, minPrice: min, maxPrice: max });
+            }}
+          >
+            <option value=":">Orice buget</option>
+            {[
+              [":25000", "Maximum 25.000 €"],
+              [":40000", "Maximum 40.000 €"],
+              [":60000", "Maximum 60.000 €"],
+              ["25000:40000", "25.000–40.000 €"],
+              ["40000:60000", "40.000–60.000 €"],
+              ["60000:80000", "60.000–80.000 €"],
+              ["80000:100000", "80.000–100.000 €"],
+              ["100000:", "Peste 100.000 €"],
+            ].map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </details>
+      <p>Prețuri cu TVA inclus</p>
+    </fieldset>
+  );
+}
 export function BasicFilters({ value, onChange }: Props) {
   const id = useId();
-  const set = (key: SearchKey, v: string) => {
-    const next = { ...value };
-    if (v) next[key] = v;
-    else delete next[key];
-    if (key === "brand") delete next.model;
-    onChange(next);
-  };
-  const models = unique(
-    vehicles.filter((v) => !value.brand || v.brand === value.brand).map(modelOf),
-  );
   return (
-    <div className="v3-search-fields">
-      <label className="v3-field" htmlFor={`${id}-brand`}>
-        <span>Marcă</span>
-        <select
-          id={`${id}-brand`}
-          name="brand"
-          value={value.brand || ""}
-          onChange={(e) => set("brand", e.target.value)}
-        >
-          <option value="">Toate mărcile</option>
-          {unique(vehicles.map((v) => v.brand)).map((v) => (
-            <option key={v}>{v}</option>
-          ))}
-        </select>
-      </label>
-      <label className="v3-field" htmlFor={`${id}-model`}>
-        <span>Model</span>
-        <select
-          id={`${id}-model`}
-          name="model"
-          value={value.model || ""}
-          onChange={(e) => set("model", e.target.value)}
-        >
-          <option value="">Toate modelele</option>
-          {models.map((v) => (
-            <option key={v}>{v}</option>
-          ))}
-        </select>
-      </label>
-      <label className="v3-field" htmlFor={`${id}-min`}>
-        <span>Preț de la (€)</span>
-        <input
-          id={`${id}-min`}
-          name="minPrice"
-          type="number"
-          inputMode="numeric"
-          min="0"
-          placeholder="Fără minim"
-          value={value.minPrice || ""}
-          onChange={(e) => set("minPrice", e.target.value)}
-        />
-      </label>
-      <label className="v3-field" htmlFor={`${id}-max`}>
-        <span>Preț până la (€)</span>
-        <input
-          id={`${id}-max`}
-          name="maxPrice"
-          type="number"
-          inputMode="numeric"
-          min="0"
-          placeholder="Fără maxim"
-          value={value.maxPrice || ""}
-          onChange={(e) => set("maxPrice", e.target.value)}
-        />
-      </label>
+    <div className="ak-basic-filters">
+      <BudgetFilter value={value} onChange={onChange} />
+      <div className="v3-search-fields">
+        <label className="v3-field">
+          <span>Marcă</span>
+          <select
+            aria-label="Marcă"
+            name="brand"
+            value={value.brand || ""}
+            onChange={(e) => {
+              const next = { ...value, brand: e.target.value };
+              for (const key of [
+                "model",
+                "fuel",
+                "body",
+                "gearbox",
+                "drive",
+                "branch",
+                "color",
+                "equipment",
+              ] as const)
+                delete next[key];
+              onChange(next);
+            }}
+          >
+            <option value="">Toate mărcile</option>
+            {["Mercedes-Benz", "Audi", "Volkswagen", "Honda", "XPENG"].map((b) => (
+              <option key={b}>{b}</option>
+            ))}
+          </select>
+        </label>
+        <fieldset className="ak-condition-field">
+          <legend className="ak-filter-label">Stare</legend>
+          <ConditionTabs value={value} onChange={onChange} />
+        </fieldset>
+        <label className="v3-field" htmlFor={`${id}-model`}>
+          <span>Model</span>
+          <select
+            id={`${id}-model`}
+            aria-label="Model"
+            name="model"
+            disabled={!value.brand}
+            value={value.model || ""}
+            onChange={(e) => onChange({ ...value, model: e.target.value })}
+          >
+            <option value="">{value.brand ? "Toate modelele" : "Alege marca"}</option>
+            {unique(
+              vehicles.filter((v) => !value.brand || v.brand === value.brand).map(modelOf),
+            ).map((m) => (
+              <option key={m}>{m}</option>
+            ))}
+          </select>
+        </label>
+      </div>
     </div>
   );
 }
 export function AdvancedFilters({ value, onChange }: Props) {
-  const id = useId();
-  const set = (key: SearchKey, v: string) => {
+  const set = (key: SearchKey, v: string) => onChange({ ...value, [key]: v });
+  const candidates = (key: SearchKey) => {
     const next = { ...value };
-    if (v) next[key] = v;
-    else delete next[key];
-    onChange(next);
+    delete next[key];
+    delete next.q;
+    return matchingVehicles(next);
   };
-  const select = (key: SearchKey, label: string, options: string[] | [string, string][]) => (
+  const select = (key: SearchKey, label: string, options: string[] | string[][]) => (
     <label className="v3-field">
       <span>{label}</span>
-      <select name={key} value={value[key] || ""} onChange={(e) => set(key, e.target.value)}>
+      <select
+        aria-label={label}
+        name={key}
+        value={value[key] || ""}
+        onChange={(e) => set(key, e.target.value)}
+      >
         <option value="">Toate</option>
         {options.map((o) => {
           const [val, text] = Array.isArray(o) ? o : [o, o];
@@ -132,95 +189,143 @@ export function AdvancedFilters({ value, onChange }: Props) {
       </select>
     </label>
   );
-  const number = (key: SearchKey, label: string) => (
+  const range = (low: SearchKey, high: SearchKey, label: string, options: string[][]) => (
     <label className="v3-field">
       <span>{label}</span>
-      <input
-        name={key}
-        type="number"
-        min="0"
-        inputMode="numeric"
-        value={value[key] || ""}
-        onChange={(e) => set(key, e.target.value)}
-        placeholder="Fără limită"
-      />
+      <select
+        aria-label={label}
+        name={low}
+        value={`${value[low] || ""}:${value[high] || ""}`}
+        onChange={(e) => {
+          const [min, max] = e.target.value.split(":");
+          onChange({ ...value, [low]: min, [high]: max });
+        }}
+      >
+        <option value=":">Orice interval</option>
+        {options.map(([key, text]) => (
+          <option key={key} value={key}>
+            {text}
+          </option>
+        ))}
+      </select>
     </label>
   );
   return (
-    <div className="mt-8">
-      <details className="v3-disclosure" open>
-        <summary>Tipul mașinii</summary>
-        <div className="v3-grid">
-          {select("body", "Caroserie", unique(vehicles.map((v) => v.bodyType)))}
-          {select("fuel", "Combustibil", ["Benzină", "Diesel", "Hibrid", "Electric"])}
-          {select("gearbox", "Transmisie", ["Automată", "Manuală"])}
-          {select("drive", "Tracțiune", [
-            ["AWD", "Integrală (AWD)"],
-            ["FWD", "Față (FWD)"],
-            ["RWD", "Spate (RWD)"],
+    <div className="ak-advanced-filters">
+      <div className="v3-grid">
+        {range("minYear", "maxYear", "An fabricație", [
+          ["2025:", "2025 sau mai recent"],
+          ["2022:2024", "2022–2024"],
+          ["2019:2021", "2019–2021"],
+          [":2018", "2018 sau anterior"],
+        ])}
+        {value.condition !== "nou" &&
+          range("minKm", "maxKm", "Kilometraj", [
+            [":25000", "Sub 25.000 km"],
+            ["25000:50000", "25.000–50.000 km"],
+            ["50000:100000", "50.000–100.000 km"],
+            ["100000:", "Peste 100.000 km"],
           ])}
-        </div>
-      </details>
-      <details className="v3-disclosure" open={Boolean(value.equipment)}>
-        <summary>Dotări</summary>
-        <div>
-          <label className="v3-field" htmlFor={`${id}-equipment`}>
-            <span>Caută dotări</span>
-            <input
-              id={`${id}-equipment`}
-              type="search"
-              name="equipment"
-              autoComplete="off"
-              placeholder="De exemplu: LED, trapă"
-              value={value.equipment || ""}
-              onChange={(e) => set("equipment", e.target.value)}
-            />
-          </label>
-        </div>
-      </details>
-      {value.condition !== "nou" && (
-        <details
-          className="v3-disclosure"
-          open={Boolean(value.minYear || value.maxYear || value.maxKm || value.minKm)}
-        >
-          <summary>An și kilometraj</summary>
-          <div className="v3-grid">
-            {number("minYear", "An de la")}
-            {number("maxYear", "An până la")}
-            {number("minKm", "Kilometraj de la")}
-            {number("maxKm", "Kilometraj până la")}
-          </div>
-        </details>
-      )}
-      <details className="v3-disclosure">
-        <summary>Putere și cilindree</summary>
+        {select(
+          "fuel",
+          "Motorizare",
+          unique(candidates("fuel").map((v) => (v.hybrid ? "Hibrid" : v.fuel))),
+        )}
+        {select("body", "Caroserie", unique(candidates("body").map((v) => v.bodyType)))}
+      </div>
+      <details
+        className="v3-disclosure"
+        open={Boolean(
+          value.gearbox || value.drive || value.color || value.certified || value.equipment,
+        )}
+      >
+        <summary>Echipare și confort</summary>
         <div className="v3-grid">
-          {number("minPower", "Putere de la (CP)")}
-          {number("maxPower", "Putere până la (CP)")}
-          {number("minEngine", "Cilindree de la (cm³)")}
-          {number("maxEngine", "Cilindree până la (cm³)")}
+          {select("gearbox", "Transmisie", unique(candidates("gearbox").map((v) => v.gearbox)))}
+          {select(
+            "drive",
+            "Tracțiune",
+            unique(
+              candidates("drive")
+                .map((v) => v.drive)
+                .filter(Boolean),
+            ).map((v) => [
+              v,
+              ({ AWD: "Integrală", FWD: "Față", RWD: "Spate" } as Record<string, string>)[v] || v,
+            ]),
+          )}
+          {select(
+            "color",
+            "Culoare",
+            unique(candidates("color").flatMap((v) => (v.color ? [v.color] : []))),
+          )}
+          {select("certified", "Certificare", [["yes", "Mercedes-Benz Certified"]])}
+          {select(
+            "equipment",
+            "Dotare esențială",
+            ["Cameră", "Scaune", "CarPlay", "Panoramic", "Navigație", "LED"].filter(
+              (term) => matchingVehicles({ ...value, equipment: term }).length > 0,
+            ),
+          )}
         </div>
       </details>
       <details
         className="v3-disclosure"
-        open={Boolean(value.branch || value.availability || value.vat)}
+        open={Boolean(
+          value.minPower ||
+          value.maxPower ||
+          value.minEngine ||
+          value.maxEngine ||
+          value.minRange ||
+          value.minCharge,
+        )}
       >
-        <summary>Disponibilitate și sucursală</summary>
-        <div className="v3-stack">
-          {select("branch", "Sucursală", unique(vehicles.map((v) => v.branch)))}
+        <summary>Performanță și autonomie</summary>
+        <div className="v3-grid">
+          {range("minPower", "maxPower", "Putere", [
+            [":150", "Maximum 150 CP"],
+            ["150:250", "150–250 CP"],
+            ["250:400", "250–400 CP"],
+            ["400:", "Peste 400 CP"],
+          ])}
+          {value.fuel !== "Electric" &&
+            range("minEngine", "maxEngine", "Cilindree", [
+              [":1600", "Maximum 1.600 cm³"],
+              ["1600:2000", "1.600–2.000 cm³"],
+              ["2000:", "Peste 2.000 cm³"],
+            ])}
+          {candidates("minRange").some((v) => v.rangeKm) && (
+            <>
+              {select("minRange", "Autonomie WLTP", [
+                ["400", "Cel puțin 400 km"],
+                ["500", "Cel puțin 500 km"],
+                ["600", "Cel puțin 600 km"],
+              ])}
+              {select("minCharge", "Încărcare DC", [
+                ["150", "Cel puțin 150 kW"],
+                ["250", "Cel puțin 250 kW"],
+              ])}
+            </>
+          )}
+        </div>
+      </details>
+      <details
+        className="v3-disclosure"
+        open={Boolean(value.branch || value.availability || value.vat || value.offer)}
+      >
+        <summary>Locație și disponibilitate</summary>
+        <div className="v3-grid">
+          {select("branch", "Sucursală", unique(candidates("branch").map((v) => v.branch)))}
           {select("availability", "Disponibilitate", [
             ["immediate", "Livrare imediată"],
             ["stock", "În stoc"],
             ["unknown", "De confirmat"],
           ])}
-          {select("vat", "Regim TVA", [
+          {select("vat", "TVA", [
             ["deductibil", "Deductibil"],
             ["nedeductibil", "Nedeductibil"],
           ])}
-          <p className="v3-small v3-muted">
-            „În stoc” nu înseamnă automat livrare imediată. Termenul se confirmă pentru fiecare
-            mașină.
-          </p>
+          {select("offer", "Oferte", [["yes", "Cu preț redus"]])}
         </div>
       </details>
     </div>
@@ -232,10 +337,12 @@ export function FilterPanel({
   open,
   onOpenChange,
   returnFocus,
+  onApply,
 }: Props & {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   returnFocus: React.RefObject<HTMLButtonElement | null>;
+  onApply?: () => void;
 }) {
   const count = matchingVehicles(value).length;
   return (
@@ -245,8 +352,8 @@ export function FilterPanel({
         <Dialog.Content
           className="v3 v3-panel"
           aria-describedby={undefined}
-          onCloseAutoFocus={(event) => {
-            event.preventDefault();
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
             returnFocus.current?.focus();
           }}
         >
@@ -257,7 +364,6 @@ export function FilterPanel({
             </Dialog.Close>
           </div>
           <div className="v3-panel-body">
-            <ConditionTabs value={value} onChange={onChange} />
             <BasicFilters value={value} onChange={onChange} />
             <AdvancedFilters value={value} onChange={onChange} />
             <button className="v3-link mt-4" onClick={() => onChange({})}>
@@ -265,8 +371,8 @@ export function FilterPanel({
             </button>
           </div>
           <div className="v3-panel-foot">
-            <Dialog.Close className="v3-button">
-              Vezi {count} {count === 1 ? "mașină" : "mașini"}
+            <Dialog.Close className="v3-button" onClick={onApply}>
+              {count ? `Vezi ${count} ${count === 1 ? "mașină" : "mașini"}` : "Vezi alternative"}
             </Dialog.Close>
           </div>
         </Dialog.Content>

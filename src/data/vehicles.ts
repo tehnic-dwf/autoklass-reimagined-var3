@@ -9,6 +9,11 @@ export type Vehicle = {
   title: string;
   brand: string;
   model?: string;
+  color?: string;
+  certified?: boolean;
+  rangeKm?: number;
+  chargeKw?: number;
+  source?: string;
   equipment?: string[];
   condition: "nou" | "rulat";
   fuel: "Diesel" | "Benzină" | "Electric";
@@ -22,7 +27,7 @@ export type Vehicle = {
   drive: string;
   priceEur: number;
   listPriceEur?: number;
-  vat: "deductibil" | "nedeductibil";
+  vat: "deductibil" | "nedeductibil" | "necomunicat";
   branch: string;
   availability?: string;
   reserved?: boolean;
@@ -37,6 +42,107 @@ export const gallerySize = (image: string) =>
   image.replace("/slir/w800-h600/", "/slir/w1400-h1000/");
 
 export const vehicles: Vehicle[] = [
+  {
+    slug: "volkswagen-touareg-3-0-v6-ld022520",
+    brand: "Volkswagen",
+    model: "Touareg",
+    title: "Volkswagen Touareg 3.0 V6",
+    condition: "rulat",
+    fuel: "Diesel",
+    powerHp: 286,
+    year: 2020,
+    km: 154500,
+    engineCc: 2967,
+    drive: "AWD",
+    priceEur: 35900,
+    vat: "deductibil",
+    branch: "Autoklass Chitila",
+    bodyType: "SUV",
+    color: "Maro",
+    hybrid: false,
+    reserved: true,
+    gearbox: "Automată",
+    registrationMonth: "",
+    image:
+      "https://cdn.contentspeed.ro/autoklass.websales.ro/cs-content/cs-photos/products/original/wvgzzzcrzld022520_25123_1_17878783718978.jpg",
+    source: "https://www.autoklass.ro/vanzari-auto/volkswagen-touareg-3-0-v6-ld022520.html",
+  },
+  {
+    slug: "volkswagengolfprime1.5tsidsgphev-v-2026-0507644-ro",
+    brand: "Volkswagen",
+    model: "Golf",
+    title: "Volkswagen Golf Prime 1.5 TSI DSG PHEV",
+    condition: "nou",
+    fuel: "Benzină",
+    powerHp: 150,
+    year: 2026,
+    km: null,
+    engineCc: 1498,
+    drive: "",
+    priceEur: 32026,
+    vat: "necomunicat",
+    branch: "Autoklass Brașov",
+    bodyType: "Hatchback",
+    color: "Albastru",
+    hybrid: true,
+    reserved: false,
+    gearbox: "Automată",
+    registrationMonth: "",
+    image:
+      "https://cdn.contentspeed.ro/autoklass.websales.ro/cs-content/cs-photos/products/original/volkswagen-golf-prime-15-tsi-dsg-phev_27133_1_17890608520176.jpg",
+    source:
+      "https://www.autoklass.ro/vanzari-auto/volkswagengolfprime1.5tsidsgphev-v-2026-0507644-ro.html",
+  },
+  {
+    slug: "audi-a7-a7-sportback-nn011329",
+    brand: "Audi",
+    model: "A7",
+    title: "Audi A7 50 TFSI e quattro",
+    condition: "rulat",
+    fuel: "Benzină",
+    powerHp: 299,
+    year: 2021,
+    km: 118979,
+    engineCc: 1984,
+    drive: "AWD",
+    priceEur: 43900,
+    vat: "nedeductibil",
+    branch: "Autoklass Sibiu",
+    bodyType: "Coupe",
+    color: "Gri",
+    hybrid: true,
+    reserved: false,
+    gearbox: "Automată",
+    registrationMonth: "",
+    image:
+      "https://cdn.contentspeed.ro/autoklass.websales.ro/cs-content/cs-photos/products/original/wauzzzf2xnn011329_26363_1_1785286961557.jpg",
+    source: "https://www.autoklass.ro/vanzari-auto/audi-a7-a7-sportback-nn011329.html",
+  },
+  {
+    slug: "audia5limuzina40tdi-a-2026-0152324-ro",
+    brand: "Audi",
+    model: "A5",
+    title: "Audi A5 Limuzină 40 TDI",
+    condition: "nou",
+    fuel: "Diesel",
+    powerHp: 204,
+    year: 2026,
+    km: null,
+    engineCc: 1968,
+    drive: "",
+    priceEur: 63102,
+    vat: "necomunicat",
+    branch: "Autoklass Ploiești",
+    bodyType: "Limuzină",
+    color: "Gri",
+    hybrid: true,
+    reserved: false,
+    gearbox: "Automată",
+    registrationMonth: "",
+    image:
+      "https://cdn.contentspeed.ro/autoklass.websales.ro/cs-content/cs-photos/products/original/audi-a5-limuzina-40-tdi_27155_1_17890609820607.jpg",
+    source: "https://www.autoklass.ro/vanzari-auto/audia5limuzina40tdi-a-2026-0152324-ro.html",
+  },
   {
     slug: "mercedes-benz-clasa-a-180-d-1n258044",
     title: "Mercedes-Benz Clasa A A 180 d",
@@ -116,27 +222,6 @@ export const vehicles: Vehicle[] = [
     branch: "Autoklass Chitila",
     bodyType: "Limuzină",
     image: cdn("wdd2221351a436450_20126_1_17648997247471.jpg.webp"),
-  },
-  {
-    slug: "mercedes-benz-clasa-e-200-4matic-sa141132",
-    title: "Mercedes-Benz Clasa E E 200 4MATIC Sedan",
-    brand: "Mercedes-Benz",
-    condition: "rulat",
-    fuel: "Benzină",
-    hybrid: true,
-    powerHp: 204,
-    gearbox: "Automată",
-    registrationMonth: "Decembrie",
-    year: 2024,
-    km: 30738,
-    engineCc: 1999,
-    drive: "AWD",
-    priceEur: 68000,
-    listPriceEur: 82308,
-    vat: "deductibil",
-    branch: "Autoklass Pipera",
-    bodyType: "Sedan",
-    image: cdn("w1klf5bb4sa141132_20153_1_17528003901347.jpg.webp"),
   },
   {
     slug: "mercedes-benz-glc-300-e-4matic-su079269",
@@ -261,48 +346,6 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1nkj0fb3tf644939_25709_1_17825217241803.jpg.webp"),
   },
   {
-    slug: "mercedes-benz-c-180-tr356701",
-    title: "Mercedes-Benz C 180",
-    brand: "Mercedes-Benz",
-    condition: "nou",
-    fuel: "Benzină",
-    powerHp: 170,
-    gearbox: "Automată",
-    registrationMonth: "Iunie",
-    year: 2026,
-    km: null,
-    engineCc: 1496,
-    drive: "FWD",
-    priceEur: 44048,
-    listPriceEur: 46600,
-    vat: "deductibil",
-    branch: "Autoklass București Sud",
-    availability: "Disponibil din 31 august 2026",
-    bodyType: "Sedan",
-    image: cdn("w1kaf4bb1tr356701_25712_1_17837311211901.png.webp"),
-  },
-  {
-    slug: "mercedes-benz-c-220-d-4matic-tr356782",
-    title: "Mercedes-Benz C 220 d 4MATIC",
-    brand: "Mercedes-Benz",
-    condition: "nou",
-    fuel: "Diesel",
-    powerHp: 197,
-    gearbox: "Automată",
-    registrationMonth: "Mai",
-    year: 2026,
-    km: null,
-    engineCc: 1993,
-    drive: "AWD",
-    priceEur: 60410,
-    listPriceEur: 64040,
-    vat: "deductibil",
-    branch: "Autoklass Chitila",
-    availability: "Disponibil din 31 august 2026",
-    bodyType: "Sedan",
-    image: cdn("w1kaf0fb1tr356782_25714_1_17807075998256.png.webp"),
-  },
-  {
     slug: "mercedes-benz-glc-300-e-4matic-coupe-vf646152",
     title: "Mercedes-Benz GLC 300 e 4MATIC Coupé",
     brand: "Mercedes-Benz",
@@ -325,6 +368,8 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: "mercedes-benz-glc-200-4matic-vu149616",
+    color: "Verde silver",
+    certified: true,
     hybrid: true,
     title: "Mercedes-Benz GLC 200 4MATIC",
     brand: "Mercedes-Benz",
@@ -340,7 +385,7 @@ export const vehicles: Vehicle[] = [
     priceEur: 69714,
     listPriceEur: 78789,
     vat: "deductibil",
-    branch: "Autoklass Cluj-Napoca",
+    branch: "Autoklass București Sud",
     bodyType: "SUV",
     image: cdn("w1nkm5bb1vu149616_25722_1_17831263711834.jpg.webp"),
   },

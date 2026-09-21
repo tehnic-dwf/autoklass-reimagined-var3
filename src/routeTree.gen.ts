@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuyBackRouteImport } from './routes/buy-back'
 import { Route as ComparatieRouteImport } from './routes/comparatie'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as InAfaraScopuluiRouteImport } from './routes/in-afara-scopului'
 import { Route as SucursaleRouteImport } from './routes/sucursale'
 import { Route as VerificareMasiniRulateRouteImport } from './routes/verificare-masini-rulate'
@@ -36,6 +37,11 @@ const BuyBackRoute = BuyBackRouteImport.update({
 const ComparatieRoute = ComparatieRouteImport.update({
   id: '/comparatie',
   path: '/comparatie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InAfaraScopuluiRoute = InAfaraScopuluiRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buy-back': typeof BuyBackRoute
   '/comparatie': typeof ComparatieRoute
+  '/contact': typeof ContactRoute
   '/in-afara-scopului': typeof InAfaraScopuluiRoute
   '/sucursale': typeof SucursaleRoute
   '/verificare-masini-rulate': typeof VerificareMasiniRulateRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buy-back': typeof BuyBackRoute
   '/comparatie': typeof ComparatieRoute
+  '/contact': typeof ContactRoute
   '/in-afara-scopului': typeof InAfaraScopuluiRoute
   '/sucursale': typeof SucursaleRoute
   '/verificare-masini-rulate': typeof VerificareMasiniRulateRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/buy-back': typeof BuyBackRoute
   '/comparatie': typeof ComparatieRoute
+  '/contact': typeof ContactRoute
   '/in-afara-scopului': typeof InAfaraScopuluiRoute
   '/sucursale': typeof SucursaleRoute
   '/verificare-masini-rulate': typeof VerificareMasiniRulateRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buy-back'
     | '/comparatie'
+    | '/contact'
     | '/in-afara-scopului'
     | '/sucursale'
     | '/verificare-masini-rulate'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buy-back'
     | '/comparatie'
+    | '/contact'
     | '/in-afara-scopului'
     | '/sucursale'
     | '/verificare-masini-rulate'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buy-back'
     | '/comparatie'
+    | '/contact'
     | '/in-afara-scopului'
     | '/sucursale'
     | '/verificare-masini-rulate'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyBackRoute: typeof BuyBackRoute
   ComparatieRoute: typeof ComparatieRoute
+  ContactRoute: typeof ContactRoute
   InAfaraScopuluiRoute: typeof InAfaraScopuluiRoute
   SucursaleRoute: typeof SucursaleRoute
   VerificareMasiniRulateRoute: typeof VerificareMasiniRulateRoute
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/comparatie'
       fullPath: '/comparatie'
       preLoaderRoute: typeof ComparatieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/in-afara-scopului': {
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyBackRoute: BuyBackRoute,
   ComparatieRoute: ComparatieRoute,
+  ContactRoute: ContactRoute,
   InAfaraScopuluiRoute: InAfaraScopuluiRoute,
   SucursaleRoute: SucursaleRoute,
   VerificareMasiniRulateRoute: VerificareMasiniRulateRoute,

@@ -1,13 +1,33 @@
 import { Link } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Menu, Search, Heart, X, ArrowRight } from "lucide-react";
+import { Menu, Search, Heart, X, ArrowRight, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import logo from "@/assets/autoklass-logo.png";
-import { primaryNavigation, serviceAppointment, siteNavigation } from "@/data/site-navigation";
+import { primaryNavigation, siteNavigation, type SiteNavItem } from "@/data/site-navigation";
 import { NavigationLink } from "@/components/layout/NavigationLink";
 import { useFavorites } from "@/lib/favorites";
 
-export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
+function MenuLinks({ items, onClick }: { items: SiteNavItem[]; onClick: () => void }) {
+  return (
+    <ul className="ak-menu-links">
+      {items.map((item) => (
+        <li key={item.label}>
+          <NavigationLink item={item} onClick={onClick} className="ak-menu-link" />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function SiteHeader({
+  overlay = false,
+  catalog = false,
+  onSearch,
+}: {
+  overlay?: boolean;
+  catalog?: boolean;
+  onSearch?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { slugs } = useFavorites();
@@ -20,7 +40,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const closeMenu = () => setOpen(false);
   return (
     <header
-      className={`sticky top-0 z-50 text-white transition-colors [&_a:focus-visible]:outline-white! [&_button:focus-visible]:outline-white! ${overlay && !scrolled ? "header-overlay-scrim bg-transparent" : "bg-[#202326]"}`}
+      className={`ak-site-header ${catalog ? "ak-catalog-header" : ""} sticky top-0 z-50 text-white transition-colors [&_a:focus-visible]:outline-white! [&_button:focus-visible]:outline-white! ${overlay && !scrolled ? "header-overlay-scrim bg-transparent" : "bg-[#202326]"}`}
     >
       <a
         href="#main-content"
@@ -45,13 +65,25 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           <Link to="/service/programare" className="v3-header-appointment">
             Programare service <ArrowRight size={16} aria-hidden />
           </Link>
-          <Link
-            to="/autoturisme"
-            aria-label="Caută o mașină"
-            className="flex size-11 items-center justify-center lg:hidden"
-          >
-            <Search size={20} strokeWidth={1.5} aria-hidden="true" />
-          </Link>
+          {onSearch ? (
+            <button
+              type="button"
+              aria-label="Caută o mașină"
+              className="flex size-11 items-center justify-center lg:hidden"
+              onClick={onSearch}
+            >
+              <Search size={20} strokeWidth={1.5} aria-hidden />
+            </button>
+          ) : (
+            <Link
+              to="/autoturisme"
+              hash="catalog-search"
+              aria-label="Caută o mașină"
+              className="flex size-11 items-center justify-center lg:hidden"
+            >
+              <Search size={20} strokeWidth={1.5} aria-hidden />
+            </Link>
+          )}
           <Link
             to="/comparatie"
             aria-label={`Mașini salvate pentru comparație (${slugs.length})`}
@@ -65,70 +97,107 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
             )}
           </Link>
           <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger className="ml-1 inline-flex min-h-11 items-center justify-center gap-2 px-2 text-[14px] sm:text-[16px]">
+            <Dialog.Trigger
+              aria-label="Meniu Autoklass"
+              className="ml-1 inline-flex min-h-11 items-center justify-center gap-2 px-2 text-[14px] sm:text-[16px]"
+            >
               <Menu size={20} strokeWidth={1.5} aria-hidden="true" />
               <span>Meniu</span>
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="v3-shell-overlay" />
-              <Dialog.Content className="v3 v3-panel" aria-describedby="site-menu-description">
+              <Dialog.Content
+                className="v3 v3-panel ak-menu-panel"
+                aria-describedby="site-menu-description"
+              >
                 <div className="v3-panel-head">
                   <Dialog.Title>Meniu Autoklass</Dialog.Title>
                   <Dialog.Close className="v3-icon" aria-label="Închide meniul">
                     <X size={22} aria-hidden="true" />
                   </Dialog.Close>
                 </div>
-                <nav className="v3-panel-body" aria-label="Toate categoriile Autoklass">
-                  <div className="mb-6 flex flex-col items-start gap-1">
-                    {primaryNavigation.map((item) => (
-                      <NavigationLink
-                        key={item.label}
-                        item={item}
-                        className="v3-link"
-                        onClick={closeMenu}
-                      />
-                    ))}
-                    <NavigationLink
-                      item={serviceAppointment}
-                      className="v3-button mt-3 w-full"
-                      onClick={closeMenu}
-                    />
-                  </div>
-                  <Dialog.Description
-                    id="site-menu-description"
-                    className="mb-5 text-[14px] text-[#5d6268]"
-                  >
-                    Toate mărcile și serviciile Autoklass.
+                <nav
+                  className="v3-panel-body ak-menu-navigation"
+                  aria-label="Toate categoriile Autoklass"
+                >
+                  <Dialog.Description id="site-menu-description" className="sr-only">
+                    Mașini, service și celelalte servicii Autoklass.
                   </Dialog.Description>
-                  {siteNavigation.map((group) => (
-                    <details key={group.id} className="v3-disclosure">
-                      <summary>{group.label}</summary>
-                      <div>
-                        {[...new Set(group.items.map((item) => item.section))].map((section) => (
-                          <div key={section ?? group.id} className="mb-4 last:mb-0">
-                            {section && (
-                              <p className="mb-2 text-[13px] text-[#5d6268]">{section}</p>
-                            )}
-                            <ul>
-                              {group.items
-                                .filter((item) => item.section === section)
-                                .map((item) => (
-                                  <li key={item.label}>
-                                    <NavigationLink
-                                      item={item}
-                                      onClick={closeMenu}
-                                      className="v3-link w-full justify-between py-2 pr-1"
-                                    />
-                                  </li>
-                                ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    </details>
-                  ))}
+                  <a
+                    className="ak-menu-branches"
+                    href="https://www.autoklass.ro/sucursale"
+                    onClick={closeMenu}
+                  >
+                    <MapPin size={20} aria-hidden />
+                    <span>Sucursale</span>
+                    <ArrowRight size={18} aria-hidden />
+                  </a>
+                  {siteNavigation.map((group) => {
+                    const primary = group.id === "autovehicule" || group.id === "service";
+                    const mainLinks = group.items.filter(
+                      (item) =>
+                        item.kind === "internal" &&
+                        (group.id === "autovehicule"
+                          ? item.to === "/autoturisme" && item.search?.condition
+                          : item.to === "/service/programare" || item.to === "/service/tarife"),
+                    );
+                    const moreLinks = group.items.filter(
+                      (item) =>
+                        !mainLinks.includes(item) &&
+                        item.label !== "Sucursale" &&
+                        !(
+                          item.kind === "internal" &&
+                          (item.to === "/comparatie" || item.to === "/contact")
+                        ),
+                    );
+                    const vehicleLinks = moreLinks
+                      .filter((item) => item.section === "Mărci și vehicule comerciale")
+                      .sort(
+                        (a, b) => Number(a.kind === "external") - Number(b.kind === "external"),
+                      );
+                    const purchaseLinks = moreLinks.filter((item) => !vehicleLinks.includes(item));
+                    return primary ? (
+                      <section className="ak-menu-primary" key={group.id}>
+                        <h2>{group.id === "service" ? "Service" : group.label}</h2>
+                        <div>
+                          {mainLinks.map((item) => (
+                            <NavigationLink
+                              key={item.label}
+                              item={item}
+                              onClick={closeMenu}
+                              className="ak-menu-main-link"
+                            />
+                          ))}
+                        </div>
+                        {group.id === "autovehicule" ? (
+                          <details className="v3-disclosure">
+                            <summary>Mărci și oferte</summary>
+                            <div className="ak-menu-subgroups">
+                              <h3>Mărci și autoutilitare</h3>
+                              <MenuLinks items={vehicleLinks} onClick={closeMenu} />
+                              <h3>Servicii de achiziție</h3>
+                              <MenuLinks items={purchaseLinks} onClick={closeMenu} />
+                            </div>
+                          </details>
+                        ) : (
+                          <details className="v3-disclosure">
+                            <summary>Servicii și garanții</summary>
+                            <MenuLinks items={moreLinks} onClick={closeMenu} />
+                          </details>
+                        )}
+                      </section>
+                    ) : (
+                      <details key={group.id} className="v3-disclosure">
+                        <summary>{group.label}</summary>
+                        <MenuLinks items={moreLinks} onClick={closeMenu} />
+                      </details>
+                    );
+                  })}
                 </nav>
-                <div className="v3-panel-foot">
+                <div className="v3-panel-foot ak-menu-footer">
+                  <Link className="v3-button" to="/contact" onClick={closeMenu}>
+                    Contactează-ne <ArrowRight size={18} aria-hidden />
+                  </Link>
                   <Link className="v3-link" to="/comparatie" onClick={closeMenu}>
                     <Heart size={18} strokeWidth={1.5} aria-hidden="true" />
                     Mașini salvate ({slugs.length})

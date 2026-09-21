@@ -28,6 +28,7 @@ const base = isGithubPages ? "/autoklass-reimagined-var3/" : "/";
 const staticPages = [
   "/",
   "/autoturisme",
+  "/contact",
   "/service/programare",
   "/service/tarife",
   "/service/dosar-daune",

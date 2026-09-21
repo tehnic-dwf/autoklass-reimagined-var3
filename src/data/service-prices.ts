@@ -91,7 +91,7 @@ const maintenanceServices: ServiceRate["serviceIds"] = [
 export const serviceRates: ServiceRate[] = [
   {
     id: "standard-under-five",
-    title: "A, B, C, CLA, GLA, GLB, GLC, E",
+    title: "Mercedes-Benz · A, B, C, CLA, GLA, GLB, GLC, E",
     group: "Manoperă",
     description: "Autoturisme cu vechime de până la 5 ani inclusiv.",
     note: "Modelele AMG au categorie separată. Pentru vehicule 100% electrice, consultă tariful dedicat.",
@@ -110,7 +110,7 @@ export const serviceRates: ServiceRate[] = [
   },
   {
     id: "premium-under-five",
-    title: "CLS, S / S Coupé, SL, AMG GT, GLE, GLS, G și AMG",
+    title: "Mercedes-Benz · CLS, S / S Coupé, SL, AMG GT, GLE, GLS, G și AMG",
     group: "Manoperă",
     description: "Autoturisme cu vechime de până la 5 ani inclusiv; toate modelele AMG.",
     note: "Pentru vehicule 100% electrice, consultă tariful dedicat.",
@@ -129,7 +129,7 @@ export const serviceRates: ServiceRate[] = [
   },
   {
     id: "over-five",
-    title: "Autoturisme mai vechi de 5 ani",
+    title: "Mercedes-Benz · autoturisme mai vechi de 5 ani",
     group: "Manoperă",
     description: "Toate modelele de turisme, conform categoriei de vechime din lista de tarife.",
     note: "Pentru un vehicul 100% electric mai vechi de 5 ani, echipa service confirmă categoria aplicabilă.",
@@ -139,7 +139,7 @@ export const serviceRates: ServiceRate[] = [
   },
   {
     id: "electric",
-    title: "Autoturisme 100% electrice",
+    title: "Mercedes-Benz · autoturisme 100% electrice",
     group: "Manoperă",
     description: "Tarif dedicat manoperei pentru vehicule complet electrice.",
     note: "Pentru un vehicul mai vechi de 5 ani, echipa service confirmă categoria aplicabilă.",
@@ -169,9 +169,10 @@ export const serviceRates: ServiceRate[] = [
   },
   {
     id: "itp-mas",
-    title: "ITP autoturism MAS și MAS CAT",
+    title: "ITP · autoturisme pe benzină",
     group: "ITP",
-    description: "Inspecția inițială pentru categoria MAS / MAS CAT din lista de tarife.",
+    description:
+      "Inspecție inițială pentru autoturisme pe benzină, cu sau fără catalizator (MAS / MAS CAT).",
     note: "Revenirile și vehiculele de taximetrie sau transport alternativ au tarife separate. Categoria se confirmă după datele mașinii.",
     unit: "inspection",
     serviceIds: ["itp"],
@@ -179,9 +180,9 @@ export const serviceRates: ServiceRate[] = [
   },
   {
     id: "itp-mac",
-    title: "ITP autoturism MAC și 4 × 4",
+    title: "ITP · diesel și 4 × 4",
     group: "ITP",
-    description: "Inspecția inițială pentru categoria MAC / 4 × 4 din lista de tarife.",
+    description: "Inspecție inițială pentru autoturisme diesel (MAC) și vehicule 4 × 4.",
     note: "Revenirile și vehiculele de taximetrie sau transport alternativ au tarife separate. Categoria se confirmă după datele mașinii.",
     unit: "inspection",
     serviceIds: ["itp"],
@@ -195,3 +196,11 @@ export const branchName = (id: string) =>
 export const ratePrice = (rate: ServiceRate, branch: string) =>
   rate.prices[branch as ServiceBranchId];
 export const rateUnit = (rate: ServiceRate) => (rate.unit === "hour" ? "lei/oră" : "lei/inspecție");
+
+/** Range of published values only; missing tariffs are never treated as zero. */
+export const rateRange = (rates: ServiceRate[]) => {
+  const prices = rates
+    .flatMap((rate) => Object.values(rate.prices))
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  return prices.length ? { min: Math.min(...prices), max: Math.max(...prices) } : undefined;
+};

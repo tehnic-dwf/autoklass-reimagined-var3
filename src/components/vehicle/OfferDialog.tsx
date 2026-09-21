@@ -1,3 +1,4 @@
+import "@/product-mobile.css";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CheckCircle2, X, ArrowRight } from "lucide-react";
 import { useRef, useState } from "react";
@@ -40,7 +41,7 @@ export function OfferDialog({
       <Dialog.Portal>
         <Dialog.Overlay className="v3-shell-overlay" />
         <Dialog.Content
-          className="v3 v3-panel"
+          className="v3 v3-panel ak-offer-dialog"
           aria-describedby="offer-description"
           onCloseAutoFocus={(e) => {
             e.preventDefault();
@@ -74,8 +75,10 @@ export function OfferDialog({
                 <Dialog.Close className="v3-button mt-6">Înapoi la mașină</Dialog.Close>
               </div>
             ) : (
-              <form id="offer-form" className="mt-8" noValidate onSubmit={submit}>
-                <p className="v3-muted mb-6">Lasă-ne datele tale pentru a discuta oferta.</p>
+              <form id="offer-form" className="mt-6" noValidate onSubmit={submit}>
+                <p className="v3-muted mb-6">
+                  Consultantul te contactează pentru oferta acestei mașini.
+                </p>
                 <ContactFields value={value} onChange={setValue} errors={errors} prefix="offer" />
                 {state === "error" && (
                   <p role="alert" className="v3-error mt-6">

@@ -34,3 +34,5 @@ autoklass-static/
 
 # Local review scratch and private source documents
 tmp/
+.playwright-cli/
+output/

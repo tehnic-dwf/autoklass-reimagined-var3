@@ -57,23 +57,9 @@ export function HomeVehicles() {
       : matches.slice(0, 6);
   return (
     <>
-      <nav className="v3-shortcuts v3-wrap" aria-label="Servicii rapide">
-        <Link to="/service/programare">
-          Programare service <ArrowRight size={18} aria-hidden />
-        </Link>
-        <Link to="/service/tarife">
-          Tarife service <ArrowRight size={18} aria-hidden />
-        </Link>
-        <a href="https://www.autoklass.ro/articole/cumparam.html">
-          Evaluare buy-back <ArrowRight size={18} aria-hidden />
-        </a>
-        <a href="#servicii-autoklass">
-          Toate serviciile <ArrowRight size={18} aria-hidden />
-        </a>
-      </nav>
       <section className="v3-wrap v3-section v3-discover" aria-labelledby="discover-title">
         <div className="v3-row">
-          <h2 id="discover-title">Explorează după caroserie</h2>
+          <h2 id="discover-title">Cum îți place să conduci?</h2>
           <Link className="v3-link" to="/autoturisme">
             Toate mașinile <ArrowRight size={18} aria-hidden />
           </Link>
@@ -99,27 +85,11 @@ export function HomeVehicles() {
             );
           })}
         </div>
-        <nav className="v3-brands" aria-label="Mărci auto">
-          {["Mercedes-Benz", "Honda", "XPENG"].map((brand) => (
-            <Link key={brand} to="/autoturisme" search={{ brand }}>
-              {brand}
-            </Link>
-          ))}
-          <a href="https://ploiesti.autoklass.ro/">
-            Audi <span aria-hidden>↗</span>
-          </a>
-          <a href="https://www.brasov.autoklass.ro/marci/volkswagen">
-            Volkswagen <span aria-hidden>↗</span>
-          </a>
-          <a href="https://www.autoklass.ro/autoutilitare-noi-mercedes">
-            Autoutilitare <span aria-hidden>↗</span>
-          </a>
-        </nav>
       </section>
-      <section className="v3-inventory" aria-labelledby="inventory-title">
+      <section className="v3-inventory ak-inventory" aria-labelledby="inventory-title">
         <div className="v3-wrap v3-section">
           <div className="v3-row">
-            <h2 id="inventory-title">Descoperă selecția Autoklass</h2>
+            <h2 id="inventory-title">Mașini de cunoscut.</h2>
             <span className="v3-muted">Prețuri cu TVA inclus</span>
           </div>
           <div className="v3-collection-tabs" role="group" aria-label="Selecții de mașini">

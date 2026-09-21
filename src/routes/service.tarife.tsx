@@ -5,221 +5,165 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import {
   serviceItems,
-  serviceBranches,
   serviceRates,
   tariffEffectiveDate,
-  branchName,
   serviceName,
-  ratePrice,
+  rateRange,
   rateUnit,
 } from "@/data/service-prices";
 import { formatPrice } from "@/data/vehicles";
 import { normalized } from "@/data/demo-vehicle";
+import "@/service-mobile.css";
+
 export const Route = createFileRoute("/service/tarife")({
   head: () => ({ meta: [{ title: "Servicii și tarife | Autoklass" }] }),
   component: Tariffs,
 });
 function Tariffs() {
-  const [branch, setBranch] = useState("pipera");
   const [service, setService] = useState("");
   const [query, setQuery] = useState("");
-  const [group, setGroup] = useState("");
-  const groups = [...new Set(serviceRates.map((rate) => rate.group))];
   const items = serviceRates.filter(
     (rate) =>
       (!service || rate.serviceIds.includes(service)) &&
-      (!group || rate.group === group) &&
       normalized(
         [rate.title, rate.description, rate.group, ...rate.serviceIds.map(serviceName)].join(" "),
       ).includes(normalized(query)),
   );
-  const selectedService = serviceItems.find((item) => item.id === service);
+  const groups = [...new Set(items.map((rate) => rate.group))];
   return (
-    <div className="v3">
+    <div className="v3 service-redesign service-tariffs">
       <SiteHeader />
       <main id="main-content">
-        <section className="bg-[#f4f5f5]">
+        <section className="service-tariff-hero">
           <div className="v3-wrap v3-section">
-            <p className="v3-kicker">Service Mercedes-Benz</p>
-            <h1>Tariful potrivit mașinii tale.</h1>
+            <p className="v3-kicker">Service Autoklass</p>
+            <h1 className="service-page-title">Tarife service</h1>
             <p className="v3-intro">
-              Consultă manopera pe oră și tarifele ITP pentru sucursala ta. Costul unei lucrări se
-              estimează după mașină, timpul necesar și piese.
+              Intervale de preț pentru manoperă și ITP. Devizul final se stabilește după verificarea
+              mașinii.
             </p>
-            <div className="v3-grid mt-8 max-w-3xl">
-              <label className="v3-field">
-                <span>Alege sucursala</span>
-                <select value={branch} onChange={(e) => setBranch(e.target.value)}>
-                  {serviceBranches.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="v3-field">
-                <span>Serviciul dorit</span>
-                <select
-                  value={service}
-                  onChange={(e) => {
-                    setService(e.target.value);
-                    setGroup("");
-                  }}
-                >
-                  <option value="">Toate serviciile</option>
-                  {serviceItems.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="v3-field">
-                <span>Categorie tarifară</span>
-                <select value={group} onChange={(e) => setGroup(e.target.value)}>
-                  <option value="">Toate categoriile</option>
-                  {groups.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="v3-field">
-                <span>Caută un model sau serviciu</span>
-                <input
-                  type="search"
-                  placeholder="GLC, revizie, frâne, ITP…"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </label>
-            </div>
-            <p className="v3-notice mt-8">
-              Tarife din {tariffEffectiveDate}, cu TVA inclus. Alege categoria după model și
-              vechime. Tariful orar nu reprezintă costul complet al unei revizii sau reparații.
-            </p>
+            <Link className="v3-button service-primary" to="/service/programare">
+              Programare service <ArrowRight size={20} aria-hidden />
+            </Link>
+            <p className="service-tariff-date">TVA inclus · Tarife din {tariffEffectiveDate}</p>
           </div>
         </section>
-        <section className="v3-wrap v3-section" aria-labelledby="tariff-heading">
-          <div className="v3-row mb-8">
-            <div>
-              <h2 id="tariff-heading">{selectedService?.title || "Manoperă și inspecții"}</h2>
-              {selectedService && <p className="v3-intro">{selectedService.description}</p>}
-            </div>
-            {selectedService && (
-              <Link
-                className="v3-button secondary"
-                to="/service/programare"
-                search={{ branch, service, intent: "estimate" }}
-              >
-                Solicită estimare <ArrowRight size={18} />
-              </Link>
-            )}
+        <section
+          className="v3-wrap v3-section service-tariff-content"
+          aria-labelledby="tariff-heading"
+        >
+          <h2 id="tariff-heading">Găsește tariful tău</h2>
+          <div className="service-tariff-filters">
+            <label className="v3-field">
+              <span>Serviciul dorit</span>
+              <select value={service} onChange={(e) => setService(e.target.value)}>
+                <option value="">Toate serviciile</option>
+                {serviceItems.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="v3-field">
+              <span>Caută după model sau serviciu</span>
+              <input
+                type="search"
+                placeholder="De exemplu: GLC, frâne, ITP"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </label>
           </div>
-          <p className="v3-small v3-muted mb-4" role="status">
-            {items.length} categorii tarifare · {branchName(branch)}
+          <p className="service-results" role="status">
+            {items.length} categorii tarifare
           </p>
-          {items.map((rate) => {
-            const price = ratePrice(rate, branch);
-            return (
-              <article key={rate.id} className="v3-tariff">
-                <div>
-                  <p className="v3-kicker">{rate.group}</p>
-                  <h3>{rate.title}</h3>
-                  <p className="v3-muted max-w-prose">{rate.description}</p>
-                  <details className="v3-disclosure mt-4 max-w-prose">
-                    <summary>Condițiile tarifului</summary>
-                    <div className="v3-small v3-muted">
-                      {rate.note}
-                      {rate.unit === "hour" &&
-                        " Numărul de ore, piesele și consumabilele se stabilesc separat în deviz."}
-                      {rate.unit === "inspection" &&
-                        branch === "timisoara" &&
-                        " La Timișoara, ITP-ul este subcontractat."}
-                    </div>
-                  </details>
-                </div>
-                <div className="sm:min-w-52">
-                  <p className="v3-price">
-                    {price !== undefined
-                      ? `${formatPrice(price)} ${rateUnit(rate)}`
-                      : "Tarif la cerere"}
-                  </p>
-                  <p className="v3-small v3-muted mt-2">
-                    {price !== undefined
-                      ? "TVA inclus"
-                      : "Valoare nepublicată pentru această sucursală"}
-                  </p>
-                  <Link
-                    className="v3-link mt-4"
-                    to="/service/programare"
-                    search={{
-                      branch,
-                      service: service || rate.serviceIds[0],
-                      rate: rate.id,
-                      intent: "estimate",
-                    }}
-                  >
-                    Solicită estimare <ArrowRight size={18} />
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
+          {groups.map((group) => (
+            <section key={group} className="service-rate-group" aria-label={group}>
+              <h2>{group}</h2>
+              {items
+                .filter((rate) => rate.group === group)
+                .map((rate) => {
+                  const range = rateRange([rate]);
+                  return (
+                    <article key={rate.id} className="service-rate">
+                      <h3>{rate.title}</h3>
+                      <p className="service-rate-description">{rate.description}</p>
+                      <p className="service-rate-price">
+                        {range ? (
+                          <>
+                            {formatPrice(range.min)}
+                            {range.max !== range.min ? `–${formatPrice(range.max)}` : ""}
+                            <span> {rateUnit(rate)}</span>
+                          </>
+                        ) : (
+                          "Tarif la cerere"
+                        )}
+                      </p>
+                      <details className="service-rate-conditions">
+                        <summary>Ce include tariful</summary>
+                        <p>
+                          {rate.note}{" "}
+                          {rate.unit === "hour"
+                            ? "Tariful este pentru o oră de manoperă. Numărul de ore, piesele și consumabilele se stabilesc separat în deviz."
+                            : "Tarifele afișate sunt pentru inspecția inițială. Disponibilitatea și categoria aplicabilă se confirmă la programare."}
+                        </p>
+                      </details>
+                      <Link
+                        className="v3-link service-rate-action"
+                        to="/service/programare"
+                        search={{ service: service || rate.serviceIds[0], rate: rate.id }}
+                      >
+                        Solicită programare <ArrowRight size={18} aria-hidden />
+                      </Link>
+                    </article>
+                  );
+                })}
+            </section>
+          ))}
           {!items.length && (
-            <div className="v3-empty">
-              <Search size={32} className="mx-auto mb-6" />
-              <h3>
-                {service === "roti"
-                  ? "Estimare pentru roțile tale."
-                  : "Nicio categorie pentru această selecție."}
-              </h3>
+            <div className="service-empty">
+              <Search size={28} aria-hidden />
+              <h3>{service === "roti" ? "Un tarif pentru roțile tale" : "Nu am găsit un tarif"}</h3>
               <p>
                 {service === "roti"
-                  ? "Tariful depinde de operațiune și de dimensiunea jantelor. Include aceste detalii în solicitare."
-                  : "Schimbă filtrele sau solicită o estimare pentru mașina ta."}
+                  ? "Costul depinde de operațiune și de dimensiunea jantelor. Spune-ne ce ai nevoie în formularul de programare."
+                  : "Încearcă alt model sau serviciu. Poți cere detalii și prin formularul de programare."}
               </p>
               <Link
                 className="v3-button"
                 to="/service/programare"
-                search={{ branch, ...(service ? { service } : {}), intent: "estimate" }}
+                search={service ? { service } : {}}
               >
-                Solicită estimare <ArrowRight size={18} />
+                Programare service <ArrowRight size={18} aria-hidden />
               </Link>
-              <div>
-                <button
-                  className="v3-link mt-4"
-                  onClick={() => {
-                    setQuery("");
-                    setGroup("");
-                    setService("");
-                  }}
-                >
-                  Vezi toate categoriile
-                </button>
-              </div>
+              <button
+                className="v3-link"
+                onClick={() => {
+                  setQuery("");
+                  setService("");
+                }}
+              >
+                Resetează filtrele
+              </button>
             </div>
           )}
-          <div className="v3-grid bg-[#f4f5f5] p-6 mt-12">
-            <div>
-              <h3>Ai nevoie de o programare?</h3>
-              <p className="v3-intro">
-                Alege serviciul și intervalul preferat. Echipa service va confirma disponibilitatea.
-              </p>
-            </div>
-            <div className="flex items-center sm:justify-end">
-              <Link
-                className="v3-button"
-                to="/service/programare"
-                search={{ branch, ...(service ? { service } : {}), intent: "appointment" }}
-              >
-                Solicită programare <ArrowRight size={18} />
-              </Link>
-            </div>
+          <div className="service-tariff-close">
+            <h2>Mașina ta, pe mâini bune.</h2>
+            <p>
+              Alege serviciul și ziua preferată. Echipa service te contactează pentru confirmare.
+            </p>
+            <Link
+              className="v3-button"
+              to="/service/programare"
+              search={service ? { service } : {}}
+            >
+              Programare service <ArrowRight size={20} aria-hidden />
+            </Link>
           </div>
-          <p className="v3-small v3-muted mt-8">
-            Selecție din lista de tarife Autoklass din {tariffEffectiveDate}, pentru autoturisme
-            Mercedes-Benz. Devizul final se stabilește după evaluarea mașinii. Pentru modelele V și
-            X sau alte servicii, solicită o estimare individuală.
+          <p className="service-source-note">
+            Intervalele reunesc tarifele publicate în rețeaua Autoklass. Pentru modelele V și X sau
+            servicii care nu apar aici, costul se confirmă individual.
           </p>
         </section>
       </main>

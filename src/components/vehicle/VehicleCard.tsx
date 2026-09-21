@@ -16,7 +16,12 @@ export function VehicleCard({
         <Link to="/autoturisme/$slug" params={{ slug: v.slug }} aria-label={`Vezi ${v.title}`}>
           <img src={v.image} alt={v.title} width={800} height={600} loading="lazy" />
         </Link>
-        <span className="v3-car-condition">{v.condition === "nou" ? "Nou" : "Rulat"}</span>
+        <span className={`v3-car-condition ak-badge ${v.condition}`}>
+          {v.condition === "nou" ? "Nou" : "Rulat"}
+        </span>
+        {!!v.listPriceEur && v.listPriceEur > v.priceEur && (
+          <span className="ak-discount-badge">−{formatPrice(v.listPriceEur - v.priceEur)} €</span>
+        )}
         <FavoriteButton slug={v.slug} className="absolute right-3 top-3 bg-white" />
       </div>
       <div className="v3-car-body">
@@ -30,6 +35,9 @@ export function VehicleCard({
         </p>
         <div className="v3-car-price-row">
           <div>
+            {!!v.listPriceEur && v.listPriceEur > v.priceEur && (
+              <del className="ak-old-price">{formatPrice(v.listPriceEur)} €</del>
+            )}
             <p className="v3-price">{formatPrice(v.priceEur)} €</p>
             {!compact && (
               <p className="v3-small v3-muted">

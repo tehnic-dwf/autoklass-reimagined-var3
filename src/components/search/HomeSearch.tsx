@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, SlidersHorizontal } from "lucide-react";
-import { BasicFilters, ConditionTabs, FilterPanel } from "./VehicleFilters";
+import { BasicFilters, FilterPanel } from "./VehicleFilters";
 import { matchingVehicles, activeFilters, type VehicleSearch } from "@/lib/vehicle-search";
 export function HomeSearch() {
   const [value, setValue] = useState<VehicleSearch>({});
@@ -9,37 +9,40 @@ export function HomeSearch() {
   const filterTrigger = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const count = matchingVehicles(value).length;
+  const extra = activeFilters(value).filter(
+    ([key]) => !["condition", "brand", "maxPrice"].includes(key),
+  );
   return (
-    <section id="cauta-masina" className="v3 v3-search v3-section" style={{ minHeight: 0 }}>
+    <section
+      id="cauta-masina"
+      className="v3 v3-search v3-section ak-search"
+      style={{ minHeight: 0 }}
+    >
       <div className="v3-wrap">
-        <h2>Găsește-ți următoarea mașină.</h2>
+        <h2>Caută o mașină.</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             void navigate({ to: "/autoturisme", search: value });
           }}
         >
-          <ConditionTabs value={value} onChange={setValue} />
           <BasicFilters value={value} onChange={setValue} />
-          {value.minPrice && value.maxPrice && Number(value.minPrice) > Number(value.maxPrice) && (
-            <p role="alert" className="v3-error mt-4">
-              Prețul minim trebuie să fie mai mic decât cel maxim.
-            </p>
-          )}
-          <div className="v3-search-footer">
+          <div className="ak-search-actions">
             <button
               type="button"
-              className="v3-link"
+              className="ak-more-filters"
               ref={filterTrigger}
               onClick={() => setOpen(true)}
+              aria-haspopup="dialog"
             >
-              <SlidersHorizontal size={18} />
-              Toate filtrele
-              {activeFilters(value).length > 0 ? ` (${activeFilters(value).length})` : ""}
+              <SlidersHorizontal size={20} aria-hidden />
+              <span>Alte filtre{extra.length ? ` (${extra.length})` : ""}</span>
             </button>
             <button className="v3-button" type="submit">
-              Vezi {count} {count === 1 ? "mașină" : "mașini"}
-              <ArrowRight size={18} />
+              <span aria-live="polite">
+                Vezi {count} {count === 1 ? "mașină" : "mașini"}
+              </span>
+              <ArrowRight size={20} aria-hidden />
             </button>
           </div>
         </form>
@@ -49,6 +52,7 @@ export function HomeSearch() {
           open={open}
           onOpenChange={setOpen}
           returnFocus={filterTrigger}
+          onApply={() => void navigate({ to: "/autoturisme", search: value })}
         />
       </div>
     </section>

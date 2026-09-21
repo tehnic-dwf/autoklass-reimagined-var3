@@ -2,6 +2,8 @@
 @source "../src";
 @import "tw-animate-css";
 @import "./v3.css";
+@import "./mobile-refinement.css";
+@import "./typography.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -187,7 +189,9 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "kern" 1, "liga" 1;
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1;
   }
 
   /* MBCorpoTitle e condensat: la mărimi mari tracking-ul pozitiv îl face să
@@ -215,7 +219,9 @@
   /* Cifre tabulare (prețuri, KM, ani) — fallback pentru fonturile MBCorpo
      dacă nu expun font-variant-numeric nativ. */
   :where(.tabular-nums) {
-    font-feature-settings: "tnum" 1, "lnum" 1;
+    font-feature-settings:
+      "tnum" 1,
+      "lnum" 1;
   }
 
   /* Vizibil pe fond deschis ȘI închis (ex. bg-primary): inelul de accent
@@ -309,7 +315,6 @@
   flex: 0 0 auto;
 }
 
-
 /* Stare apăsată discretă pentru acțiuni */
 @utility press {
   transition-property: transform, background-color, border-color, color;
@@ -366,7 +371,6 @@
     transform: none;
   }
 }
-
 
 /* Tranziție pe proprietăți exacte pentru acordeoane de navigație.
    Regula de bază e mereu activă (altfel conținutul închis ar rămâne vizibil);

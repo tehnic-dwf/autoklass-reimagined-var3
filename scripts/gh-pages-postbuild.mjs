@@ -28,6 +28,7 @@ if (!outDir) {
 const requiredPages = [
   "",
   "autoturisme",
+  "contact",
   "autoturisme/mercedes-benz-glc-200-4matic-vu149616",
   "service/tarife",
   "service/programare",

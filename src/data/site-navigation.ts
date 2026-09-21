@@ -8,8 +8,14 @@ export type SiteNavItem = NavigationItemBase &
   (
     | {
         kind: "internal";
-        to: "/" | "/autoturisme" | "/service/tarife" | "/service/programare" | "/comparatie";
-        search?: { condition: "nou" | "rulat" };
+        to:
+          | "/"
+          | "/autoturisme"
+          | "/service/tarife"
+          | "/service/programare"
+          | "/comparatie"
+          | "/contact";
+        search?: { condition?: "nou" | "rulat"; brand?: string };
         hash?: string;
       }
     | { kind: "external"; href: string }
@@ -45,7 +51,7 @@ export const primaryNavigation: SiteNavItem[] = [
   },
   {
     kind: "internal",
-    label: "Service & tarife",
+    label: "Tarife service",
     to: "/service/tarife",
     section: "Vizita în service",
     footer: true,
@@ -54,7 +60,7 @@ export const primaryNavigation: SiteNavItem[] = [
 
 export const serviceAppointment: SiteNavItem = {
   kind: "internal",
-  label: "Solicită programare service",
+  label: "Programare service",
   to: "/service/programare",
   section: "Vizita în service",
   footer: true,
@@ -64,7 +70,7 @@ export const serviceAppointment: SiteNavItem = {
 export const siteNavigation: SiteNavGroup[] = [
   {
     id: "autovehicule",
-    label: "Autovehicule",
+    label: "Mașini",
     description: "Mărci, oferte, buy-back și test drive.",
     items: [
       ...primaryNavigation.filter((item) => item.kind === "internal" && item.to === "/autoturisme"),
@@ -75,9 +81,10 @@ export const siteNavigation: SiteNavGroup[] = [
         section: "Alege o mașină",
       },
       {
-        kind: "external",
+        kind: "internal",
         label: "Mercedes-Benz",
-        href: `${LIVE}/autoturisme-noi-mercedes`,
+        to: "/autoturisme",
+        search: { brand: "Mercedes-Benz" },
         section: "Mărci și vehicule comerciale",
       },
       {
@@ -88,27 +95,31 @@ export const siteNavigation: SiteNavGroup[] = [
         footer: true,
       },
       {
-        kind: "external",
+        kind: "internal",
         label: "Audi",
-        href: "https://ploiesti.autoklass.ro/",
+        to: "/autoturisme",
+        search: { brand: "Audi" },
         section: "Mărci și vehicule comerciale",
       },
       {
-        kind: "external",
+        kind: "internal",
         label: "Volkswagen",
-        href: "https://www.brasov.autoklass.ro/marci/volkswagen",
+        to: "/autoturisme",
+        search: { brand: "Volkswagen" },
         section: "Mărci și vehicule comerciale",
       },
       {
-        kind: "external",
+        kind: "internal",
         label: "XPENG",
-        href: `${LIVE}/search/filtre/marca-xpeng`,
+        to: "/autoturisme",
+        search: { brand: "XPENG" },
         section: "Mărci și vehicule comerciale",
       },
       {
-        kind: "external",
+        kind: "internal",
         label: "Honda",
-        href: `${LIVE}/autoturisme-noi-honda`,
+        to: "/autoturisme",
+        search: { brand: "Honda" },
         section: "Mărci și vehicule comerciale",
       },
       {
@@ -146,7 +157,7 @@ export const siteNavigation: SiteNavGroup[] = [
         kind: "internal",
         label: "Cum soliciți o ofertă",
         to: "/",
-        hash: "cum-soliciti-oferta",
+        hash: "cauta-masina",
         section: "Oferte și achiziție",
       },
     ],
@@ -208,7 +219,7 @@ export const siteNavigation: SiteNavGroup[] = [
   },
   {
     id: "mobilitate",
-    label: "Mobilitate",
+    label: "Închirieri și asistență rutieră",
     description: "Pick-up, închirieri și asistență rutieră.",
     items: [
       {
@@ -287,9 +298,9 @@ export const siteNavigation: SiteNavGroup[] = [
         footer: true,
       },
       {
-        kind: "external",
+        kind: "internal",
         label: "Contact",
-        href: `${LIVE}/articole/contact.html`,
+        to: "/contact",
         footer: true,
       },
       {
