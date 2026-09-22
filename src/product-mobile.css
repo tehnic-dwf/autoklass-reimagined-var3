@@ -528,3 +528,68 @@
     max-width: none;
   }
 }
+
+.ak-product .ak-condition-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  border-left: 4px solid #202326;
+  background: #edf0f2;
+  color: #202326;
+}
+.ak-product .ak-condition-banner.is-used {
+  background: #f4ede2;
+  border-left-color: #805b28;
+}
+.ak-condition-banner strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+.ak-condition-banner > span {
+  font-size: 14px;
+}
+.ak-product .ak-history-report {
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px 0;
+}
+.ak-history-report > svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.ak-product.v3.v3 .ak-history-report h2 {
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 0 0 8px;
+}
+.ak-history-report p {
+  color: #555b60;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.ak-history-report .v3-link {
+  margin-top: 8px;
+}
+.ak-product-specs dd {
+  overflow-wrap: anywhere;
+}
+
+.ak-product .ak-history-report {
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.ak-carvertical-logo {
+  display: block;
+  width: 140px;
+  height: auto;
+}
+.ak-product .ak-history-report > .v3-link {
+  margin: 0;
+  min-height: 44px;
+  white-space: nowrap;
+}

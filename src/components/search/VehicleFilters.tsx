@@ -1,6 +1,6 @@
 import { useId } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, Check } from "lucide-react";
+import { X, Check, ChevronDown } from "lucide-react";
 import { vehicles } from "@/data/vehicles";
 import {
   modelOf,
@@ -67,7 +67,10 @@ export function BudgetFilter({ value, onChange }: Props) {
         ))}
       </div>
       <details className="ak-budget-interval" open={Boolean(value.minPrice)}>
-        <summary>Alege un interval de preț</summary>
+        <summary>
+          <span>Alege alt interval de preț</span>
+          <ChevronDown size={18} aria-hidden="true" />
+        </summary>
         <label className="v3-field">
           <span className="sr-only">Interval de preț</span>
           <select
@@ -106,7 +109,7 @@ export function BasicFilters({ value, onChange }: Props) {
     <div className="ak-basic-filters">
       <BudgetFilter value={value} onChange={onChange} />
       <div className="v3-search-fields">
-        <label className="v3-field">
+        <label className="v3-field ak-brand-field">
           <span>Marcă</span>
           <select
             aria-label="Marcă"
@@ -134,11 +137,7 @@ export function BasicFilters({ value, onChange }: Props) {
             ))}
           </select>
         </label>
-        <fieldset className="ak-condition-field">
-          <legend className="ak-filter-label">Stare</legend>
-          <ConditionTabs value={value} onChange={onChange} />
-        </fieldset>
-        <label className="v3-field" htmlFor={`${id}-model`}>
+        <label className="v3-field ak-model-field" htmlFor={`${id}-model`}>
           <span>Model</span>
           <select
             id={`${id}-model`}
@@ -156,6 +155,10 @@ export function BasicFilters({ value, onChange }: Props) {
             ))}
           </select>
         </label>
+        <fieldset className="ak-condition-field">
+          <legend className="ak-filter-label">Stare</legend>
+          <ConditionTabs value={value} onChange={onChange} />
+        </fieldset>
       </div>
     </div>
   );

@@ -11,12 +11,14 @@ export function OfferDialog({
   onOpenChange,
   opener,
   simulateError = false,
+  requestKind = "offer",
 }: {
   vehicle: Vehicle;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   opener: React.RefObject<HTMLButtonElement | null>;
   simulateError?: boolean;
+  requestKind?: "offer" | "report";
 }) {
   const [value, setValue] = useState<ContactValues>(testContact);
   const [errors, setErrors] = useState<Partial<Record<keyof ContactValues, string>>>({});
@@ -49,7 +51,9 @@ export function OfferDialog({
           }}
         >
           <div className="v3-panel-head">
-            <Dialog.Title>Solicită ofertă</Dialog.Title>
+            <Dialog.Title>
+              {requestKind === "report" ? "Solicită raportul carVertical" : "Solicită ofertă"}
+            </Dialog.Title>
             <Dialog.Close
               className="v3-icon"
               aria-label="Închide formularul"
@@ -70,14 +74,20 @@ export function OfferDialog({
               <div className="v3-success" role="status">
                 <CheckCircle2 size={40} strokeWidth={1.5} />
                 <h2>Mulțumim pentru solicitare.</h2>
-                <p>Un consultant te va contacta pentru oferta mașinii alese.</p>
+                <p>
+                  {requestKind === "report"
+                    ? "Consultantul te va contacta în legătură cu raportul carVertical al mașinii alese."
+                    : "Un consultant te va contacta pentru oferta mașinii alese."}
+                </p>
 
                 <Dialog.Close className="v3-button mt-6">Înapoi la mașină</Dialog.Close>
               </div>
             ) : (
               <form id="offer-form" className="mt-6" noValidate onSubmit={submit}>
                 <p className="v3-muted mb-6">
-                  Consultantul te contactează pentru oferta acestei mașini.
+                  {requestKind === "report"
+                    ? "Soliciți raportul carVertical pentru această mașină."
+                    : "Consultantul te contactează pentru oferta acestei mașini."}
                 </p>
                 <ContactFields value={value} onChange={setValue} errors={errors} prefix="offer" />
                 {state === "error" && (
@@ -105,7 +115,11 @@ export function OfferDialog({
                 className="v3-button"
                 disabled={state === "sending"}
               >
-                {state === "sending" ? "Se trimite…" : "Solicită ofertă"}
+                {state === "sending"
+                  ? "Se trimite…"
+                  : requestKind === "report"
+                    ? "Trimite solicitarea"
+                    : "Solicită ofertă"}
                 {state !== "sending" && <ArrowRight size={18} />}
               </button>
             </div>
