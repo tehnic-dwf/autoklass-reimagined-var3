@@ -7,9 +7,12 @@ export function VehicleFacts({
   vehicle: Vehicle;
   compact?: boolean;
 }) {
+  const facts = vehicleFacts(vehicle).filter(
+    ({ label }) => compact || vehicle.condition !== "rulat" || label !== "Emisii CO₂",
+  );
   return (
     <dl className={compact ? "ak-card-facts" : "ak-product-facts"}>
-      {vehicleFacts(vehicle).map(({ label, value, icon: Icon }) => (
+      {facts.map(({ label, value, icon: Icon }) => (
         <div key={label}>
           <dt>
             <Icon size={18} strokeWidth={1.5} aria-hidden />

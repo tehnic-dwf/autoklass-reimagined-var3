@@ -1134,19 +1134,18 @@
     min-height: 52px;
     padding-block: 4px;
   }
-  .ak-product.ak-reviewed-product .ak-condition-banner {
+  .ak-product.ak-reviewed-product .ak-condition-banner,
+  .ak-product.ak-reviewed-product .ak-condition-banner.is-used {
     margin-block: 4px 12px;
     gap: 8px 12px;
+    background: transparent;
   }
-  .ak-product.ak-reviewed-product .ak-condition-banner strong {
+  .ak-product.ak-reviewed-product .ak-condition-banner strong,
+  .ak-product.ak-reviewed-product .ak-condition-banner.is-used strong {
     padding: 6px 8px;
     font-size: 13px;
     color: #304759;
     background: #eef2f5;
-  }
-  .ak-product.ak-reviewed-product .ak-condition-banner.is-used strong {
-    background: #eee7da;
-    color: #604b28;
   }
   .ak-product.ak-reviewed-product .ak-condition-banner strong svg {
     width: 14px;
