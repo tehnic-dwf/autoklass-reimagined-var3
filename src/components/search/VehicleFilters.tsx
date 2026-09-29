@@ -4,6 +4,7 @@ import { X, Check, ChevronDown } from "lucide-react";
 import { vehicles } from "@/data/vehicles";
 import {
   modelOf,
+  cityOf,
   unique,
   matchingVehicles,
   type SearchKey,
@@ -30,6 +31,17 @@ export function ConditionTabs({ value, onChange }: Props) {
               delete next.minKm;
               delete next.maxKm;
             }
+            const candidates = vehicles.filter((v) => !key || v.condition === key);
+            if (next.brand && !candidates.some((v) => v.brand === next.brand)) {
+              delete next.brand;
+              delete next.model;
+            } else if (
+              next.model &&
+              !candidates.some(
+                (v) => (!next.brand || v.brand === next.brand) && modelOf(v) === next.model,
+              )
+            )
+              delete next.model;
             onChange(next);
           }}
         >
@@ -109,6 +121,10 @@ export function BasicFilters({ value, onChange }: Props) {
     <div className="ak-basic-filters">
       <BudgetFilter value={value} onChange={onChange} />
       <div className="v3-search-fields">
+        <fieldset className="ak-condition-field">
+          <legend className="ak-filter-label">Stare</legend>
+          <ConditionTabs value={value} onChange={onChange} />
+        </fieldset>
         <label className="v3-field ak-brand-field">
           <span>Marcă</span>
           <select
@@ -132,7 +148,11 @@ export function BasicFilters({ value, onChange }: Props) {
             }}
           >
             <option value="">Toate mărcile</option>
-            {["Mercedes-Benz", "Audi", "Volkswagen", "Honda", "XPENG"].map((b) => (
+            {unique(
+              vehicles
+                .filter((v) => !value.condition || v.condition === value.condition)
+                .map((v) => v.brand),
+            ).map((b) => (
               <option key={b}>{b}</option>
             ))}
           </select>
@@ -149,16 +169,18 @@ export function BasicFilters({ value, onChange }: Props) {
           >
             <option value="">{value.brand ? "Toate modelele" : "Alege marca"}</option>
             {unique(
-              vehicles.filter((v) => !value.brand || v.brand === value.brand).map(modelOf),
+              vehicles
+                .filter(
+                  (v) =>
+                    (!value.brand || v.brand === value.brand) &&
+                    (!value.condition || v.condition === value.condition),
+                )
+                .map(modelOf),
             ).map((m) => (
               <option key={m}>{m}</option>
             ))}
           </select>
         </label>
-        <fieldset className="ak-condition-field">
-          <legend className="ak-filter-label">Stare</legend>
-          <ConditionTabs value={value} onChange={onChange} />
-        </fieldset>
       </div>
     </div>
   );
@@ -318,7 +340,7 @@ export function AdvancedFilters({ value, onChange }: Props) {
       >
         <summary>Locație și disponibilitate</summary>
         <div className="v3-grid">
-          {select("branch", "Sucursală", unique(candidates("branch").map((v) => v.branch)))}
+          {select("city", "Oraș", unique(candidates("city").map(cityOf)))}
           {select("availability", "Disponibilitate", [
             ["immediate", "Livrare imediată"],
             ["stock", "În stoc"],

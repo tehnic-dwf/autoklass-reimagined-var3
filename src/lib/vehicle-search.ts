@@ -50,6 +50,7 @@ export const searchKeys = [
   "fuel",
   "body",
   "branch",
+  "city",
   "gearbox",
   "drive",
   "minYear",
@@ -71,8 +72,14 @@ export function validateVehicleSearch(raw: Record<string, unknown>): VehicleSear
   const result: VehicleSearch = {};
   for (const key of searchKeys) {
     const v = raw[key];
-    if ((typeof v === "string" || typeof v === "number") && String(v).trim())
-      result[key] = String(v).slice(0, 160);
+    if ((typeof v === "string" || typeof v === "number") && String(v).trim()) {
+      const value = String(v).trim().slice(0, 160);
+      if (/^(min|max)(Price|Year|Km|Power|Engine|Range|Charge)$/.test(key) || key === "page") {
+        const numeric = value.replace(/^["']|["']$/g, "");
+        if (/^\d+(\.\d+)?$/.test(numeric) && Number.isFinite(Number(numeric)))
+          result[key] = String(Number(numeric));
+      } else result[key] = value;
+    }
   }
   if (result.sort && !vehicleSortOptions.some((option) => option.value === result.sort))
     delete result.sort;
@@ -85,6 +92,10 @@ export function modelOf(v: Vehicle) {
     (v.title.includes(" C ") ? "Clasa C" : "Clasa E")
   );
 }
+export const cityOf = (v: Vehicle) => {
+  if (/București|Bucuresti|Pipera|Sud/.test(v.branch)) return "București";
+  return v.branch.replace(/^Autoklass\s+/, "");
+};
 export const availabilityOf = (v: Vehicle) =>
   v.reserved ? "Indisponibil" : v.availability || "Disponibilitate de confirmat";
 export const shortTitle = (v: Vehicle) =>
@@ -122,6 +133,7 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
     if (s.body && v.bodyType !== s.body && !(s.body === "Limuzină" && v.bodyType === "Sedan"))
       return false;
     if (s.branch && v.branch !== s.branch) return false;
+    if (s.city && cityOf(v) !== s.city) return false;
     if (s.gearbox && v.gearbox !== s.gearbox) return false;
     if (s.drive && v.drive !== s.drive) return false;
     if (s.vat && v.vat !== s.vat) return false;
@@ -185,6 +197,7 @@ export const filterLabels: Record<SearchKey, string> = {
   fuel: "Combustibil",
   body: "Caroserie",
   branch: "Sucursală",
+  city: "Oraș",
   gearbox: "Transmisie",
   drive: "Tracțiune",
   minYear: "An de la",

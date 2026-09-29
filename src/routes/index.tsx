@@ -1,13 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck, FileText, MapPin } from "lucide-react";
+import { ArrowRight, BadgeCheck, FileText, MapPin, Pause, Play } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import showroomVideo from "@/assets/showroom.mp4";
 import showroomPoster from "@/assets/showroom-poster.jpg";
 import serviceImage from "@/assets/service-consultant.jpg";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Button } from "@/components/ui/button";
-import { HomeBrands, HomeOffers } from "@/components/home/HomeBrands";
+import { HomeBrands, HomeOffers, HomeServiceOffers } from "@/components/home/HomeBrands";
 import { HomeVehicles } from "@/components/home/HomeVehicles";
+import { HomeBodyCategories, HomeNeedsCategories } from "@/components/home/HomeDiscovery";
 import { HomeSearch } from "@/components/search/HomeSearch";
 import { HomeServices } from "@/components/home/HomeServices";
 export const Route = createFileRoute("/")({
@@ -24,6 +26,18 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 function HomePage() {
+  const video = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => {
+      if (motion.matches) video.current?.pause();
+      else void video.current?.play().catch(() => {});
+    };
+    sync();
+    motion.addEventListener("change", sync);
+    return () => motion.removeEventListener("change", sync);
+  }, []);
   return (
     <div className="v3 ak-home">
       <SiteHeader overlay />
@@ -38,13 +52,26 @@ function HomePage() {
               style={{ transform: "scale(1.32)", transformOrigin: "50% 100%" }}
               src={showroomVideo}
               poster={showroomPoster}
-              autoPlay
+              ref={video}
+              onPlay={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
               muted
               loop
               playsInline
               preload="auto"
             />
           </div>
+          <button
+            className="ak-video-control"
+            type="button"
+            aria-label={playing ? "Pune pe pauză videoclipul" : "Redă videoclipul"}
+            onClick={() => {
+              if (playing) video.current?.pause();
+              else void video.current?.play();
+            }}
+          >
+            {playing ? <Pause size={16} aria-hidden /> : <Play size={16} aria-hidden />}
+          </button>
           <div className="hero-copy-scrim absolute inset-0 bg-primary/10" aria-hidden />
 
           <div className="relative mx-auto flex v3-hero-content min-h-[86svh] w-full max-w-7xl flex-col justify-end px-6 pb-12 pt-28 md:px-8 md:pb-16 lg:px-10">
@@ -64,7 +91,7 @@ function HomePage() {
               className="hero-rise mt-6 text-pretty text-base text-primary-foreground/85"
               style={{ animationDelay: "220ms", maxWidth: "44ch" }}
             >
-              Autoturisme noi și rulate. Service autorizat. Oamenii potriviți, la fiecare pas.
+              Autoturisme noi și rulate. Service autorizat.
             </p>
 
             <div
@@ -83,21 +110,17 @@ function HomePage() {
                 <Link to="/service/programare">Programare service</Link>
               </Button>
             </div>
-
-            <p
-              className="hero-rise mt-6 text-sm text-primary-foreground/85"
-              style={{ animationDelay: "400ms" }}
-            >
-              Dealer și service autorizat
-            </p>
           </div>
         </section>
 
         <HomeServices />
         <HomeSearch />
-        <HomeBrands />
         <HomeOffers />
+        <HomeBodyCategories />
+        <HomeNeedsCategories />
         <HomeVehicles />
+        <HomeBrands />
+        <HomeServiceOffers />
         <section className="ak-assurance v3-wrap v3-section">
           <BadgeCheck size={32} strokeWidth={1.3} aria-hidden />
           <h2>
@@ -106,8 +129,8 @@ function HomePage() {
             Un partener aproape.
           </h2>
           <p>
-            Autoklass este centru autorizat de vânzări și service pentru Mercedes-Benz, Audi,
-            Volkswagen, XPENG și Honda.
+            Consultanții Autoklass te ajută cu alegerea mașinii, finanțarea și evaluarea pentru
+            buy-back.
           </p>
           <a className="v3-link" href="https://www.autoklass.ro/sucursale">
             Găsește echipa din apropiere <ArrowRight size={18} aria-hidden />

@@ -24,6 +24,8 @@ export type Vehicle = {
   year: number;
   km: number | null;
   engineCc: number;
+  co2?: number;
+  prototypeFields?: string[];
   drive: string;
   priceEur: number;
   listPriceEur?: number;
@@ -43,7 +45,32 @@ export const gallerySize = (image: string) =>
 
 export const vehicles: Vehicle[] = [
   {
+    slug: "bmw-seria-5-530e-xdrive-0cd61150",
+    title: "BMW Seria 5 530e xDrive",
+    brand: "BMW",
+    model: "Seria 5",
+    condition: "rulat",
+    fuel: "Benzină",
+    hybrid: true,
+    powerHp: 184,
+    gearbox: "Automată",
+    registrationMonth: "Ianuarie",
+    year: 2019,
+    km: 96134,
+    engineCc: 1998,
+    co2: 131,
+    drive: "AWD",
+    priceEur: 23740,
+    vat: "nedeductibil",
+    branch: "Autoklass Sibiu",
+    bodyType: "Limuzină",
+    image:
+      "https://cdn.contentspeed.ro/slir/w800-h600/autoklass.websales.ro/cs-content/cs-photos/products/original/wbajp91000cd61150_21428_1_17470976527043.jpg",
+    source: "https://www.autoklass.ro/vanzari-auto/bmw-seria-5-530e-xdrive-0cd61150.html",
+  },
+  {
     slug: "volkswagen-touareg-3-0-v6-ld022520",
+    co2: 219,
     brand: "Volkswagen",
     model: "Touareg",
     title: "Volkswagen Touareg 3.0 V6",
@@ -68,7 +95,9 @@ export const vehicles: Vehicle[] = [
     source: "https://www.autoklass.ro/vanzari-auto/volkswagen-touareg-3-0-v6-ld022520.html",
   },
   {
+    prototypeFields: ["drive"],
     slug: "volkswagengolfprime1.5tsidsgphev-v-2026-0507644-ro",
+    co2: 26,
     brand: "Volkswagen",
     model: "Golf",
     title: "Volkswagen Golf Prime 1.5 TSI DSG PHEV",
@@ -78,7 +107,7 @@ export const vehicles: Vehicle[] = [
     year: 2026,
     km: null,
     engineCc: 1498,
-    drive: "",
+    drive: "FWD",
     priceEur: 32026,
     vat: "necomunicat",
     branch: "Autoklass Brașov",
@@ -95,6 +124,7 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: "audi-a7-a7-sportback-nn011329",
+    co2: 32,
     brand: "Audi",
     model: "A7",
     title: "Audi A7 50 TFSI e quattro",
@@ -119,7 +149,9 @@ export const vehicles: Vehicle[] = [
     source: "https://www.autoklass.ro/vanzari-auto/audi-a7-a7-sportback-nn011329.html",
   },
   {
+    prototypeFields: ["drive"],
     slug: "audia5limuzina40tdi-a-2026-0152324-ro",
+    co2: 128,
     brand: "Audi",
     model: "A5",
     title: "Audi A5 Limuzină 40 TDI",
@@ -129,7 +161,7 @@ export const vehicles: Vehicle[] = [
     year: 2026,
     km: null,
     engineCc: 1968,
-    drive: "",
+    drive: "FWD",
     priceEur: 63102,
     vat: "necomunicat",
     branch: "Autoklass Ploiești",
@@ -144,6 +176,7 @@ export const vehicles: Vehicle[] = [
     source: "https://www.autoklass.ro/vanzari-auto/audia5limuzina40tdi-a-2026-0152324-ro.html",
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-a-180-d-1n258044",
     title: "Mercedes-Benz Clasa A A 180 d",
     brand: "Mercedes-Benz",
@@ -155,6 +188,7 @@ export const vehicles: Vehicle[] = [
     year: 2021,
     km: 74965,
     engineCc: 1950,
+    co2: 112,
     drive: "FWD",
     priceEur: 23980,
     listPriceEur: 28369,
@@ -164,6 +198,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1k1770101n258044_20062_1_17700834225417.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-a-200-limuzina-pj413906",
     title: "Mercedes-Benz Clasa A A 200 Limuzină",
     brand: "Mercedes-Benz",
@@ -175,6 +210,7 @@ export const vehicles: Vehicle[] = [
     year: 2023,
     km: 36673,
     engineCc: 1332,
+    co2: 134,
     drive: "FWD",
     priceEur: 31890,
     listPriceEur: 38008,
@@ -184,6 +220,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1k3g8hb8pj413906_20090_1_17356100115998.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-gla-220-4matic-rj574287",
     title: "Mercedes-Benz GLA 220 4MATIC",
     brand: "Mercedes-Benz",
@@ -195,6 +232,7 @@ export const vehicles: Vehicle[] = [
     year: 2023,
     km: 15765,
     engineCc: 1991,
+    co2: 165,
     drive: "AWD",
     priceEur: 37980,
     listPriceEur: 61166,
@@ -204,6 +242,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1n4n4fb5rj574287_20108_1_17629131174932.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-s-400-d-4matic-1a436450",
     title: "Mercedes-Benz Clasa S S 400 d 4MATIC Limuzină Lungă",
     brand: "Mercedes-Benz",
@@ -215,6 +254,7 @@ export const vehicles: Vehicle[] = [
     year: 2018,
     km: 179441,
     engineCc: 2925,
+    co2: 172,
     drive: "AWD",
     priceEur: 43000,
     listPriceEur: 145170,
@@ -226,6 +266,7 @@ export const vehicles: Vehicle[] = [
   {
     slug: "mercedes-benz-glc-300-e-4matic-su079269",
     title: "Mercedes-Benz GLC SUV GLC 300 e 4MATIC",
+    co2: 178,
     brand: "Mercedes-Benz",
     condition: "rulat",
     fuel: "Benzină",
@@ -245,6 +286,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1nkm5gb0su079269_20165_1_17394112054036.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-e-220-d-4matic-sa138850",
     title: "Mercedes-Benz Clasa E E 220 d 4MATIC Limuzină",
     brand: "Mercedes-Benz",
@@ -256,6 +298,7 @@ export const vehicles: Vehicle[] = [
     year: 2024,
     km: 23620,
     engineCc: 1993,
+    co2: 136,
     drive: "AWD",
     priceEur: 69900,
     listPriceEur: 94516,
@@ -265,6 +308,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1klf0fb1sa138850_20171_1_17867559761537.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-e-200-4matic-sa141206",
     title: "Mercedes-Benz Clasa E E 200 4MATIC Sedan",
     brand: "Mercedes-Benz",
@@ -277,6 +321,7 @@ export const vehicles: Vehicle[] = [
     year: 2024,
     km: 28735,
     engineCc: 1999,
+    co2: 162,
     drive: "AWD",
     priceEur: 76850,
     listPriceEur: 89270,
@@ -286,6 +331,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1klf5bb7sa141206_20178_1_17840764007845.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-a-200-limuzina-rj431800",
     title: "Mercedes-Benz Clasa A A 200 Limuzină",
     brand: "Mercedes-Benz",
@@ -297,6 +343,7 @@ export const vehicles: Vehicle[] = [
     year: 2023,
     km: 36920,
     engineCc: 1332,
+    co2: 139,
     drive: "FWD",
     priceEur: 35500,
     listPriceEur: 47900,
@@ -306,6 +353,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1k3g8hb1rj431800_20182_1_17847682501541.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-clasa-a-200-limuzina-rj450376",
     title: "Mercedes-Benz Clasa A A 200 Limuzină",
     brand: "Mercedes-Benz",
@@ -317,6 +365,7 @@ export const vehicles: Vehicle[] = [
     year: 2024,
     km: 31628,
     engineCc: 1332,
+    co2: 140,
     drive: "FWD",
     priceEur: 35900,
     listPriceEur: 48400,
@@ -328,6 +377,7 @@ export const vehicles: Vehicle[] = [
   {
     slug: "mercedes-benz-glc-220-d-4matic-coupe-tf644939",
     title: "Mercedes-Benz GLC 220 d 4MATIC Coupé",
+    co2: 135,
     brand: "Mercedes-Benz",
     condition: "nou",
     fuel: "Diesel",
@@ -348,6 +398,7 @@ export const vehicles: Vehicle[] = [
   {
     slug: "mercedes-benz-glc-300-e-4matic-coupe-vf646152",
     title: "Mercedes-Benz GLC 300 e 4MATIC Coupé",
+    co2: 119,
     brand: "Mercedes-Benz",
     condition: "nou",
     fuel: "Benzină",
@@ -372,6 +423,7 @@ export const vehicles: Vehicle[] = [
     certified: true,
     hybrid: true,
     title: "Mercedes-Benz GLC 200 4MATIC",
+    co2: 185,
     brand: "Mercedes-Benz",
     condition: "nou",
     fuel: "Benzină",
@@ -390,6 +442,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1nkm5bb1vu149616_25722_1_17831263711834.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-amg-gle-53-4matic-tb534181",
     title: "Mercedes-AMG GLE 53 4MATIC+",
     brand: "Mercedes-Benz",
@@ -402,6 +455,7 @@ export const vehicles: Vehicle[] = [
     year: 2025,
     km: null,
     engineCc: 2999,
+    co2: 247,
     drive: "AWD",
     priceEur: 128327,
     listPriceEur: 134377,
@@ -412,6 +466,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1nfb6bb3tb534181_25730_1_17835586139007.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-benz-e-300-e-4matic-va311764",
     title: "Mercedes-Benz E 300 e 4MATIC Limuzină",
     brand: "Mercedes-Benz",
@@ -424,6 +479,7 @@ export const vehicles: Vehicle[] = [
     year: 2026,
     km: null,
     engineCc: 1999,
+    co2: 23,
     drive: "AWD",
     priceEur: 88984,
     listPriceEur: 99874,
@@ -433,6 +489,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1klf5gb8va311764_25734_1_1784163122512.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "mercedes-amg-cle-53-4matic-coupe-vf135666",
     title: "Mercedes-AMG CLE 53 4MATIC+ Coupé",
     brand: "Mercedes-Benz",
@@ -445,6 +502,7 @@ export const vehicles: Vehicle[] = [
     year: 2026,
     km: null,
     engineCc: 2999,
+    co2: 214,
     drive: "AWD",
     priceEur: 112416,
     vat: "deductibil",
@@ -454,6 +512,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("w1kmj6cb2vf135666_25735_1_1783990388213.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "honda-civic-5d-hu025350",
     title: "Honda Civic 5D 1.0 VTEC",
     brand: "Honda",
@@ -466,6 +525,7 @@ export const vehicles: Vehicle[] = [
     year: 2017,
     km: 111082,
     engineCc: 988,
+    co2: 117,
     drive: "FWD",
     priceEur: 12000,
     vat: "deductibil",
@@ -481,6 +541,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("shhfk6740hu025350_24014_1_17642092930829.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "xpeng-g6-awd-performance-sb179466",
     title: "XPENG G6 AWD Performance",
     brand: "XPENG",
@@ -493,6 +554,7 @@ export const vehicles: Vehicle[] = [
     year: 2026,
     km: null,
     engineCc: 0,
+    co2: 0,
     drive: "AWD",
     priceEur: 56040,
     vat: "deductibil",
@@ -501,6 +563,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("l1nnsgha7sb179466_25869_1_17819173930651.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "xpeng-g9-rwd-standard-range-sd091009",
     title: "XPENG G9 RWD Standard Range",
     brand: "XPENG",
@@ -513,6 +576,7 @@ export const vehicles: Vehicle[] = [
     year: 2026,
     km: null,
     engineCc: 0,
+    co2: 0,
     drive: "RWD",
     priceEur: 63340,
     vat: "deductibil",
@@ -521,6 +585,7 @@ export const vehicles: Vehicle[] = [
     image: cdn("l1nnsghb3sd091009_25874_1_17819174521003.jpg.webp"),
   },
   {
+    prototypeFields: ["co2"],
     slug: "honda-zr-v-advance-r2012298",
     title: "Honda ZR-V 2.0 e:HEV Advance",
     brand: "Honda",
@@ -534,6 +599,7 @@ export const vehicles: Vehicle[] = [
     year: 2024,
     km: 23001,
     engineCc: 1993,
+    co2: 132,
     drive: "FWD",
     priceEur: 37450,
     vat: "deductibil",

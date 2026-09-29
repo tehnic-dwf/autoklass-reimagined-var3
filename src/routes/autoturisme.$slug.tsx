@@ -4,10 +4,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  CalendarDays,
-  Fuel,
-  Gauge,
-  Settings2,
   Armchair,
   Sun,
   Camera,
@@ -16,6 +12,9 @@ import {
   Navigation,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Sparkles,
+  History,
   FileText,
   Expand,
   MapPin,
@@ -27,11 +26,13 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { FavoriteButton } from "@/components/vehicle/FavoriteButton";
 import { OfferDialog } from "@/components/vehicle/OfferDialog";
+import { VehicleFacts } from "@/components/vehicle/VehicleFacts";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
-import { vehicles, getVehicle, formatPrice, formatKm, gallerySize } from "@/data/vehicles";
+import { vehicles, getVehicle, formatPrice, gallerySize } from "@/data/vehicles";
 import { demoSlug, normalized } from "@/data/demo-vehicle";
 import { usedDetails } from "@/data/used-product-details";
-import { glcDetails, completeEquipmentGroups } from "@/data/product-details";
+import { glcDetails, completeEquipmentGroups, equipmentKind } from "@/data/product-details";
+import { groupEquipmentByPurpose } from "@/lib/equipment-groups";
 import { availabilityOf, shortTitle } from "@/lib/vehicle-search";
 import carVerticalLogo from "@/assets/carvertical.svg";
 import "@/product-mobile.css";
@@ -92,52 +93,40 @@ function VehiclePage() {
     }))
     .filter((group) => group.items.length);
   const count = filtered.reduce((sum, group) => sum + group.items.length, 0);
-  const facts = isUsed
-    ? [
-        ["Kilometraj", v.km === null ? "Necomunicat" : formatKm(v.km)],
-        ["An fabricație", String(v.year)],
-        ["Combustibil", v.hybrid ? "Hibrid · benzină" : v.fuel],
-        ["Cutie de viteze", v.gearbox],
-      ]
-    : [
-        ["An fabricație", String(v.year)],
-        ["Combustibil", detailed ? "Benzină · mild hybrid" : v.fuel],
-        ["Putere", `${v.powerHp} CP`],
-        ["Cutie de viteze", v.gearbox],
-      ];
   const specs = detailed
-    ? glcDetails.specs
+    ? glcDetails.specs.filter(
+        ([label]) =>
+          ![
+            "Stare",
+            "Fabricație",
+            "Cilindree",
+            "Transmisie",
+            "Tracțiune",
+            "Motorizare",
+            "Putere",
+            "Emisii CO₂ WLTP",
+            "Echipare de bază",
+            "Kilometraj",
+          ].includes(label!),
+      )
     : usedExample
       ? [
-          ...facts,
-          ...usedDetails.specs.filter(([name]) => !facts.some(([label]) => label === name)),
+          ...usedDetails.specs.filter(
+            ([name]) => !["Motorizare", "Putere totală", "Tracțiune", "Cilindree"].includes(name!),
+          ),
         ]
       : [
-          ...facts,
-          ["Caroserie", v.bodyType],
-          ["Kilometraj", v.km === null ? "Necomunicat" : formatKm(v.km)],
-          [
-            "Tracțiune",
-            v.drive === "AWD"
-              ? "Integrală"
-              : v.drive === "FWD"
-                ? "Față"
-                : v.drive === "RWD"
-                  ? "Spate"
-                  : "Necomunicată",
-          ],
-          ...(v.engineCc ? [["Cilindree", `${formatPrice(v.engineCc)} cm³`]] : []),
+          ...(v.color ? [["Culoare", v.color]] : []),
+          ...(v.rangeKm ? [["Autonomie electrică", `${v.rangeKm} km`]] : []),
+          ...(v.chargeKw ? [["Încărcare DC", `${v.chargeKw} kW`]] : []),
         ];
   const similar = vehicles
     .filter((item) => item.slug !== v.slug && !item.reserved && item.bodyType === v.bodyType)
     .sort((a, b) => Math.abs(a.priceEur - v.priceEur) - Math.abs(b.priceEur - v.priceEur))
     .slice(0, 4);
-  const factIcons = isUsed
-    ? [Gauge, CalendarDays, Fuel, Settings2]
-    : [CalendarDays, Fuel, Gauge, Settings2];
   const highlightIcons = [Armchair, Sun, Camera, Lightbulb, Wind, Navigation];
   return (
-    <div className="v3 ak-product pb-24 lg:pb-0">
+    <div className={"v3 ak-product ak-reviewed-product pb-24 lg:pb-0"}>
       <SiteHeader />
       <main id="main-content">
         <div className="v3-wrap ak-product-back">
@@ -153,7 +142,6 @@ function VehiclePage() {
           >
             <ArrowLeft size={18} /> Înapoi la mașini
           </Link>
-          <FavoriteButton slug={v.slug} />
         </div>
         <div className="v3-wrap ak-product-layout">
           <section className="ak-product-gallery" aria-label="Fotografiile mașinii">
@@ -180,6 +168,8 @@ function VehiclePage() {
                 height={900}
                 fetchPriority="high"
               />
+            </div>
+            <div className="ak-gallery-toolbar">
               {photos.length > 1 && (
                 <>
                   <button
@@ -207,8 +197,11 @@ function VehiclePage() {
                 aria-label="Mărește fotografia"
                 onClick={() => setExpanded(true)}
               >
-                <Expand size={19} />
+                <Expand size={19} aria-hidden />
               </button>
+              <div className="ak-gallery-save">
+                <FavoriteButton slug={v.slug} withLabel />
+              </div>
             </div>
             {photos.length > 1 && (
               <div className="ak-photo-thumbs" aria-label="Alege fotografia">
@@ -238,53 +231,80 @@ function VehiclePage() {
             <div
               className={`ak-product-eyebrow ak-condition-banner ${isUsed ? "is-used" : "is-new"}`}
             >
-              <strong>{isUsed ? "Autoturism rulat" : "Autoturism nou"}</strong>
+              <strong>
+                {isUsed ? <History size={16} aria-hidden /> : <Sparkles size={16} aria-hidden />}
+                {isUsed ? "Autoturism rulat" : "Autoturism nou"}
+              </strong>
               <span>{v.brand}</span>
             </div>
             <h1 id="vehicle-title">{shortTitle(v)}</h1>
             <p className="ak-product-trim">
               {detailed
-                ? "AMG Line Premium · SUV · 2026"
+                ? "AMG Line Premium · SUV"
                 : usedExample
-                  ? "Sportback · quattro · hibrid plug-in"
-                  : `${v.bodyType} · ${v.year}`}
+                  ? "Sportback · hibrid plug-in"
+                  : v.bodyType}{" "}
+              · <span className="ak-product-year">{v.year}</span>
             </p>
-            <div className="ak-product-price">
-              {detailed && <del className="ak-old-price">78.789 €</del>}
-              <strong>{formatPrice(v.priceEur)} €</strong>
-              <span>
-                TVA inclus
-                {v.vat === "deductibil"
-                  ? " · deductibil"
-                  : v.vat === "nedeductibil"
-                    ? " · nedeductibil"
-                    : ""}
-              </span>
-            </div>
-            <p className="ak-product-location">
-              <MapPin size={18} /> {v.branch}
-            </p>
-            <div className="ak-offer-box">
-              <ConsultantBlock detailed={detailed} usedExample={usedExample} />
-              <button className="v3-button ak-offer-button" onClick={contact}>
-                Solicită ofertă <ArrowRight size={20} />
-              </button>
-              <p>Consultantul confirmă disponibilitatea și termenul de livrare.</p>
-            </div>
-            <dl className="ak-product-facts">
-              {facts.map(([label, value], i) => (
-                <div key={label}>
-                  <dt>
-                    {(() => {
-                      const Icon = factIcons[i]!;
-                      return <Icon size={18} strokeWidth={1.4} aria-hidden />;
-                    })()}
-                    {label}
-                  </dt>
-                  <dd>{value}</dd>
+            <div className="ak-purchase-panel">
+              <div className="ak-product-price">
+                <strong>{formatPrice(v.priceEur)} €</strong>
+                <span>
+                  TVA inclus
+                  {v.vat === "deductibil"
+                    ? " · deductibil"
+                    : v.vat === "nedeductibil"
+                      ? " · nedeductibil"
+                      : ""}
+                </span>
+                {(detailed || usedExample) && v.listPriceEur && v.listPriceEur > v.priceEur && (
+                  <div className="ak-price-saving">
+                    <del className="ak-old-price">{formatPrice(v.listPriceEur)} €</del>
+                    <span>Economisești {formatPrice(v.listPriceEur - v.priceEur)} €</span>
+                  </div>
+                )}
+              </div>
+              {(detailed || usedExample) && (
+                <details className="ak-finance-disclosure">
+                  <summary>
+                    <span className="ak-finance-main">
+                      <span className="ak-finance-label">Leasing orientativ</span>
+                      <span className="ak-finance-rate">
+                        <b>{usedExample ? "661,39" : "1.050,29"} €</b>
+                        <small>/ lună</small>
+                      </span>
+                    </span>
+                    <span className="ak-finance-conditions-link">
+                      Condiții <ChevronDown size={16} aria-hidden />
+                    </span>
+                  </summary>
+                  <div>
+                    <p>
+                      Avansul, durata, dobânda și costul total se confirmă în oferta personalizată.
+                    </p>
+                    <p>
+                      Prețul include dotările instalate. Plata în lei se calculează la cursul
+                      aplicabil din ziua plății, confirmat în ofertă.
+                    </p>
+                  </div>
+                </details>
+              )}
+              <div className="ak-offer-box">
+                <button className="v3-button ak-offer-button" onClick={contact}>
+                  Solicită ofertă <ArrowRight size={20} aria-hidden />
+                </button>
+                <div className="ak-contact-details">
+                  <ConsultantBlock detailed={detailed} usedExample={usedExample} />
+                  <div className="ak-vehicle-location">
+                    <span>
+                      <small>Locația mașinii</small>
+                      <strong>{v.branch}</strong>
+                    </span>
+                  </div>
                 </div>
-              ))}
-            </dl>
+              </div>
+            </div>
+            <VehicleFacts vehicle={v} />
             {detailed && (
               <div className="ak-product-download">
                 <FileText size={20} aria-hidden />
@@ -384,55 +404,10 @@ function VehiclePage() {
                 </section>
               </>
             )}
-            {(detailed || usedExample) && (
-              <section className="ak-product-section" id="finantare">
-                <h2>Opțiuni de finanțare.</h2>
-                <div className="ak-finance-options">
-                  <div>
-                    <span>Leasing</span>
-                    <strong>{usedExample ? "661,39 €" : "1.050,29 €"}</strong>
-                    <small>/ lună</small>
-                  </div>
-                  <div>
-                    <span>Rată</span>
-                    <strong>{usedExample ? "667,79 €" : "1.060,46 €"}</strong>
-                    <small>/ lună</small>
-                  </div>
-                </div>
-                <p>
-                  Valorile lunare sunt orientative. Avansul, durata, dobânda și costul total se
-                  confirmă în oferta personalizată.
-                </p>
-                <button className="v3-button mt-6" onClick={contact}>
-                  Solicită ofertă <ArrowRight size={18} />
-                </button>
-                <details className="ak-product-disclosure">
-                  <summary>Detalii despre preț</summary>
-                  <div className="ak-product-answer">
-                    <p>
-                      {usedExample
-                        ? "Preț anterior: 79.360 €. Cel mai scăzut preț în ultimele 30 de zile: 43.900 €."
-                        : "Preț anterior: 78.789 €. Cel mai scăzut preț în ultimele 30 de zile: 75.480 €."}
-                    </p>
-                    <p>Prețul în lei se calculează la cursul valutar din ziua curentă.</p>
-                  </div>
-                </details>
-              </section>
-            )}
 
             {detailed && (
               <section className="ak-product-section">
-                <p className="ak-section-label">Echiparea acestui exemplar</p>
-                <h2>
-                  Confortul pe care
-                  <br />
-                  îl simți zi de zi.
-                </h2>
-                <p>
-                  Scaune climatizate, lumină naturală prin trapa panoramică și asistență la parcare
-                  cu vedere la 360°. Acest GLC combină echiparea AMG Line Premium cu tracțiunea
-                  integrală 4MATIC.
-                </p>
+                <h2>Dotări remarcabile.</h2>
                 <ul className="ak-product-highlights">
                   {glcDetails.highlights.map((item, i) => (
                     <li key={item}>
@@ -456,7 +431,10 @@ function VehiclePage() {
             )}
             {!!groups.length && (
               <section className="ak-product-section" id="dotari">
-                <h2>Dotări, în detaliu.</h2>
+                <h2>Dotările acestei mașini.</h2>
+                <p className="ak-equipment-intro">
+                  Toate dotările afișate sunt instalate pe această mașină și incluse în preț.
+                </p>
                 <label className="v3-field ak-equipment-search">
                   <span>Caută o dotare</span>
                   <input
@@ -466,29 +444,43 @@ function VehiclePage() {
                     placeholder="De exemplu: scaune, cameră, CarPlay"
                   />
                 </label>
-                {query && (
-                  <p className="ak-search-count" role="status">
-                    {count} {count === 1 ? "rezultat" : "rezultate"}
-                  </p>
-                )}
-                {filtered.map((group, i) => (
+                <p className="ak-search-count" role="status">
+                  {query ? `${count} ${count === 1 ? "rezultat" : "rezultate"}` : ""}
+                </p>
+                {filtered.map((group) => (
                   <details
                     key={query + group.name}
                     className="ak-product-disclosure"
-                    open={!!query || i === 0}
+                    open={!!query}
                   >
                     <summary>
                       {group.name}
                       <span>{group.items.length}</span>
                     </summary>
-                    <ul>
-                      {group.items.map((item) => (
-                        <li key={item}>
-                          <Check size={17} />
-                          {item}
-                        </li>
+                    <div className="ak-equipment-group">
+                      {groupEquipmentByPurpose(group.items).map((topic) => (
+                        <div className="ak-equipment-topic" key={topic.name}>
+                          <h3>{topic.name}</h3>
+                          <ul>
+                            {topic.items.map((item) => (
+                              <li
+                                key={item}
+                                className={`ak-equipment-row${detailed ? " has-kind" : ""}`}
+                              >
+                                <span>{item.replace(/^[A-Z0-9]{3} - /, "")}</span>
+                                {detailed && (
+                                  <span className={`ak-equipment-kind ${equipmentKind(item)}`}>
+                                    {equipmentKind(item) === "optional"
+                                      ? "Opțional inclus"
+                                      : "Standard"}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </details>
                 ))}
                 {!count && (
@@ -501,23 +493,25 @@ function VehiclePage() {
                 )}
               </section>
             )}
-            <section className="ak-product-section" id="specificatii">
-              <h2>Date tehnice.</h2>
-              <dl className="ak-product-specs">
-                {specs.map(([name, value]) => (
-                  <div key={name}>
-                    <dt>{name}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-              </dl>
-              {detailed && (
-                <p className="ak-product-footnote">
-                  Valorile de consum și emisii sunt măsurate conform WLTP. Pot varia în condiții
-                  reale de utilizare.
-                </p>
-              )}
-            </section>
+            {specs.length > 0 && (
+              <section className="ak-product-section" id="specificatii">
+                <h2>Date tehnice.</h2>
+                <dl className="ak-product-specs">
+                  {specs.map(([name, value]) => (
+                    <div key={name}>
+                      <dt>{name}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {detailed && (
+                  <p className="ak-product-footnote">
+                    Valorile de consum și emisii sunt măsurate conform WLTP. Pot varia în condiții
+                    reale de utilizare.
+                  </p>
+                )}
+              </section>
+            )}
             {usedExample && (
               <section className="ak-product-section">
                 <h2>Vezi mașina la Autoklass Sibiu.</h2>
@@ -557,11 +551,7 @@ function VehiclePage() {
               </section>
             )}
             <section className="ak-product-section">
-              <h2>
-                Următorul pas,
-                <br />
-                cu un consultant.
-              </h2>
+              <h2>Cum soliciți oferta.</h2>
               <ol className="ak-buying-steps">
                 <li>
                   <span>1</span>
@@ -727,9 +717,9 @@ function ConsultantBlock({ detailed, usedExample }: { detailed: boolean; usedExa
         </strong>
         <span>
           {detailed
-            ? glcDetails.consultant.role
+            ? "Consultant vânzări"
             : usedExample
-              ? "Consultant vânzări · Sibiu"
+              ? "Consultant vânzări"
               : "Detalii despre mașină și ofertă"}
         </span>
       </div>

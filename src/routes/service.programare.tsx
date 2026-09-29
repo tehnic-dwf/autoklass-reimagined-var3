@@ -16,6 +16,7 @@ import {
   rateUnit,
 } from "@/data/service-prices";
 import { formatPrice } from "@/data/vehicles";
+import { vinVehicles, serviceModels, eligibleServiceRateIds } from "@/data/service-vehicles";
 import "@/service-mobile.css";
 type ServiceSearch = {
   branch?: string;
@@ -49,9 +50,46 @@ function ServiceRequest() {
       ? search.rate!
       : "",
   );
-  const availableRates = serviceRates.filter((item) => item.serviceIds.includes(service));
+  const [vin, setVin] = useState("W1NKM5BB1VU149616");
+  const [brand, setBrand] = useState("Mercedes-Benz");
+  const [model, setModel] = useState("GLC");
+  const [vinStatus, setVinStatus] = useState("");
+  const matchedVehicle = vinVehicles[vin];
+  const identified =
+    matchedVehicle?.brand === brand && matchedVehicle.model === model ? matchedVehicle : undefined;
+  const identifyVehicle = (input: string) => {
+    const next = input.replace(/\s/g, "").toUpperCase();
+    setVin(next);
+    setErrors((previous) => {
+      const remaining = { ...previous };
+      for (const key of ["vin", "brand", "model"]) delete remaining[key];
+      return remaining;
+    });
+    setRate("");
+    setBrand("");
+    setModel("");
+    const match = vinVehicles[next];
+    if (match) {
+      setBrand(match.brand);
+      setModel(match.model);
+      setVinStatus(`Mașină identificată: ${match.brand} ${match.model}, ${match.year}.`);
+    } else
+      setVinStatus(
+        next.length === 17
+          ? "Alege marca și modelul; identificarea automată nu a găsit această mașină."
+          : "",
+      );
+  };
+  const modelRateIds = eligibleServiceRateIds(brand, model, identified);
+  const availableRates = serviceRates.filter(
+    (item) =>
+      item.serviceIds.includes(service) &&
+      brand === "Mercedes-Benz" &&
+      (!["revizie", "climatizare", "frane", "geometrie"].includes(service) ||
+        modelRateIds.includes(item.id)),
+  );
   const selectedRate = availableRates.find((item) => item.id === rate);
-  const priceRange = rateRange(selectedRate ? [selectedRate] : availableRates);
+  const priceRange = rateRange(selectedRate ? [selectedRate] : availableRates, branch);
   const priceUnit = selectedRate || availableRates[0];
   const rateSummary =
     priceRange && priceUnit ? (
@@ -72,9 +110,7 @@ function ServiceRequest() {
     ) : (
       <p className="service-price-unavailable">Costul se stabilește după verificarea mașinii.</p>
     );
-  const [vin, setVin] = useState("WDD00000000000000");
   const [km, setKm] = useState("35000");
-  const [unknown, setUnknown] = useState(false);
   const [problem, setProblem] = useState("Revizie periodică.");
   const [date, setDate] = useState("");
   useEffect(() => {
@@ -112,12 +148,12 @@ function ServiceRequest() {
       if (!service) errs["service"] = "Alege un serviciu.";
       if (service === "other" && !problem.trim())
         errs["problem"] = "Descrie pe scurt ce ai observat.";
-      if (!unknown) {
-        if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin.trim()))
-          errs["vin"] = "VIN-ul are 17 caractere, fără I, O și Q.";
-        if (!/^\d+$/.test(km) || Number(km) > 2000000)
-          errs["km"] = "Introdu kilometrajul în cifre.";
-      }
+      if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin.trim()))
+        errs["vin"] = "Introdu VIN-ul: 17 caractere, fără I, O și Q.";
+      if (!brand) errs["brand"] = "Alege marca mașinii.";
+      if (!model) errs["model"] = "Alege modelul mașinii.";
+      if (km && (!/^\d+$/.test(km) || Number(km) > 2000000))
+        errs["km"] = "Introdu kilometrajul în cifre.";
     } else {
       Object.assign(errs, validateContact(contact));
       if (date && date < minDate) errs["date"] = "Alege o zi viitoare.";
@@ -156,6 +192,8 @@ function ServiceRequest() {
         service: "Serviciu",
         problem: "Ce ai observat la mașină?",
         vin: "VIN (serie de șasiu)",
+        brand: "Marca mașinii",
+        model: "Modelul mașinii",
         km: "Kilometraj actual (km)",
         date: "Zi preferată (opțional)",
       } as Record<string, string>
@@ -213,9 +251,7 @@ function ServiceRequest() {
               </div>
             ) : (
               <>
-                <p className="v3-intro">
-                  Alege serviciul și sucursala. Confirmăm împreună ziua și ora.
-                </p>
+                <p className="v3-intro">Completează VIN-ul, apoi alege serviciul și locația.</p>
                 <div className="v3-step mt-8" aria-label={`Pasul ${step} din 2`}>
                   <span className="active" />
                   <span className={step === 2 ? "active" : ""} />
@@ -227,6 +263,98 @@ function ServiceRequest() {
                   <div className="v3-stack">
                     {step === 1 ? (
                       <>
+                        <label className="v3-field">
+                          <span>VIN (serie de șasiu)</span>
+                          <input
+                            {...a11y("vin")}
+                            value={vin}
+                            onChange={(e) => identifyVehicle(e.target.value)}
+                            maxLength={17}
+                            autoCapitalize="characters"
+                            autoComplete="off"
+                            spellCheck={false}
+                            required
+                            aria-describedby={errors["vin"] ? "service-vin-error" : "vin-help"}
+                          />
+                          {err("vin")}
+                          {!errors["vin"] && (
+                            <span id="vin-help" className="v3-small v3-muted">
+                              17 caractere. Îl găsești în talon, la rubrica E.
+                            </span>
+                          )}
+                        </label>
+                        {vinStatus && (
+                          <p className="ak-vin-status" role="status">
+                            {vinStatus}
+                          </p>
+                        )}
+                        <div className="ak-service-vehicle-fields">
+                          <label className="v3-field">
+                            <span>Marca mașinii</span>
+                            <select
+                              {...a11y("brand")}
+                              required
+                              value={brand}
+                              onChange={(e) => {
+                                setBrand(e.target.value);
+                                setErrors((previous) => {
+                                  const next = { ...previous };
+                                  delete next["brand"];
+                                  delete next["model"];
+                                  return next;
+                                });
+                                setModel("");
+                                setRate("");
+                                setVinStatus("");
+                              }}
+                            >
+                              <option value="">Alege marca</option>
+                              {Object.keys(serviceModels).map((item) => (
+                                <option key={item}>{item}</option>
+                              ))}
+                            </select>
+                            {err("brand")}
+                          </label>
+                          <label className="v3-field">
+                            <span>Modelul mașinii</span>
+                            <select
+                              {...a11y("model")}
+                              required
+                              disabled={!brand}
+                              value={model}
+                              onChange={(e) => {
+                                setModel(e.target.value);
+                                setErrors((previous) => {
+                                  const next = { ...previous };
+                                  delete next["model"];
+                                  return next;
+                                });
+                                setRate("");
+                                setVinStatus("");
+                              }}
+                            >
+                              <option value="">
+                                {brand ? "Alege modelul" : "Alege întâi marca"}
+                              </option>
+                              {(serviceModels[brand] || []).map((item) => (
+                                <option key={item}>{item}</option>
+                              ))}
+                            </select>
+                            {err("model")}
+                          </label>
+                        </div>
+                        <label className="v3-field">
+                          <span>Kilometraj actual (opțional)</span>
+                          <input
+                            {...a11y("km")}
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="off"
+                            value={km}
+                            onChange={(e) => setKm(e.target.value)}
+                          />
+                          {err("km")}
+                        </label>
                         <label className="v3-field">
                           <span>Sucursală</span>
                           <select
@@ -266,29 +394,6 @@ function ServiceRequest() {
                           {err("service")}
                         </label>
                         {rateSummary}
-                        {availableRates.length > 1 && (
-                          <label className="v3-field">
-                            <span>Categoria mașinii (opțional)</span>
-                            <select
-                              name="rate"
-                              value={rate}
-                              onChange={(e) => setRate(e.target.value)}
-                            >
-                              <option value="">Nu sunt sigur / toate categoriile</option>
-                              {availableRates.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                  {item.title}
-                                  {item.id.endsWith("under-five")
-                                    ? " · până la 5 ani inclusiv"
-                                    : ""}
-                                </option>
-                              ))}
-                            </select>
-                          </label>
-                        )}
-                        <p className="service-estimate-note">
-                          Devizul final se stabilește în service, după verificarea mașinii.
-                        </p>
                         <label className="v3-field">
                           <span>
                             {service === "other"
@@ -315,50 +420,6 @@ function ServiceRequest() {
                           />
                           {err("problem")}
                         </label>
-                        <label className="v3-check">
-                          <input
-                            type="checkbox"
-                            checked={unknown}
-                            onChange={(e) => setUnknown(e.target.checked)}
-                          />
-                          Nu am VIN-ul sau kilometrajul la îndemână
-                        </label>
-                        {unknown ? (
-                          <p className="v3-notice">
-                            Poți continua. Consultantul îți va cere ulterior datele mașinii.
-                          </p>
-                        ) : (
-                          <>
-                            <label className="v3-field">
-                              <span>VIN (serie de șasiu)</span>
-                              <input
-                                {...a11y("vin")}
-                                value={vin}
-                                onChange={(e) => setVin(e.target.value.toUpperCase())}
-                                maxLength={17}
-                                autoCapitalize="characters"
-                                spellCheck={false}
-                                required
-                              />
-                              {err("vin")}
-                              <small className="v3-small v3-muted">
-                                17 caractere. Îl găsești în talon, la rubrica E.
-                              </small>
-                            </label>
-                            <label className="v3-field">
-                              <span>Kilometraj actual (km)</span>
-                              <input
-                                {...a11y("km")}
-                                type="text"
-                                inputMode="numeric"
-                                value={km}
-                                onChange={(e) => setKm(e.target.value)}
-                                required
-                              />
-                              {err("km")}
-                            </label>
-                          </>
-                        )}
                       </>
                     ) : (
                       <>
@@ -367,9 +428,10 @@ function ServiceRequest() {
                           <br />
                           {branchName(branch)}
                           <br />
-                          {unknown
-                            ? "Datele mașinii vor fi completate ulterior."
-                            : `${vin} · ${km} km`}
+                          {brand} {model}
+                          <br />
+                          {vin}
+                          {km ? ` · ${formatPrice(Number(km))} km` : ""}
                         </div>
 
                         <label className="v3-field">

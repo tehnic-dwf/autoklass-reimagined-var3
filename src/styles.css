@@ -4,6 +4,8 @@
 @import "./v3.css";
 @import "./mobile-refinement.css";
 @import "./typography.css";
+@import "./client-refinement.css";
+@import "./discovery.css";
 
 @custom-variant dark (&:is(.dark *));
 

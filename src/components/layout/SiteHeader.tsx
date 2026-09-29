@@ -123,6 +123,16 @@ export function SiteHeader({
                   <Dialog.Description id="site-menu-description" className="sr-only">
                     Mașini, service și celelalte servicii Autoklass.
                   </Dialog.Description>
+                  <div className="ak-menu-offers" aria-label="Oferte Autoklass">
+                    <Link to="/" hash="oferte-vanzari" onClick={closeMenu}>
+                      <span>Oferte vânzări</span>
+                      <ArrowRight size={20} aria-hidden />
+                    </Link>
+                    <Link to="/" hash="oferte-service" onClick={closeMenu}>
+                      <span>Oferte service</span>
+                      <ArrowRight size={20} aria-hidden />
+                    </Link>
+                  </div>
                   <a
                     className="ak-menu-branches"
                     href="https://www.autoklass.ro/sucursale"
@@ -145,6 +155,7 @@ export function SiteHeader({
                       (item) =>
                         !mainLinks.includes(item) &&
                         item.label !== "Sucursale" &&
+                        !/Campanii|Oferte service|Promoții service/i.test(item.label) &&
                         !(
                           item.kind === "internal" &&
                           (item.to === "/comparatie" || item.to === "/contact")
@@ -171,7 +182,7 @@ export function SiteHeader({
                         </div>
                         {group.id === "autovehicule" ? (
                           <details className="v3-disclosure">
-                            <summary>Mărci și oferte</summary>
+                            <summary>Mărci și servicii de achiziție</summary>
                             <div className="ak-menu-subgroups">
                               <h3>Mărci și autoutilitare</h3>
                               <MenuLinks items={vehicleLinks} onClick={closeMenu} />

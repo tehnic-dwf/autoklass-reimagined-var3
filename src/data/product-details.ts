@@ -171,7 +171,6 @@ export const glcDetails = {
     "75B - Pachet USB",
     "851 - Geamuri fata izolate termic si acustic",
     "868 - Display central",
-    "891 - Lumina ambientala",
     "897 - Incarcare wireless pentru dispozitive mobile pentru locurile din fata",
     "942 - Pachet Boot Confort",
     "B51 - Kit interventie pana TIREFIT",
@@ -262,15 +261,25 @@ export const completeEquipmentGroups = [
 ];
 
 const generalEquipment = {
-  "Confort și interior": ["Scaune față încălzite și ventilate"],
-  "Siguranță și asistență": [
-    "Asistent schimbare bandă",
-    "Sistem de parcare automat",
-    "Asistență fază lungă",
-    "Faruri autoadaptive",
-  ],
+  "Siguranță și asistență": ["Asistent schimbare bandă"],
   "Multimedia și conectivitate": ["Control vocal", "Conexiune internet"],
 };
 for (const group of completeEquipmentGroups) {
   group.items.push(...(generalEquipment[group.name as keyof typeof generalEquipment] || []));
+}
+
+// Prototype-only classifications, inferred at the user's request on 2026-09-25.
+// Installed equipment is sourced above; standard/optional status needs a factory build sheet for production.
+export type EquipmentKind = "standard" | "optional";
+export const equipmentKindLabels: Record<EquipmentKind, string> = {
+  standard: "Standard",
+  optional: "Opțional inclus",
+};
+const prototypeOptionalCodes = new Set(
+  "188 118 207 241 242 30P 401 413 443 464 513 670 795 824 840 851 875 876 891 894 897 901 942 949 7U3 51U H64 L5C P17 P21 P29 P31 P35 P47 P49 P53 P55 PAV PBG PDC PSN RRE U19 U26 U34 U35 U45".split(
+    " ",
+  ),
+);
+export function equipmentKind(item: string): EquipmentKind {
+  return prototypeOptionalCodes.has(item.split(" - ")[0]!) ? "optional" : "standard";
 }

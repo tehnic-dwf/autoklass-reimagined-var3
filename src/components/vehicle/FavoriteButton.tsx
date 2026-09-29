@@ -23,7 +23,7 @@ export function FavoriteButton({
     <button
       type="button"
       aria-pressed={active}
-      aria-label={active ? "Scoate din lista salvată" : "Salvează pentru comparație"}
+      aria-label={active ? "Salvată. Scoate din lista salvată" : "Salvează pentru comparație"}
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -37,7 +37,7 @@ export function FavoriteButton({
       )}
     >
       <Heart className={cn("size-5 shrink-0", active && "fill-current")} aria-hidden />
-      {withLabel ? (active ? "Salvată" : "Salvează pentru comparație") : null}
+      {withLabel ? <span>{active ? "Salvată" : "Salvează pentru comparație"}</span> : null}
     </button>
   );
 }

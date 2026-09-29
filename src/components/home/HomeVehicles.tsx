@@ -5,20 +5,6 @@ import { vehicles } from "@/data/vehicles";
 import { matchingVehicles, type VehicleSearch } from "@/lib/vehicle-search";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 
-const categories = [
-  { label: "SUV", search: { body: "SUV" }, slug: "mercedes-benz-glc-200-4matic-vu149616" },
-  {
-    label: "Limuzine",
-    search: { body: "Limuzină" },
-    slug: "mercedes-benz-clasa-a-200-limuzina-pj413906",
-  },
-  {
-    label: "Coupé",
-    search: { body: "Coupe" },
-    slug: "mercedes-benz-glc-220-d-4matic-coupe-tf644939",
-  },
-  { label: "Compacte", search: { body: "Hatchback" }, slug: "honda-civic-5d-hu025350" },
-];
 const collections: { label: string; search: VehicleSearch }[] = [
   { label: "Selecția Autoklass", search: {} },
   { label: "Noi", search: { condition: "nou" } },
@@ -33,7 +19,7 @@ const featured = [
   "honda-civic-5d-hu025350",
   "mercedes-benz-clasa-a-200-limuzina-pj413906",
   "mercedes-benz-glc-220-d-4matic-coupe-tf644939",
-  "honda-zr-v-advance-r2012298",
+  "bmw-seria-5-530e-xdrive-0cd61150",
 ];
 
 export function HomeVehicles() {
@@ -57,39 +43,10 @@ export function HomeVehicles() {
       : matches.slice(0, 6);
   return (
     <>
-      <section className="v3-wrap v3-section v3-discover" aria-labelledby="discover-title">
-        <div className="v3-row">
-          <h2 id="discover-title">Cum îți place să conduci?</h2>
-          <Link className="v3-link" to="/autoturisme">
-            Toate mașinile <ArrowRight size={18} aria-hidden />
-          </Link>
-        </div>
-        <div className="v3-category-grid">
-          {categories.map((category) => {
-            const vehicle = vehicles.find((v) => v.slug === category.slug)!;
-            return (
-              <Link
-                key={category.label}
-                to="/autoturisme"
-                search={category.search}
-                className="v3-category"
-              >
-                <div>
-                  <img src={vehicle.image} alt="" width={800} height={600} loading="lazy" />
-                </div>
-                <span>
-                  {category.label}
-                  <ArrowRight size={22} aria-hidden />
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
       <section className="v3-inventory ak-inventory" aria-labelledby="inventory-title">
         <div className="v3-wrap v3-section">
           <div className="v3-row">
-            <h2 id="inventory-title">Mașini de cunoscut.</h2>
+            <h2 id="inventory-title">Selecții pentru tine.</h2>
             <span className="v3-muted">Prețuri cu TVA inclus</span>
           </div>
           <div className="v3-collection-tabs" role="group" aria-label="Selecții de mașini">

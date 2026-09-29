@@ -198,9 +198,9 @@ export const ratePrice = (rate: ServiceRate, branch: string) =>
 export const rateUnit = (rate: ServiceRate) => (rate.unit === "hour" ? "lei/oră" : "lei/inspecție");
 
 /** Range of published values only; missing tariffs are never treated as zero. */
-export const rateRange = (rates: ServiceRate[]) => {
+export const rateRange = (rates: ServiceRate[], branch?: string) => {
   const prices = rates
-    .flatMap((rate) => Object.values(rate.prices))
+    .flatMap((rate) => (branch ? [ratePrice(rate, branch)] : Object.values(rate.prices)))
     .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
   return prices.length ? { min: Math.min(...prices), max: Math.max(...prices) } : undefined;
 };

@@ -1,0 +1,1591 @@
+/* Shared visual refinements for the September client review. */
+.v3 {
+  --ak-accent: #075ca8;
+  --ak-accent-hover: #034b8b;
+  --ak-accent-soft: #edf4fa;
+  --ak-text-muted: #5d6268;
+  --ak-surface: #f3f4f4;
+  --ak-separator: #dde1e4;
+}
+.ak-home [id^="oferte-"],
+.ak-home #brands-title {
+  scroll-margin-top: 88px;
+}
+.ak-home .v3-section h2 {
+  text-wrap: balance;
+}
+.ak-video-control {
+  position: absolute;
+  inset-block-start: 88px;
+  inset-inline-end: 24px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #ffffff80;
+  border-radius: 50%;
+  background: #202326b3;
+  color: #fff;
+}
+
+/* Product discovery stays shorter than the vehicles it leads to. */
+.ak-home .v3-discover {
+  padding-block: 32px;
+}
+.ak-home .v3-discover .v3-row {
+  align-items: center;
+  margin-block-end: 16px;
+}
+.ak-home .v3-discover h2 {
+  font-size: 24px;
+  margin: 0;
+}
+.ak-home .v3-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.ak-home .v3-discover .v3-category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--ak-separator);
+  background: #fff;
+  text-decoration: none;
+}
+.ak-home .v3-category > div {
+  height: 48px;
+  width: 128px;
+  max-width: 100%;
+  aspect-ratio: auto;
+  display: grid;
+  place-items: center;
+}
+.ak-body-silhouette {
+  width: 100%;
+  height: 100%;
+  color: #475158;
+}
+.ak-home .v3-category > span {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ak-home .v3-category > span > svg {
+  display: none;
+}
+
+/* Equivalent logo fields with deliberately different optical sizes. */
+.ak-home .ak-brands {
+  padding-block: 40px;
+}
+.ak-brands h2 {
+  max-width: 24ch;
+}
+.ak-home .ak-authorized-brands.ak-brand-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-block-start: 24px;
+}
+.ak-home .ak-authorized-brands > a,
+.ak-brand-upcoming {
+  width: auto;
+  min-width: 0;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--ak-separator);
+  border-radius: 6px;
+  padding: 12px 4px;
+  text-decoration: none;
+}
+.ak-home .ak-authorized-brands > a > span:first-child {
+  height: 36px;
+  display: grid;
+  place-items: center;
+}
+.ak-home .ak-authorized-brands > a > span:last-child,
+.ak-brand-upcoming > span:last-child {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+}
+.ak-home .ak-authorized-brands a img {
+  width: 64px;
+  height: 32px;
+  object-fit: contain;
+}
+.ak-home .ak-authorized-brands a:nth-child(1) img {
+  width: 43px;
+  height: 43px;
+}
+.ak-home .ak-authorized-brands a:nth-child(2) img {
+  width: 63px;
+  height: 30px;
+}
+.ak-home .ak-authorized-brands a:nth-child(3) img {
+  width: 32px;
+  height: 32px;
+}
+.ak-home .ak-authorized-brands a:nth-child(4) img {
+  width: 39px;
+  height: 32px;
+}
+.ak-home .ak-authorized-brands a:nth-child(5) img {
+  width: 48px;
+  height: 28px;
+}
+.ak-brand-upcoming {
+  background: var(--ak-surface);
+  color: var(--ak-text-muted);
+}
+.ak-ford-wordmark {
+  font:
+    italic 700 29px Georgia,
+    serif;
+  line-height: 36px;
+  color: #202326;
+}
+.ak-used-brands {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-block-start: 24px;
+  padding-block-start: 24px;
+  border-block-start: 1px solid var(--ak-separator);
+}
+.ak-used-stock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-decoration: none;
+}
+.ak-used-stock > span {
+  display: grid;
+  gap: 2px;
+}
+.ak-used-stock strong {
+  font-size: 18px;
+  font-weight: 600;
+}
+.ak-used-stock span > span {
+  font-size: 14px;
+  color: var(--ak-text-muted);
+}
+.ak-used-network {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.ak-used-network > img {
+  width: 108px;
+  height: 42px;
+  object-fit: contain;
+}
+.ak-used-network > nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 12px;
+}
+.ak-used-network a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--ak-text-muted);
+  font-size: 14px;
+  text-underline-offset: 4px;
+}
+
+/* Offers are real campaign entry points, separated from individual stock prices. */
+.ak-offer-section {
+  background: var(--ak-surface);
+}
+.ak-offer-section .v3-row > .v3-link {
+  color: var(--ak-accent);
+}
+.ak-sales-campaign {
+  display: flex;
+  padding: 20px 24px;
+  border-radius: 6px;
+  margin-block: 8px 24px;
+  background: #e3edf6;
+  text-decoration: none;
+}
+.ak-sales-campaign > span {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 24px;
+}
+.ak-sales-campaign strong {
+  font-size: 20px;
+  font-weight: 600;
+}
+.ak-sales-campaign span > span:not(.ak-campaign-link) {
+  grid-column: 1;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.ak-sales-campaign small {
+  grid-column: 1;
+  color: #4d5c69;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.ak-sales-campaign .ak-campaign-link {
+  grid-column: 2;
+  grid-row: 1/4;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  color: var(--ak-accent);
+  font-size: 16px;
+  font-weight: 600;
+}
+.ak-offer-rail {
+  position: relative;
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block: 8px 16px;
+}
+.ak-offer-rail > article {
+  flex: 0 0 calc((100% - 48px) / 3);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.ak-offer-rail > .v3-car {
+  background: #fff;
+}
+.ak-service-promo {
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.ak-service-promo > a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+}
+.ak-service-benefit {
+  padding: 24px;
+  background: var(--ak-accent-soft);
+  color: #202326;
+}
+.ak-service-benefit strong {
+  display: block;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.ak-service-benefit > span {
+  display: block;
+  margin-block-start: 4px;
+  font-size: 16px;
+}
+.ak-service-promo-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 24px;
+}
+.ak-service-promo-copy h3 {
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+.ak-service-promo-copy p {
+  font-size: 16px;
+  margin: 0 0 16px;
+  color: var(--ak-text-muted);
+  line-height: 1.5;
+}
+.ak-service-promo-copy small {
+  display: block;
+  margin-block: auto 16px;
+  font-size: 13px;
+  color: var(--ak-text-muted);
+  line-height: 1.5;
+}
+.ak-service-promo-copy .v3-link {
+  min-height: 44px;
+  color: var(--ak-accent);
+}
+.ak-menu-offers {
+  display: grid;
+  gap: 8px;
+  margin-block-end: 16px;
+}
+.ak-menu-offers > a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  background: var(--ak-accent-soft);
+  color: var(--ak-accent);
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* The existing basic search order and service identification stay intact. */
+.ak-basic-filters .ak-condition-field {
+  grid-column: 1/-1;
+  grid-row: 1;
+}
+.ak-basic-filters .v3-search-fields > .ak-brand-field {
+  grid-column: 1;
+  grid-row: 2;
+}
+.ak-basic-filters .v3-search-fields > .ak-model-field {
+  grid-column: 2;
+  grid-row: 2;
+}
+.ak-service-vehicle-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.ak-service-vehicle-fields > label {
+  min-width: 0;
+}
+.ak-vin-status {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #354d40;
+}
+
+/* Technical facts read as information, not unlabeled abbreviations. */
+.ak-card-year {
+  margin-inline-start: auto;
+  color: #4d555c;
+  font-variant-numeric: tabular-nums;
+}
+.v3-car-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.ak-card-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 8px;
+  margin-block: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #42494e;
+}
+.ak-card-facts > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+.ak-card-facts dt {
+  position: relative;
+  flex: none;
+}
+.ak-card-facts dd {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+.ak-product.ak-reviewed-product .ak-product-facts {
+  gap: 16px 24px;
+}
+.ak-product.ak-reviewed-product .ak-product-facts dd {
+  font-size: 17px;
+}
+.ak-product-year {
+  color: #30363a;
+  font-weight: 600;
+}
+
+/* One price and enquiry module; financing remains a secondary disclosure. */
+.ak-product.ak-reviewed-product .ak-condition-banner {
+  padding: 0;
+  border: 0;
+  margin-block-end: 16px;
+  background: transparent;
+  justify-content: flex-start;
+  gap: 12px;
+}
+.ak-product.ak-reviewed-product .ak-condition-banner strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #202326;
+  color: #fff;
+}
+.ak-product.ak-reviewed-product .ak-condition-banner.is-used strong {
+  background: #eee7da;
+  color: #604b28;
+}
+.ak-product.ak-reviewed-product .ak-condition-banner > span {
+  font-size: 14px;
+  color: var(--ak-text-muted);
+}
+.ak-purchase-panel {
+  min-width: 0;
+  padding: 24px;
+  margin-block-start: 24px;
+  background: #f5f6f6;
+  border: 1px solid #e4e6e6;
+  border-radius: 8px;
+}
+.ak-product.ak-reviewed-product .ak-purchase-panel .ak-product-price {
+  margin: 0;
+  padding: 0;
+  gap: 4px;
+}
+.ak-reviewed-product .ak-price-saving {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-block-end: 8px;
+}
+.ak-reviewed-product .ak-price-saving .ak-old-price {
+  margin: 0;
+  font-size: 16px;
+  color: var(--ak-text-muted);
+}
+.ak-price-saving > span {
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #e6ede8;
+  color: #304b39;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ak-product.ak-reviewed-product .ak-product-price > strong {
+  font-size: 40px;
+  font-weight: 700;
+}
+.ak-finance-disclosure {
+  margin-block-start: 20px;
+  padding-block: 14px;
+  border-block: 1px solid var(--ak-separator);
+}
+.ak-finance-disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  list-style: none;
+}
+.ak-finance-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.ak-finance-label {
+  font-size: 16px;
+  font-weight: 600;
+}
+.ak-finance-label small {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--ak-text-muted);
+}
+.ak-finance-rate {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 2px 4px;
+  margin-inline-start: auto;
+  text-align: end;
+}
+.ak-finance-rate b {
+  font-size: 21px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ak-finance-rate small {
+  font-size: 14px;
+  color: var(--ak-text-muted);
+  white-space: nowrap;
+}
+.ak-finance-disclosure summary > svg {
+  flex: none;
+  color: var(--ak-text-muted);
+}
+.ak-finance-disclosure[open] summary > svg {
+  transform: rotate(180deg);
+}
+.ak-finance-disclosure > div {
+  padding-block-start: 12px;
+}
+.ak-finance-disclosure p {
+  font-size: 14px;
+  color: var(--ak-text-muted);
+  line-height: 1.5;
+  margin-block: 0 8px;
+}
+.ak-product.ak-reviewed-product .ak-offer-box {
+  padding: 0;
+  margin-block-start: 20px;
+  background: transparent;
+}
+.ak-product.ak-reviewed-product .ak-offer-button {
+  width: 100%;
+  min-height: 52px;
+  margin: 0;
+}
+.ak-contact-details {
+  padding-block-start: 20px;
+}
+.ak-purchase-panel .ak-product-consultant img,
+.ak-purchase-panel .ak-consultant-fallback {
+  width: 44px;
+  height: 44px;
+}
+.ak-purchase-panel .ak-product-consultant strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+.ak-vehicle-location {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-start: 16px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--ak-separator);
+}
+.ak-vehicle-location > svg {
+  flex: none;
+  margin-inline: 13px;
+}
+.ak-vehicle-location span {
+  min-width: 0;
+}
+.ak-vehicle-location small {
+  display: block;
+  font-size: 13px;
+  color: var(--ak-text-muted);
+}
+.ak-vehicle-location strong {
+  display: block;
+  margin-block-start: 2px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.ak-equipment-intro {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.ak-product .ak-equipment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-block: 14px;
+  margin: 0;
+  border-block-end: 1px solid #e8e9e7;
+  line-height: 1.5;
+}
+.ak-equipment-row > span:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.ak-equipment-kind {
+  flex: none;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+  padding: 3px 7px;
+  border: 1px solid #d8dcdf;
+  border-radius: 4px;
+  background: #fff;
+  color: #555e63;
+}
+.ak-equipment-kind.optional {
+  background: #e9edf0;
+  border-color: #e9edf0;
+  color: #33434f;
+}
+.ak-product #dotari .ak-search-count:empty {
+  margin: 0;
+}
+.ak-product #dotari > .ak-product-disclosure {
+  border-block-end-color: var(--ak-separator);
+}
+.ak-product #dotari > .ak-product-disclosure > summary {
+  padding-block: 20px;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.ak-product #dotari > .ak-product-disclosure > summary > span {
+  font-size: 14px;
+  color: var(--ak-text-muted);
+  font-weight: 400;
+}
+
+@media (hover: hover) {
+  .ak-menu-offers > a:hover {
+    background: #dfeefa;
+    color: var(--ak-accent-hover);
+  }
+  .ak-home .ak-authorized-brands > a:hover,
+  .ak-home .v3-discover .v3-category:hover {
+    border-color: #7b848c;
+    background: #f7f8f8;
+  }
+  .ak-used-stock:hover strong,
+  .ak-service-promo a:hover h3,
+  .ak-sales-campaign:hover .ak-campaign-link {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+@media (max-width: 767px) {
+  .ak-home .v3-discover .v3-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .ak-home .v3-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .ak-home .v3-category > div {
+    height: 40px;
+    width: 112px;
+  }
+  .ak-home .v3-discover .v3-category {
+    padding: 8px 12px;
+  }
+  .ak-home .ak-authorized-brands.ak-brand-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ak-home .ak-authorized-brands > a,
+  .ak-brand-upcoming {
+    min-height: 92px;
+  }
+  .ak-used-brands {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .ak-used-stock {
+    min-height: 48px;
+  }
+  .ak-used-network > nav {
+    flex-wrap: nowrap;
+  }
+  .ak-offer-rail {
+    gap: 16px;
+    margin-inline-end: -24px;
+    padding-inline-end: 24px;
+  }
+  .ak-offer-rail > article {
+    flex-basis: 90%;
+  }
+  .ak-sales-campaign {
+    padding: 20px;
+  }
+  .ak-sales-campaign > span {
+    display: block;
+  }
+  .ak-sales-campaign > span > * {
+    display: block;
+  }
+  .ak-sales-campaign strong {
+    margin-block-end: 8px;
+  }
+  .ak-sales-campaign small {
+    margin-block-start: 8px;
+  }
+  .ak-sales-campaign .ak-campaign-link {
+    display: flex;
+    margin-block-start: 8px;
+  }
+  .ak-search .ak-basic-filters .ak-condition-field {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .ak-search .ak-basic-filters .v3-search-fields > .ak-brand-field {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .ak-search .ak-basic-filters .v3-search-fields > .ak-model-field {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .ak-service-vehicle-fields {
+    grid-template-columns: 1fr;
+  }
+  .ak-product.ak-reviewed-product .ak-product-facts {
+    grid-row: 4;
+    margin-block-start: 16px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-gallery {
+    grid-row: 5;
+  }
+  .ak-product.ak-reviewed-product .ak-purchase-panel {
+    grid-row: 6;
+    padding: 20px;
+    margin-inline: -8px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-download {
+    grid-row: 7;
+  }
+  .ak-product.ak-reviewed-product .ak-product-content {
+    grid-row: 8;
+  }
+  .ak-product .ak-equipment-row {
+    gap: 12px;
+  }
+  .ak-equipment-kind {
+    max-width: 94px;
+    text-align: center;
+  }
+}
+@media (max-width: 359px) {
+  .ak-home .ak-authorized-brands > a > span:last-child {
+    font-size: 12px;
+  }
+  .ak-finance-rate {
+    display: block;
+  }
+  .ak-finance-rate small {
+    display: block;
+  }
+  .ak-finance-rate b {
+    font-size: 19px;
+  }
+  .ak-product.ak-reviewed-product .ak-purchase-panel {
+    padding: 16px;
+  }
+  .ak-used-network {
+    gap: 8px;
+  }
+  .ak-used-network > img {
+    width: 94px;
+  }
+  .ak-used-network > nav {
+    gap: 6px;
+  }
+}
+
+/* Mobile-only composition pass: stock, campaign and contact each have one clear role. */
+@media (max-width: 767px) {
+  .ak-home .v3-discover .v3-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+  .ak-home .v3-discover h2 {
+    font-size: 24px;
+  }
+  .ak-home .v3-discover .v3-link {
+    font-size: 14px;
+    min-height: 44px;
+  }
+  .ak-home .v3-category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-block-start: 8px;
+  }
+  .ak-home .v3-discover .v3-category {
+    display: block;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .ak-home .v3-category > div {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    border-radius: 4px;
+    background: #eef0f1;
+    outline: 1px solid #0000001a;
+    outline-offset: -1px;
+  }
+  .ak-home .v3-category img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: none;
+  }
+  .ak-home .v3-category > span {
+    min-height: 44px;
+    padding: 4px 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .ak-home .ak-brands {
+    padding-block: 40px;
+  }
+  .ak-home .ak-brands h2 {
+    font-size: 24px;
+    max-width: 23ch;
+  }
+  .ak-home .ak-authorized-brands.ak-brand-grid {
+    gap: 16px 8px;
+    margin-block-start: 24px;
+  }
+  .ak-home .ak-authorized-brands > a,
+  .ak-home .ak-brand-upcoming {
+    border: 0;
+    background: transparent;
+    min-height: 80px;
+    padding: 8px 0;
+    gap: 12px;
+  }
+  .ak-home .ak-authorized-brands > a > span:first-child,
+  .ak-home .ak-ford-wordmark {
+    height: 40px;
+    display: grid;
+    place-items: center;
+  }
+  .ak-home .ak-ford-wordmark img {
+    width: 72px;
+    height: 28px;
+    object-fit: contain;
+  }
+  .ak-home .ak-authorized-brands > a > span:last-child,
+  .ak-home .ak-brand-upcoming > span:last-child {
+    font-size: 13px;
+  }
+  .ak-home .ak-authorized-brands a:nth-child(2) img {
+    width: 72px;
+    height: 34px;
+  }
+  .ak-home .ak-used-brands {
+    display: block;
+    margin-block-start: 24px;
+    padding-block-start: 24px;
+  }
+  .ak-home .ak-used-brands h3 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .ak-used-destinations {
+    padding: 0 16px;
+    border-radius: 6px;
+    background: var(--ak-surface);
+  }
+  .ak-home .ak-used-stock {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 72px;
+    padding-block: 12px;
+  }
+  .ak-home .ak-used-stock > img {
+    width: 104px;
+    height: 32px;
+    object-fit: contain;
+    filter: brightness(0);
+  }
+  .ak-home .ak-used-stock > span {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-inline-start: auto;
+    font-size: 14px;
+    color: #343b40;
+  }
+  .ak-home .ak-used-network {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 16px;
+    padding-block: 12px;
+    border-block-start: 1px solid var(--ak-separator);
+  }
+  .ak-home .ak-used-network > img {
+    width: 112px;
+    height: 40px;
+    mix-blend-mode: multiply;
+    object-position: left center;
+  }
+  .ak-home .ak-used-network > nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .ak-home .ak-used-network a {
+    color: #343b40;
+    min-height: 44px;
+    text-decoration: underline;
+  }
+
+  .ak-home .ak-sales-campaign {
+    display: block;
+    overflow: hidden;
+    padding: 0;
+    margin-block: 8px 24px;
+    background: #fff;
+    border-radius: 6px;
+  }
+  .ak-sales-campaign > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2.25;
+    object-fit: cover;
+    outline: 1px solid #0000001a;
+    outline-offset: -1px;
+  }
+  .ak-sales-campaign > div {
+    padding: 20px;
+  }
+  .ak-sales-campaign .ak-campaign-eyebrow {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ak-text-muted);
+  }
+  .ak-sales-campaign strong {
+    display: block;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 600;
+    margin-block: 8px 12px;
+  }
+  .ak-sales-campaign p {
+    margin: 0 0 12px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .ak-sales-campaign p b {
+    font-weight: 600;
+  }
+  .ak-sales-campaign small {
+    display: block;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ak-text-muted);
+  }
+  .ak-sales-campaign .ak-campaign-link {
+    margin-block-start: 16px;
+    font-size: 16px;
+    min-height: 44px;
+    display: flex;
+    gap: 8px;
+  }
+  .ak-home .ak-stock-offers-title {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .ak-home .ak-offer-section .ak-discount-badge {
+    color: #064e8e;
+    background: #e7f2fc;
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .ak-home #oferte-service {
+    background: #f3f4f4;
+  }
+  .ak-home .ak-service-promo {
+    border-radius: 6px;
+  }
+  .ak-home .ak-service-promo-copy {
+    padding: 24px;
+  }
+  .ak-home .ak-service-promo-copy h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .ak-home .ak-service-benefit {
+    padding: 24px 0;
+    background: transparent;
+  }
+  .ak-home .ak-service-benefit strong {
+    font-size: 44px;
+    font-weight: 600;
+    color: #17344d;
+    line-height: 1.1;
+  }
+  .ak-home .ak-service-benefit > span {
+    font-size: 16px;
+    margin-block-start: 8px;
+    color: #343b40;
+  }
+  .ak-home .ak-service-promo-copy p {
+    margin-block-end: 16px;
+  }
+  .ak-home .ak-service-promo-copy small {
+    padding-block-start: 16px;
+    border-block-start: 1px solid var(--ak-separator);
+    margin-block-end: 12px;
+  }
+
+  .ak-menu-panel .v3-panel-head {
+    padding: 12px 20px;
+    min-height: 64px;
+  }
+  .ak-menu-panel .v3-panel-head h2 {
+    font-size: 24px;
+  }
+  .ak-menu-panel .v3-panel-body {
+    padding: 12px 20px;
+  }
+  .ak-menu-panel .ak-menu-offers {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-block-end: 8px;
+  }
+  .ak-menu-panel .ak-menu-offers > a {
+    align-items: center;
+    min-height: 52px;
+    padding: 8px 12px;
+    gap: 8px;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+  .ak-menu-panel .ak-menu-offers > a svg {
+    flex: none;
+    width: 16px;
+  }
+  .ak-menu-panel .ak-menu-branches {
+    min-height: 44px;
+    padding: 8px 12px;
+    margin-block-end: 16px;
+    font-size: 16px;
+  }
+  .ak-menu-panel.v3.v3 .ak-menu-primary h2 {
+    font-size: 20px;
+    margin-block-end: 0;
+  }
+  .ak-menu-panel .ak-menu-primary {
+    padding-block-end: 8px;
+    margin-block-end: 12px;
+  }
+  .ak-menu-panel .ak-menu-main-link {
+    padding-block: 8px;
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .ak-menu-panel .v3-disclosure > summary {
+    padding-block: 8px;
+    min-height: 44px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .ak-menu-panel .ak-menu-footer {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px max(12px, env(safe-area-inset-bottom));
+  }
+  .ak-menu-panel .ak-menu-footer > .v3-button {
+    min-height: 48px;
+    font-size: 15px;
+    padding: 12px;
+  }
+  .ak-menu-panel .ak-menu-footer > .v3-button > svg {
+    display: none;
+  }
+  .ak-menu-panel .ak-menu-footer > a:not(.v3-button) {
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .ak-product.ak-reviewed-product .ak-product-back {
+    min-height: 52px;
+    padding-block: 4px;
+  }
+  .ak-product.ak-reviewed-product .ak-condition-banner {
+    margin-block: 4px 12px;
+    gap: 8px 12px;
+  }
+  .ak-product.ak-reviewed-product .ak-condition-banner strong {
+    padding: 6px 8px;
+    font-size: 13px;
+    color: #304759;
+    background: #eef2f5;
+  }
+  .ak-product.ak-reviewed-product .ak-condition-banner.is-used strong {
+    background: #eee7da;
+    color: #604b28;
+  }
+  .ak-product.ak-reviewed-product .ak-condition-banner strong svg {
+    width: 14px;
+    height: 14px;
+  }
+  .ak-product.ak-reviewed-product #vehicle-title {
+    font-size: 30px;
+    margin-block-end: 8px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-trim {
+    font-size: 15px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-facts {
+    margin-block: 16px 0;
+    gap: 16px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-facts dt {
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .ak-product.ak-reviewed-product .ak-product-facts dt svg {
+    width: 16px;
+    height: 16px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-facts dd {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .ak-product.ak-reviewed-product .ak-product-gallery {
+    position: relative;
+    margin-block-start: 16px;
+  }
+  .ak-gallery-save {
+    position: static;
+    grid-column: 5;
+    grid-row: 1;
+  }
+  .ak-gallery-save > button {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #202426;
+    box-shadow: none;
+  }
+  .ak-gallery-save > button > span {
+    display: none;
+  }
+  .ak-gallery-save > button:focus-visible {
+    outline: 2px solid #1262a6;
+    outline-offset: -4px;
+  }
+  .ak-gallery-save > button[aria-pressed="true"] {
+    color: var(--ak-accent);
+  }
+  .ak-product.ak-reviewed-product .ak-purchase-panel {
+    padding: 24px;
+    margin: 0 -24px 24px;
+    background: #f4f6f8;
+    border: 0;
+    border-radius: 0;
+  }
+  .ak-product.ak-reviewed-product .ak-product-price > strong {
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .ak-product.ak-reviewed-product .ak-product-price > span {
+    font-size: 14px;
+    margin-block-start: 4px;
+  }
+  .ak-product.ak-reviewed-product .ak-price-saving {
+    gap: 8px 12px;
+    margin: 12px 0 0;
+  }
+  .ak-product.ak-reviewed-product .ak-price-saving .ak-old-price {
+    font-size: 14px;
+  }
+  .ak-product.ak-reviewed-product .ak-price-saving > span {
+    background: #e3effa;
+    color: #064e8e;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 8px;
+  }
+  .ak-product.ak-reviewed-product .ak-finance-disclosure {
+    background: transparent;
+    padding: 16px 0 0;
+    border: 0;
+    border-block-start: 1px solid #dce2e7;
+    border-radius: 0;
+    margin-block-start: 16px;
+  }
+  .ak-product.ak-reviewed-product .ak-finance-disclosure > summary {
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+  }
+  .ak-finance-main {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .ak-product.ak-reviewed-product .ak-finance-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ak-text-muted);
+  }
+  .ak-product.ak-reviewed-product .ak-finance-rate {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 4px;
+    margin: 0;
+    text-align: start;
+  }
+  .ak-product.ak-reviewed-product .ak-finance-rate b {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .ak-product.ak-reviewed-product .ak-finance-rate small {
+    font-size: 14px;
+  }
+  .ak-finance-conditions-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+    color: var(--ak-accent);
+    font-size: 14px;
+  }
+  .ak-finance-conditions-link svg {
+    flex: none;
+  }
+  .ak-finance-disclosure[open] .ak-finance-conditions-link svg {
+    transform: rotate(180deg);
+  }
+  .ak-product.ak-reviewed-product .ak-offer-box {
+    margin-block-start: 16px;
+  }
+  .ak-product.ak-reviewed-product .ak-offer-button,
+  .ak-product.ak-reviewed-product .ak-product-sticky .v3-button {
+    background: var(--ak-accent);
+    border-color: var(--ak-accent);
+    color: #fff;
+  }
+  .ak-product.ak-reviewed-product .ak-contact-details {
+    margin-block-start: 16px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px 16px;
+  }
+  .ak-contact-details .ak-product-consultant {
+    display: contents;
+  }
+  .ak-contact-details .ak-product-consultant > img,
+  .ak-contact-details .ak-consultant-fallback {
+    grid-column: 1;
+    width: 48px;
+    height: 48px;
+  }
+  .ak-contact-details .ak-product-consultant > div {
+    grid-column: 2;
+    align-self: center;
+    min-width: 0;
+  }
+  .ak-product.ak-reviewed-product .ak-vehicle-location {
+    grid-column: 2;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .ak-product.ak-reviewed-product .ak-vehicle-location small {
+    font-size: 12px;
+  }
+  .ak-product.ak-reviewed-product .ak-vehicle-location strong {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+  .ak-product.ak-reviewed-product .ak-product-download {
+    margin-block-start: 0;
+  }
+}
+@media (max-width: 359px) {
+  .ak-home .ak-authorized-brands > a > span:last-child {
+    font-size: 12px;
+  }
+
+  .ak-menu-panel .ak-menu-footer {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .ak-menu-panel .ak-menu-offers > a {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .ak-home .v3-category > span {
+    font-size: 13px;
+  }
+  .ak-home .ak-used-network {
+    display: block;
+  }
+  .ak-home .ak-used-network > nav {
+    margin-block-start: 4px;
+  }
+}
+@media (hover: hover) and (max-width: 767px) {
+  .ak-product.ak-reviewed-product .ak-offer-button:hover,
+  .ak-product.ak-reviewed-product .ak-product-sticky .v3-button:hover {
+    background: var(--ak-accent-hover);
+  }
+}
+
+/* Product gallery: keep navigation outside the photograph on touch screens. */
+.ak-product-gallery {
+  position: relative;
+}
+.ak-gallery-toolbar {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  aspect-ratio: 4 / 3;
+  pointer-events: none;
+}
+.ak-gallery-toolbar > * {
+  pointer-events: auto;
+}
+.ak-gallery-toolbar .ak-gallery-save {
+  position: absolute;
+  inset-block-start: 16px;
+  inset-inline-end: 16px;
+}
+.ak-equipment-group {
+  padding-block: 16px;
+}
+.ak-product .ak-equipment-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #424b52;
+  background: #f1f3f4;
+}
+.ak-product .ak-equipment-heading.optional {
+  color: #064e8e;
+  background: #e3effa;
+}
+.ak-equipment-heading svg {
+  flex: none;
+}
+.ak-product .ak-equipment-group > ul {
+  gap: 0;
+  padding: 8px 0 0;
+}
+.ak-product .ak-equipment-group .ak-equipment-row {
+  padding-block: 8px;
+  border: 0;
+}
+@media (max-width: 767px) {
+  .ak-product.ak-reviewed-product .ak-gallery-toolbar {
+    position: static;
+    aspect-ratio: auto;
+    display: grid;
+    grid-template-columns: 44px minmax(40px, 1fr) 44px 44px 44px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 24px;
+  }
+  .ak-product .ak-gallery-toolbar > .ak-gallery-arrow,
+  .ak-product .ak-gallery-toolbar > .ak-gallery-expand,
+  .ak-product .ak-gallery-toolbar > .ak-photo-count,
+  .ak-product .ak-gallery-toolbar > .ak-gallery-save {
+    position: static;
+    margin: 0;
+    grid-row: 1;
+  }
+  .ak-product .ak-gallery-toolbar > .ak-gallery-arrow,
+  .ak-product .ak-gallery-toolbar > .ak-gallery-expand {
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    background: transparent;
+    color: #202426;
+  }
+  .ak-gallery-toolbar .previous {
+    grid-column: 1;
+  }
+  .ak-gallery-toolbar .next {
+    grid-column: 3;
+  }
+  .ak-gallery-toolbar .ak-gallery-expand {
+    grid-column: 4;
+  }
+  .ak-gallery-toolbar .ak-gallery-save {
+    grid-column: 5;
+  }
+  .ak-product .ak-gallery-toolbar .ak-photo-count {
+    grid-column: 2;
+    padding: 0;
+    text-align: center;
+    background: transparent;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .ak-product .ak-photo-thumbs {
+    display: none;
+  }
+  .ak-product.ak-reviewed-product .ak-product-section {
+    padding-block: 24px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-section h2 {
+    font-size: 24px;
+    line-height: 1.25;
+    margin-block-end: 16px;
+    text-wrap: pretty;
+  }
+  .ak-product.ak-reviewed-product .ak-product-highlights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-block: 16px 0;
+  }
+  .ak-product .ak-product-highlights li {
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .ak-product-highlights svg {
+    width: 18px;
+    height: 18px;
+    margin-block-start: 2px;
+  }
+  .ak-product .ak-product-detail-image {
+    display: none;
+  }
+  .ak-product.ak-reviewed-product #dotari > .ak-product-disclosure > summary {
+    padding-block: 16px;
+    font-size: 16px;
+    min-height: 48px;
+  }
+  .ak-product .ak-equipment-search {
+    margin-block: 16px;
+  }
+  .ak-product .ak-equipment-group {
+    padding-block: 8px 16px;
+  }
+  .ak-product .ak-equipment-row {
+    font-size: 15px;
+  }
+  .ak-product .ak-product-specs > div {
+    padding-block: 12px;
+    font-size: 15px;
+  }
+  .ak-product .ak-buying-steps {
+    gap: 16px;
+    margin-block: 16px;
+  }
+  .ak-product .ak-buying-steps p {
+    margin-block-start: 4px;
+  }
+  .ak-product.ak-reviewed-product .ak-product-map {
+    height: 180px;
+    margin-block: 16px;
+  }
+}
+
+.ak-product .ak-equipment-topic {
+  margin-block-start: 24px;
+}
+.v3.ak-product.ak-reviewed-product #dotari .ak-equipment-topic > h3,
+.v3.ak-product.ak-reviewed-product #dotari .ak-equipment-topic > h4 {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #202426;
+}
+.ak-product .ak-equipment-topic > ul {
+  padding: 0;
+  gap: 0;
+}
+.ak-product .ak-equipment-topic .ak-equipment-row {
+  gap: 8px;
+  padding-block: 4px;
+}
+.ak-equipment-topic .ak-equipment-row::before {
+  content: "";
+  flex: 0 0 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin-block-start: 10px;
+  background: #687077;
+}
+
+.ak-product .ak-equipment-topic:first-child {
+  margin-block-start: 8px;
+}
+.ak-product .ak-equipment-topic .ak-equipment-row.has-kind {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: start;
+  gap: 16px;
+  padding-block: 8px;
+}
+.ak-equipment-topic .ak-equipment-row.has-kind::before {
+  display: none;
+}
+.ak-product .ak-equipment-row.has-kind > span:first-child {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ak-product .ak-equipment-row.has-kind > .ak-equipment-kind {
+  width: 104px;
+  text-align: center;
+  max-width: none;
+  border: 0;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+  color: #555e63;
+  background: transparent;
+}
+.ak-product .ak-equipment-row.has-kind > .ak-equipment-kind.optional {
+  background: #e3effa;
+  color: #064e8e;
+  font-weight: 500;
+}
