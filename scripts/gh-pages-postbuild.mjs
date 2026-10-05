@@ -33,6 +33,8 @@ const requiredPages = [
   "service/tarife",
   "service/programare",
   "comparatie",
+  "rezervare/mercedes-benz-glc-200-4matic-vu149616",
+  "rezervare/audi-a7-a7-sportback-nn011329",
 ];
 for (const page of requiredPages) {
   const file = join(outDir, page, "index.html");

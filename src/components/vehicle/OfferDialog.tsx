@@ -12,6 +12,9 @@ export function OfferDialog({
   opener,
   simulateError = false,
   requestKind = "offer",
+  initialContact = testContact,
+  onContactChange,
+  onSuccess,
 }: {
   vehicle: Vehicle;
   open: boolean;
@@ -19,8 +22,11 @@ export function OfferDialog({
   opener: React.RefObject<HTMLButtonElement | null>;
   simulateError?: boolean;
   requestKind?: "offer" | "report";
+  initialContact?: ContactValues;
+  onContactChange?: (value: ContactValues) => void;
+  onSuccess?: (value: ContactValues) => void;
 }) {
-  const [value, setValue] = useState<ContactValues>(testContact);
+  const [value, setValue] = useState<ContactValues>(initialContact);
   const [errors, setErrors] = useState<Partial<Record<keyof ContactValues, string>>>({});
   const [state, setState] = useState<"idle" | "sending" | "error" | "done">("idle");
   const attempts = useRef(0);
@@ -36,7 +42,10 @@ export function OfferDialog({
     setState("sending");
     await new Promise((resolve) => setTimeout(resolve, 500));
     if ((simulateError && attempts.current++ === 0) || !navigator.onLine) setState("error");
-    else setState("done");
+    else {
+      setState("done");
+      onSuccess?.(value);
+    }
   };
   return (
     <Dialog.Root open={open} onOpenChange={(v) => state !== "sending" && onOpenChange(v)}>
@@ -89,7 +98,15 @@ export function OfferDialog({
                     ? "Soliciți raportul carVertical pentru această mașină."
                     : "Consultantul te contactează pentru oferta acestei mașini."}
                 </p>
-                <ContactFields value={value} onChange={setValue} errors={errors} prefix="offer" />
+                <ContactFields
+                  value={value}
+                  onChange={(next) => {
+                    setValue(next);
+                    onContactChange?.(next);
+                  }}
+                  errors={errors}
+                  prefix="offer"
+                />
                 {state === "error" && (
                   <p role="alert" className="v3-error mt-6">
                     Solicitarea nu a putut fi trimisă. Datele au rămas completate. Încearcă din nou.

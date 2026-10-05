@@ -36,6 +36,7 @@ const staticPages = [
   "/comparatie",
 
   ...vehicles.map((vehicle) => `/autoturisme/${vehicle.slug}`),
+  ...vehicles.map((vehicle) => `/rezervare/${vehicle.slug}`),
 ].map((path) => ({
   // prerender-ul cere rutele prin base, deci le prefixăm explicit
   path: `${base.replace(/\/$/, "")}${path}`.replace(/^$/, "/"),

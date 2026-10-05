@@ -593,3 +593,29 @@
   min-height: 44px;
   white-space: nowrap;
 }
+
+/* Reservation remains subordinate to the offer request. */
+.ak-reserve-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  border: 1px solid #929ba2;
+  border-radius: 5px;
+  background: transparent;
+  color: #343d44;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.ak-reserve-button:hover {
+  background: #edf2f6;
+  border-color: #516574;
+}
+.ak-reserve-button:focus-visible {
+  outline: 2px solid #075ca8;
+  outline-offset: 3px;
+}

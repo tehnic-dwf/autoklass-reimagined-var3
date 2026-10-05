@@ -225,12 +225,22 @@
   color: var(--ak-accent);
 }
 .ak-sales-campaign {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
   padding: 20px 24px;
   border-radius: 6px;
   margin-block: 8px 24px;
   background: #e3edf6;
   text-decoration: none;
+}
+.ak-sales-campaign > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ak-sales-campaign > div {
+  min-width: 0;
 }
 .ak-sales-campaign > span {
   width: 100%;
@@ -779,9 +789,6 @@
   }
 }
 @media (max-width: 359px) {
-  .ak-home .ak-authorized-brands > a > span:last-child {
-    font-size: 12px;
-  }
   .ak-finance-rate {
     display: block;
   }
@@ -855,42 +862,95 @@
   }
 
   .ak-home .ak-brands {
-    padding-block: 40px;
+    padding-block: 32px;
+    --ak-brand-label: #202326;
+    --ak-brand-surface: #f4f5f6;
+    --ak-brand-border: #d5dadd;
   }
   .ak-home .ak-brands h2 {
-    font-size: 24px;
-    max-width: 23ch;
+    font-size: 26px;
+    line-height: 1.2;
+    max-width: 22ch;
+    margin: 0;
+    text-align: start;
   }
   .ak-home .ak-authorized-brands.ak-brand-grid {
-    gap: 16px 8px;
-    margin-block-start: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-block-start: 16px;
   }
   .ak-home .ak-authorized-brands > a,
   .ak-home .ak-brand-upcoming {
-    border: 0;
-    background: transparent;
-    min-height: 80px;
-    padding: 8px 0;
-    gap: 12px;
+    border: 1px solid var(--ak-brand-border);
+    border-radius: 8px;
+    background: var(--ak-brand-surface);
+    min-height: 104px;
+    padding: 12px 8px;
+    gap: 8px;
+    justify-content: center;
+    color: var(--ak-brand-label);
   }
   .ak-home .ak-authorized-brands > a > span:first-child,
   .ak-home .ak-ford-wordmark {
+    height: 44px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ak-home .ak-authorized-brands img {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    filter: grayscale(1) contrast(1.2);
+    mix-blend-mode: multiply;
+  }
+  .ak-home .ak-authorized-brands a:nth-child(1) img {
+    width: 60px;
+    height: 60px;
+  }
+  .ak-home .ak-authorized-brands a:nth-child(2) img {
+    width: 80px;
+    height: 60px;
+  }
+  .ak-home .ak-authorized-brands a:nth-child(3) img {
+    width: 40px;
     height: 40px;
-    display: grid;
-    place-items: center;
+  }
+  .ak-home .ak-authorized-brands a:nth-child(4) img {
+    width: 52px;
+    height: 40px;
+  }
+  .ak-home .ak-authorized-brands a:nth-child(5) img {
+    width: 64px;
+    height: 36px;
   }
   .ak-home .ak-ford-wordmark img {
-    width: 72px;
-    height: 28px;
-    object-fit: contain;
+    width: 80px;
+    height: 32px;
   }
   .ak-home .ak-authorized-brands > a > span:last-child,
   .ak-home .ak-brand-upcoming > span:last-child {
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: normal;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    color: var(--ak-brand-label);
   }
-  .ak-home .ak-authorized-brands a:nth-child(2) img {
-    width: 72px;
-    height: 34px;
+  .ak-home .ak-ford-name {
+    display: inline;
+  }
+  .ak-home .ak-brand-upcoming small {
+    display: inline;
+    margin-inline-start: 4px;
+    margin-block-start: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--ak-text-muted);
   }
   .ak-home .ak-used-brands {
     display: block;
@@ -900,58 +960,87 @@
   .ak-home .ak-used-brands h3 {
     margin: 0 0 16px;
     font-size: 20px;
+    line-height: 1.25;
     font-weight: 600;
   }
-  .ak-used-destinations {
-    padding: 0 16px;
-    border-radius: 6px;
-    background: var(--ak-surface);
+  .ak-home .ak-used-destinations {
+    display: grid;
+    gap: 0;
+    padding: 0 12px;
+    border: 1px solid var(--ak-brand-border);
+    border-radius: 8px;
+    background: var(--ak-brand-surface);
+  }
+  .ak-home .ak-used-stock,
+  .ak-home .ak-used-network {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 8px 0;
+    min-height: 60px;
   }
   .ak-home .ak-used-stock {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    min-height: 72px;
-    padding-block: 12px;
+    gap: 0 8px;
+    border-bottom: 1px solid var(--ak-brand-border);
   }
   .ak-home .ak-used-stock > img {
-    width: 104px;
-    height: 32px;
+    width: 96px;
+    height: 28px;
     object-fit: contain;
     filter: brightness(0);
   }
   .ak-home .ak-used-stock > span {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     gap: 8px;
-    margin-inline-start: auto;
+    margin-inline-start: 0;
+    min-height: 44px;
     font-size: 14px;
-    color: #343b40;
+    font-weight: 600;
+    color: var(--ak-accent);
   }
   .ak-home .ak-used-network {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0 16px;
-    padding-block: 12px;
-    border-block-start: 1px solid var(--ak-separator);
+    align-items: center;
+    gap: 0 8px;
   }
   .ak-home .ak-used-network > img {
-    width: 112px;
+    width: 108px;
     height: 40px;
+    margin-inline-start: -6px;
     mix-blend-mode: multiply;
-    object-position: left center;
+    object-fit: contain;
   }
   .ak-home .ak-used-network > nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 12px;
+    gap: 0 12px;
   }
   .ak-home .ak-used-network a {
-    color: #343b40;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    color: var(--ak-accent);
     min-height: 44px;
+    font-size: 14px;
+    font-weight: 500;
     text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .ak-home .ak-brands a {
+    scroll-margin-block: 88px;
+    touch-action: manipulation;
+  }
+  .ak-home .ak-brands a:focus-visible {
+    outline: 2px solid var(--ak-accent);
+    outline-offset: 4px;
   }
 
   .ak-home .ak-sales-campaign {
@@ -1336,10 +1425,6 @@
   }
 }
 @media (max-width: 359px) {
-  .ak-home .ak-authorized-brands > a > span:last-child {
-    font-size: 12px;
-  }
-
   .ak-menu-panel .ak-menu-footer {
     grid-template-columns: 1fr;
     gap: 0;
@@ -1350,12 +1435,6 @@
   }
   .ak-home .v3-category > span {
     font-size: 13px;
-  }
-  .ak-home .ak-used-network {
-    display: block;
-  }
-  .ak-home .ak-used-network > nav {
-    margin-block-start: 4px;
   }
 }
 @media (hover: hover) and (max-width: 767px) {

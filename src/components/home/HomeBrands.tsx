@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import mercedes from "@/assets/brands/mercedes.png";
-import audi from "@/assets/brands/audi.png";
-import volkswagen from "@/assets/brands/volkswagen.png";
-import honda from "@/assets/brands/honda.png";
-import ford from "@/assets/brands/ford.webp";
+import mercedes from "@/assets/brands/mercedes-mobile.webp";
+import audi from "@/assets/brands/audi-mobile.webp";
+import volkswagen from "@/assets/brands/volkswagen-mobile.webp";
+import honda from "@/assets/brands/honda-mobile.webp";
+import ford from "@/assets/brands/ford-mobile.webp";
 import autoklass from "@/assets/autoklass-logo.png";
 import campaignPhoto from "@/assets/showroom-poster.jpg";
-import xpeng from "@/assets/brands/xpeng.png";
+import xpeng from "@/assets/brands/xpeng-mobile.webp";
 import { vehicles } from "@/data/vehicles";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 import { OfferRail } from "./OfferRail";
@@ -27,7 +27,7 @@ export function HomeBrands() {
       <h2 id="brands-title">Centru autorizat de vânzări.</h2>
       <nav aria-label="Mărci reprezentate oficial" className="ak-brand-grid ak-authorized-brands">
         {brands.map(([brand, logo]) => (
-          <Link key={brand} to="/autoturisme" search={{ brand }}>
+          <Link key={brand} to="/autoturisme" search={{ brand }} translate="no">
             <span>
               <img src={logo} alt="" width={100} height={72} loading="lazy" />
             </span>
@@ -36,9 +36,14 @@ export function HomeBrands() {
         ))}
         <div className="ak-brand-upcoming">
           <span className="ak-ford-wordmark">
-            <img src={ford} alt="Ford" width={384} height={144} loading="lazy" />
+            <img src={ford} alt="" width={384} height={144} loading="lazy" />
           </span>
-          <span>În curând</span>
+          <span>
+            <span className="ak-ford-name" translate="no">
+              Ford
+            </span>
+            <small>În curând</small>
+          </span>
         </div>
       </nav>
       <section className="ak-used-brands" aria-labelledby="used-brands-title">

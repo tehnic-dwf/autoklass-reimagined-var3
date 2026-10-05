@@ -293,6 +293,15 @@ function VehiclePage() {
                 <button className="v3-button ak-offer-button" onClick={contact}>
                   Solicită ofertă <ArrowRight size={20} aria-hidden />
                 </button>
+                {!v.reserved && (
+                  <Link
+                    className="ak-reserve-button"
+                    to="/rezervare/$slug"
+                    params={{ slug: v.slug }}
+                  >
+                    Rezervă · 500 €
+                  </Link>
+                )}
                 <div className="ak-contact-details">
                   <ConsultantBlock detailed={detailed} usedExample={usedExample} />
                   <div className="ak-vehicle-location">
