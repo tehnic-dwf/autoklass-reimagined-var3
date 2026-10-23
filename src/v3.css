@@ -1260,6 +1260,10 @@
   color: #62676d;
 }
 @media (max-width: 767px) {
+  .ak-utility-bar {
+    background: #626c73;
+    border-bottom: 1px solid #879299;
+  }
   .ak-utility-inner {
     padding-inline: 8px;
   }
@@ -1267,7 +1271,17 @@
     flex: 1;
     justify-content: center;
     padding-inline: 6px;
-    font-size: 13px;
+    color: #f8fafb;
+  }
+  .ak-utility-inner a + a {
+    border-left-color: #aeb7bc;
+  }
+  .ak-utility-inner a span {
+    color: #f8fafb;
+  }
+  .ak-utility-inner a:hover {
+    color: #fff;
+    background: transparent;
   }
 }
 @media (prefers-reduced-motion: reduce) {
