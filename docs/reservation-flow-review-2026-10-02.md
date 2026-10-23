@@ -1,5 +1,7 @@
 # Rezervare și revenire la solicitarea unei oferte
 
+**Decizie ulterioară a clientului:** trimiterea către „Solicită ofertă” a fost eliminată complet din fluxul de rezervare. Descrierea de mai jos păstrează istoricul variantei analizate la 2 octombrie; nu reprezintă structura actuală de implementat.
+
 Implementare locală, fără publicare. Plata de 500 € este o simulare; nu se colectează carduri, nu se trimit solicitări și nu se blochează stocul.
 
 ## Modificări

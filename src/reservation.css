@@ -94,37 +94,6 @@
   color: var(--ak-text-muted);
   margin: 0;
 }
-.res-offer-alternative {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px 24px;
-  padding: 14px 18px;
-  margin-bottom: 24px;
-  border: 1px solid #d8dfe4;
-  border-radius: 8px;
-  background: #fff;
-}
-.res-offer-alternative > div:last-child {
-  flex: none;
-  text-align: right;
-}
-.res-offer-alternative p {
-  margin: 0 0 3px;
-  color: var(--ak-text-muted);
-  font-size: 13px;
-}
-.res-offer-alternative a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 32px;
-  color: #12558d;
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 .res-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
@@ -675,15 +644,6 @@
   }
   .res-title {
     padding-block: 24px 16px;
-  }
-  .res-offer-alternative {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px 16px;
-  }
-  .res-offer-alternative > div:last-child {
-    text-align: left;
   }
   .v3.ak-reservation.ak-reservation h1 {
     font-size: 30px;

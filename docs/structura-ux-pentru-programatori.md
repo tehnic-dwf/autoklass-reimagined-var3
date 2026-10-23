@@ -25,8 +25,6 @@ flowchart TD
     V --> PAY[Plată 500 €]
     PAY -->|Confirmată de procesator| TR[Confirmare rezervare]
     PAY -->|Eșuată sau anulată| V
-    R -->|Vrei întâi o ofertă?| O
-    V -->|Vrei întâi o ofertă?| O
     O -->|Solicitare acceptată| TO[Confirmare solicitare ofertă]
     OL -->|Solicitare acceptată| TO
     P -->|Înapoi la rezultate| C
@@ -197,7 +195,8 @@ Pe desktop, fotografia și zona comercială pot ocupa două coloane, conform pro
 2. Rezumat editabil, sumă de 500 € și acord explicit cu condițiile.
 3. Plată prin procesator; anularea sau eroarea permit reluarea fără reintroducerea datelor.
 4. Confirmare cu mașina, rezultatul plății, contact și pașii următori.
-5. Înainte de plată, alternativa „Vrei întâi o ofertă?” deschide formularul de ofertă cu datele deja introduse și consultantul în context.
+
+Fluxul de rezervare nu include o trimitere către „Solicită ofertă”. Aceasta rămâne o acțiune separată pe pagina mașinii.
 
 Regulă pentru producție: rezervarea se confirmă pe baza rezultatului validat în sistem, nu doar pentru că utilizatorul a revenit pe o anumită adresă. Tratați și plata în curs de confirmare, nu doar succes/eroare. Durata blocării stocului, anularea și rambursarea se stabilesc cu Autoklass și procesatorul.
 
@@ -232,7 +231,7 @@ Regulă pentru producție: rezervarea se confirmă pe baza rezultatului validat 
 - Pe nou/rulat văd cele șase specificații potrivite înaintea pozelor, fără CO₂ în rezumatul rulatei.
 - Caut o dotare și disting ce este standard și ce este opțional deja inclus, acolo unde există date confirmate.
 - Solicit oferta de pe CTA principal și din bara fixă: am același formular și aceeași mașină.
-- Încep rezervarea, aleg oferta în schimb: datele de contact se păstrează, fără plată.
+- Parcurg rezervarea fără o a doua acțiune comercială către formularul de ofertă.
 - O plată eșuată nu produce confirmare de rezervare; pot reîncerca fără date pierdute.
 - La zero rezultate, eroare de încărcare sau imagine lipsă există un mesaj și o cale de continuare.
 - Parcurg acțiunile cu tastatura și pe mobil fără elemente acoperite de bara fixă.

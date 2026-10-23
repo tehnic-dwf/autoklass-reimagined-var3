@@ -299,19 +299,6 @@ export function ReservationCheckout({
               <h1>Rezervă mașina cu {deposit}.</h1>
               <p>Completezi datele, le verifici și continui la plată.</p>
             </div>
-            <div className="res-offer-alternative">
-              {consultant}
-              <div>
-                <p>Nu vrei să rezervi acum?</p>
-                <Link
-                  to="/autoturisme/$slug"
-                  params={{ slug: vehicle.slug }}
-                  search={{ offer: "1" }}
-                >
-                  Solicită ofertă <ArrowRight size={16} aria-hidden />
-                </Link>
-              </div>
-            </div>
             <div className="res-layout">
               {summary}
               <div className="res-content">
