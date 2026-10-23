@@ -1,0 +1,170 @@
+.ak-offer-dialog .offer-confirmation {
+  padding: 8px 0 24px;
+  color: #202326;
+}
+
+.ak-offer-dialog .offer-confirmation-icon {
+  display: block;
+  color: #267058;
+  margin-bottom: 16px;
+}
+
+.ak-offer-dialog .offer-confirmation-kicker {
+  margin: 0 0 8px;
+  color: #267058;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+}
+
+.ak-offer-dialog .offer-confirmation h2 {
+  margin: 0 0 12px;
+  font: 700 28px/1.2 var(--font-sans);
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.ak-offer-dialog .offer-confirmation h2:focus {
+  outline: none;
+}
+
+.ak-offer-dialog
+  .offer-confirmation
+  > p:not(.offer-confirmation-kicker):not(.offer-confirmation-help) {
+  margin: 0;
+  color: #596168;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.ak-offer-dialog .offer-confirmation-car {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+  padding: 12px;
+  border: 1px solid #d9dfe3;
+  border-radius: 8px;
+  background: #f7f8f8;
+}
+
+.ak-offer-dialog .offer-confirmation-car img {
+  width: 104px;
+  height: 78px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.ak-offer-dialog .offer-confirmation-car span,
+.ak-offer-dialog .offer-confirmation-consultant span {
+  display: block;
+  color: #596168;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ak-offer-dialog .offer-confirmation-car strong,
+.ak-offer-dialog .offer-confirmation-consultant strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.ak-offer-dialog .offer-confirmation-details {
+  margin: 0;
+  padding: 10px 0 0;
+}
+
+.ak-offer-dialog .offer-confirmation-details > div {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e6e8;
+  font-size: 14px;
+}
+
+.ak-offer-dialog .offer-confirmation-details dt {
+  color: #596168;
+}
+
+.ak-offer-dialog .offer-confirmation-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.ak-offer-dialog .offer-confirmation-next {
+  margin-top: 28px;
+}
+
+.ak-offer-dialog .offer-confirmation-next h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ak-offer-dialog .offer-confirmation-next > p {
+  margin: 0;
+  color: #596168;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.ak-offer-dialog .offer-confirmation-consultant {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f3f6f8;
+}
+
+.ak-offer-dialog .offer-confirmation-consultant img,
+.ak-offer-dialog .offer-confirmation-avatar {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ak-offer-dialog .offer-confirmation-avatar {
+  display: grid;
+  place-items: center;
+  color: #44545f;
+  background: #e2e8ec;
+}
+
+.ak-offer-dialog .offer-confirmation-help {
+  margin: 20px 0 0;
+  color: #596168;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ak-offer-dialog .offer-confirmation-help a {
+  color: #135b92;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ak-offer-dialog .offer-confirmation-email {
+  margin-top: 18px !important;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 400px) {
+  .ak-offer-dialog .offer-confirmation h2 {
+    font-size: 25px;
+  }
+
+  .ak-offer-dialog .offer-confirmation-details > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}
