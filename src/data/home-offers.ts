@@ -1,4 +1,5 @@
 import type { VehicleSearch } from "@/lib/vehicle-search";
+import { salesOfferSlugs } from "./sales-offers";
 // Editorial selections: marketing can add rails and choose the exact vehicle order here.
 export const autoOfferSelections: {
   id: string;
@@ -10,15 +11,7 @@ export const autoOfferSelections: {
     id: "vanzari",
     title: "Oferte vânzări",
     search: { offer: "yes" },
-    slugs: [
-      "mercedes-benz-glc-200-4matic-vu149616",
-      "mercedes-benz-glc-220-d-4matic-coupe-tf644939",
-      "mercedes-benz-glc-300-e-4matic-coupe-vf646152",
-      "mercedes-amg-gle-53-4matic-tb534181",
-      "mercedes-benz-clasa-a-200-limuzina-pj413906",
-      "mercedes-benz-clasa-a-180-d-1n258044",
-      "mercedes-benz-e-300-e-4matic-va311764",
-    ],
+    slugs: [...salesOfferSlugs],
   },
 ];
 // Public Autoklass campaigns checked 2026-09-25. Preserve scope and expiry per campaign.

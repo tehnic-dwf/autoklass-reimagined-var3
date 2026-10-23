@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck, FileText, MapPin, Pause, Play } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ArrowRight, BadgeCheck, FileText, MapPin } from "lucide-react";
+import { useEffect, useRef } from "react";
 import showroomVideo from "@/assets/showroom.mp4";
 import showroomPoster from "@/assets/showroom-poster.jpg";
 import serviceImage from "@/assets/service-consultant.jpg";
@@ -27,7 +27,6 @@ export const Route = createFileRoute("/")({
 });
 function HomePage() {
   const video = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
   useEffect(() => {
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => {
@@ -53,25 +52,14 @@ function HomePage() {
               src={showroomVideo}
               poster={showroomPoster}
               ref={video}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
+              onTimeUpdate={(event) => {
+                if (event.currentTarget.currentTime >= 5) event.currentTarget.pause();
+              }}
               muted
-              loop
               playsInline
               preload="auto"
             />
           </div>
-          <button
-            className="ak-video-control"
-            type="button"
-            aria-label={playing ? "Pune pe pauză videoclipul" : "Redă videoclipul"}
-            onClick={() => {
-              if (playing) video.current?.pause();
-              else void video.current?.play();
-            }}
-          >
-            {playing ? <Pause size={16} aria-hidden /> : <Play size={16} aria-hidden />}
-          </button>
           <div className="hero-copy-scrim absolute inset-0 bg-primary/10" aria-hidden />
 
           <div className="relative mx-auto flex v3-hero-content min-h-[86svh] w-full max-w-7xl flex-col justify-end px-6 pb-12 pt-28 md:px-8 md:pb-16 lg:px-10">
@@ -168,7 +156,7 @@ function HomePage() {
                   <div className="v3-proof">
                     <FileText size={22} strokeWidth={1.5} aria-hidden="true" />
                     <div>
-                      <p>Intervale de preț, cu TVA inclus</p>
+                      <p>Tarife pe sucursală, cu TVA inclus</p>
                     </div>
                   </div>
                   <div className="v3-proof">

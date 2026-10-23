@@ -1,0 +1,64 @@
+.ak-mobile-rail-progress {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .ak-home .ak-discovery-controls {
+    display: none;
+  }
+
+  .ak-home .ak-offer-rail,
+  .ak-home .v3-home-cars,
+  .ak-home .ak-needs-rail {
+    scrollbar-width: none;
+    overscroll-behavior-inline: contain;
+  }
+
+  .ak-home .ak-offer-rail::-webkit-scrollbar,
+  .ak-home .v3-home-cars::-webkit-scrollbar,
+  .ak-home .ak-needs-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ak-home .ak-offer-rail > article,
+  .ak-home .v3-home-cars > article {
+    flex: 0 0 min(80%, 340px);
+  }
+
+  .ak-home .ak-needs-rail > .ak-need-card {
+    flex: 0 0 min(80%, 300px);
+  }
+
+  .ak-mobile-rail-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+    color: #4d5962;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ak-mobile-rail-track {
+    width: 64px;
+    height: 3px;
+    border-radius: 3px;
+    background: #cfd5da;
+    overflow: hidden;
+  }
+
+  .ak-mobile-rail-track > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #263b4b;
+    transition: transform 160ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ak-mobile-rail-track > span {
+    transition: none;
+  }
+}

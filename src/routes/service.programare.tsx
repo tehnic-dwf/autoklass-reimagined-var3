@@ -38,7 +38,7 @@ export const Route = createFileRoute("/service/programare")({
 function ServiceRequest() {
   const search = Route.useSearch();
   const [branch, setBranch] = useState(
-    serviceBranches.some((b) => b.id === search.branch) ? search.branch! : "pipera",
+    serviceBranches.some((b) => b.id === search.branch) ? search.branch! : "",
   );
   const [service, setService] = useState(
     serviceItems.some((s) => s.id === search.service) ? search.service! : "revizie",
@@ -89,27 +89,28 @@ function ServiceRequest() {
         modelRateIds.includes(item.id)),
   );
   const selectedRate = availableRates.find((item) => item.id === rate);
-  const priceRange = rateRange(selectedRate ? [selectedRate] : availableRates, branch);
+  const priceRange = branch
+    ? rateRange(selectedRate ? [selectedRate] : availableRates, branch)
+    : null;
   const priceUnit = selectedRate || availableRates[0];
-  const rateSummary =
-    priceRange && priceUnit ? (
-      <div className="service-cost" aria-live="polite">
-        <p>{priceUnit.unit === "hour" ? "Tarif orientativ de manoperă" : "Tarif orientativ ITP"}</p>
-        <strong>
-          {formatPrice(priceRange.min)}
-          {priceRange.max !== priceRange.min ? `–${formatPrice(priceRange.max)}` : ""}
-          <span> {rateUnit(priceUnit)}</span>
-        </strong>
-        <p>
-          TVA inclus.{" "}
-          {priceUnit.unit === "hour"
-            ? "Nu este costul total al lucrării. Timpul de lucru și piesele se stabilesc separat."
-            : "Pentru inspecția inițială; categoria se confirmă după datele mașinii."}
-        </p>
-      </div>
-    ) : (
-      <p className="service-price-unavailable">Costul se stabilește după verificarea mașinii.</p>
-    );
+  const rateSummary = !branch ? null : priceRange && priceUnit ? (
+    <div className="service-cost" aria-live="polite">
+      <p>{priceUnit.unit === "hour" ? "Tarif de manoperă" : "Tarif ITP"}</p>
+      <strong>
+        {formatPrice(priceRange.min)}
+        {priceRange.max !== priceRange.min ? `–${formatPrice(priceRange.max)}` : ""}
+        <span> {rateUnit(priceUnit)}</span>
+      </strong>
+      <p>
+        TVA inclus.{" "}
+        {priceUnit.unit === "hour"
+          ? "Nu este costul total al lucrării. Timpul de lucru și piesele se stabilesc separat."
+          : "Pentru inspecția inițială; categoria se confirmă după datele mașinii."}
+      </p>
+    </div>
+  ) : (
+    <p className="service-price-unavailable">Costul se stabilește după verificarea mașinii.</p>
+  );
   const [km, setKm] = useState("35000");
   const [problem, setProblem] = useState("Revizie periodică.");
   const [date, setDate] = useState("");

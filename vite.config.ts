@@ -7,6 +7,7 @@
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import type { LovableViteTanstackOptions } from "@lovable.dev/vite-tanstack-config";
 
 import { vehicles } from "./src/data/vehicles.ts";
 
@@ -34,6 +35,8 @@ const staticPages = [
   "/service/dosar-daune",
   "/verificare-masini-rulate",
   "/comparatie",
+  "/campanii/mercedes-benz-start-up-editions",
+  "/campanii/suv-winter-edition",
 
   ...vehicles.map((vehicle) => `/autoturisme/${vehicle.slug}`),
   ...vehicles.map((vehicle) => `/rezervare/${vehicle.slug}`),
@@ -69,7 +72,7 @@ export default defineConfig({
               entryFileNames: "server.js",
             },
           },
-        } as any,
+        } as unknown as NonNullable<LovableViteTanstackOptions["nitro"]>,
         tanstackStart: {
           server: { entry: "server" },
           prerender: { enabled: true, crawlLinks: false },

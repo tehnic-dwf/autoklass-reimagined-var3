@@ -1,6 +1,6 @@
-import { useId } from "react";
+import { Check, ChevronDown, X } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, Check, ChevronDown } from "lucide-react";
+import { ClassicSelect } from "@/components/ui/ClassicSelect";
 import { vehicles } from "@/data/vehicles";
 import {
   modelOf,
@@ -11,6 +11,7 @@ import {
   type VehicleSearch,
 } from "@/lib/vehicle-search";
 type Props = { value: VehicleSearch; onChange: (value: VehicleSearch) => void };
+
 export function ConditionTabs({ value, onChange }: Props) {
   return (
     <div className="v3-tabs" aria-label="Starea mașinii">
@@ -116,7 +117,6 @@ export function BudgetFilter({ value, onChange }: Props) {
   );
 }
 export function BasicFilters({ value, onChange }: Props) {
-  const id = useId();
   return (
     <div className="ak-basic-filters">
       <BudgetFilter value={value} onChange={onChange} />
@@ -125,62 +125,49 @@ export function BasicFilters({ value, onChange }: Props) {
           <legend className="ak-filter-label">Stare</legend>
           <ConditionTabs value={value} onChange={onChange} />
         </fieldset>
-        <label className="v3-field ak-brand-field">
-          <span>Marcă</span>
-          <select
-            aria-label="Marcă"
-            name="brand"
-            value={value.brand || ""}
-            onChange={(e) => {
-              const next = { ...value, brand: e.target.value };
-              for (const key of [
-                "model",
-                "fuel",
-                "body",
-                "gearbox",
-                "drive",
-                "branch",
-                "color",
-                "equipment",
-              ] as const)
-                delete next[key];
-              onChange(next);
-            }}
-          >
-            <option value="">Toate mărcile</option>
-            {unique(
-              vehicles
-                .filter((v) => !value.condition || v.condition === value.condition)
-                .map((v) => v.brand),
-            ).map((b) => (
-              <option key={b}>{b}</option>
-            ))}
-          </select>
-        </label>
-        <label className="v3-field ak-model-field" htmlFor={`${id}-model`}>
-          <span>Model</span>
-          <select
-            id={`${id}-model`}
-            aria-label="Model"
-            name="model"
-            disabled={!value.brand}
-            value={value.model || ""}
-            onChange={(e) => onChange({ ...value, model: e.target.value })}
-          >
-            <option value="">{value.brand ? "Toate modelele" : "Alege marca"}</option>
-            {unique(
-              vehicles
-                .filter(
-                  (v) =>
-                    (!value.brand || v.brand === value.brand) &&
-                    (!value.condition || v.condition === value.condition),
-                )
-                .map(modelOf),
-            ).map((m) => (
-              <option key={m}>{m}</option>
-            ))}
-          </select>
-        </label>
+        <ClassicSelect
+          className="ak-brand-field"
+          label="Marcă"
+          value={value.brand || ""}
+          placeholder="Toate mărcile"
+          options={unique(
+            vehicles
+              .filter((v) => !value.condition || v.condition === value.condition)
+              .map((v) => v.brand),
+          ).map((brand) => ({ value: brand, label: brand }))}
+          onChange={(brand) => {
+            const next = { ...value, brand };
+            for (const key of [
+              "model",
+              "fuel",
+              "body",
+              "gearbox",
+              "drive",
+              "branch",
+              "color",
+              "equipment",
+            ] as const)
+              delete next[key];
+            onChange(next);
+          }}
+        />
+        <ClassicSelect
+          className="ak-model-field"
+          label="Model"
+          value={value.model || ""}
+          placeholder={value.brand ? "Toate modelele" : "Alege marca"}
+          disabled={!value.brand}
+          options={unique(
+            vehicles
+              .filter(
+                (v) =>
+                  (!value.brand || v.brand === value.brand) &&
+                  (!value.condition || v.condition === value.condition),
+              )
+              .map(modelOf),
+          ).map((model) => ({ value: model, label: model }))}
+          onChange={(model) => onChange({ ...value, model })}
+        />
       </div>
     </div>
   );

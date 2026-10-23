@@ -18,6 +18,7 @@ import { Route as SucursaleRouteImport } from './routes/sucursale'
 import { Route as VerificareMasiniRulateRouteImport } from './routes/verificare-masini-rulate'
 import { Route as AutoturismeIndexRouteImport } from './routes/autoturisme.index'
 import { Route as AutoturismeSlugRouteImport } from './routes/autoturisme.$slug'
+import { Route as CampaniiSlugRouteImport } from './routes/campanii.$slug'
 import { Route as RezervareSlugRouteImport } from './routes/rezervare.$slug'
 import { Route as ServiceDosarDauneRouteImport } from './routes/service.dosar-daune'
 import { Route as ServiceProgramareRouteImport } from './routes/service.programare'
@@ -69,6 +70,11 @@ const AutoturismeSlugRoute = AutoturismeSlugRouteImport.update({
   path: '/autoturisme/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaniiSlugRoute = CampaniiSlugRouteImport.update({
+  id: '/campanii/$slug',
+  path: '/campanii/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RezervareSlugRoute = RezervareSlugRouteImport.update({
   id: '/rezervare/$slug',
   path: '/rezervare/$slug',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/sucursale': typeof SucursaleRoute
   '/verificare-masini-rulate': typeof VerificareMasiniRulateRoute
   '/autoturisme/$slug': typeof AutoturismeSlugRoute
+  '/campanii/$slug': typeof CampaniiSlugRoute
   '/rezervare/$slug': typeof RezervareSlugRoute
   '/service/dosar-daune': typeof ServiceDosarDauneRoute
   '/service/programare': typeof ServiceProgramareRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/sucursale': typeof SucursaleRoute
   '/verificare-masini-rulate': typeof VerificareMasiniRulateRoute
   '/autoturisme/$slug': typeof AutoturismeSlugRoute
+  '/campanii/$slug': typeof CampaniiSlugRoute
   '/rezervare/$slug': typeof RezervareSlugRoute
   '/service/dosar-daune': typeof ServiceDosarDauneRoute
   '/service/programare': typeof ServiceProgramareRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/sucursale': typeof SucursaleRoute
   '/verificare-masini-rulate': typeof VerificareMasiniRulateRoute
   '/autoturisme/$slug': typeof AutoturismeSlugRoute
+  '/campanii/$slug': typeof CampaniiSlugRoute
   '/rezervare/$slug': typeof RezervareSlugRoute
   '/service/dosar-daune': typeof ServiceDosarDauneRoute
   '/service/programare': typeof ServiceProgramareRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/sucursale'
     | '/verificare-masini-rulate'
     | '/autoturisme/$slug'
+    | '/campanii/$slug'
     | '/rezervare/$slug'
     | '/service/dosar-daune'
     | '/service/programare'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/sucursale'
     | '/verificare-masini-rulate'
     | '/autoturisme/$slug'
+    | '/campanii/$slug'
     | '/rezervare/$slug'
     | '/service/dosar-daune'
     | '/service/programare'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/sucursale'
     | '/verificare-masini-rulate'
     | '/autoturisme/$slug'
+    | '/campanii/$slug'
     | '/rezervare/$slug'
     | '/service/dosar-daune'
     | '/service/programare'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   SucursaleRoute: typeof SucursaleRoute
   VerificareMasiniRulateRoute: typeof VerificareMasiniRulateRoute
   AutoturismeSlugRoute: typeof AutoturismeSlugRoute
+  CampaniiSlugRoute: typeof CampaniiSlugRoute
   RezervareSlugRoute: typeof RezervareSlugRoute
   ServiceDosarDauneRoute: typeof ServiceDosarDauneRoute
   ServiceProgramareRoute: typeof ServiceProgramareRoute
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AutoturismeSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campanii/$slug': {
+      id: '/campanii/$slug'
+      path: '/campanii/$slug'
+      fullPath: '/campanii/$slug'
+      preLoaderRoute: typeof CampaniiSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rezervare/$slug': {
       id: '/rezervare/$slug'
       path: '/rezervare/$slug'
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   SucursaleRoute: SucursaleRoute,
   VerificareMasiniRulateRoute: VerificareMasiniRulateRoute,
   AutoturismeSlugRoute: AutoturismeSlugRoute,
+  CampaniiSlugRoute: CampaniiSlugRoute,
   RezervareSlugRoute: RezervareSlugRoute,
   ServiceDosarDauneRoute: ServiceDosarDauneRoute,
   ServiceProgramareRoute: ServiceProgramareRoute,

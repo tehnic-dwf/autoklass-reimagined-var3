@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { vehicles } from "@/data/vehicles";
 import { matchingVehicles, type VehicleSearch } from "@/lib/vehicle-search";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
+import { MobileRailProgress } from "./MobileRailProgress";
 
 const collections: { label: string; search: VehicleSearch }[] = [
   { label: "Selecția Autoklass", search: {} },
@@ -26,16 +27,6 @@ export function HomeVehicles() {
   const [selected, setSelected] = useState(0);
   const rail = useRef<HTMLDivElement>(null);
   const collection = collections[selected]!;
-  const move = (direction: number) => {
-    const element = rail.current;
-    if (element)
-      element.scrollBy({
-        left: direction * ((element.firstElementChild?.clientWidth || element.clientWidth) + 24),
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-      });
-  };
   const matches = matchingVehicles(collection.search).filter((v) => !v.reserved);
   const displayed =
     selected === 0
@@ -64,19 +55,17 @@ export function HomeVehicles() {
               </button>
             ))}
           </div>
-          <div ref={rail} className="v3-cards v3-home-cars" aria-live="polite">
+          <div
+            ref={rail}
+            className="v3-cards v3-home-cars"
+            aria-live="polite"
+            aria-label="Mașini: glisează pentru mai multe"
+          >
             {displayed.map((vehicle) => (
               <VehicleCard key={vehicle.slug} vehicle={vehicle} compact />
             ))}
           </div>
-          <div className="v3-rail-controls">
-            <button className="v3-icon" aria-label="Mașinile precedente" onClick={() => move(-1)}>
-              <ArrowLeft aria-hidden />
-            </button>
-            <button className="v3-icon" aria-label="Mașinile următoare" onClick={() => move(1)}>
-              <ArrowRight aria-hidden />
-            </button>
-          </div>
+          <MobileRailProgress key={selected} rail={rail} count={displayed.length} />
           <div className="v3-collection-end">
             <Link className="v3-button secondary" to="/autoturisme" search={collection.search}>
               Vezi toate mașinile ({matchingVehicles(collection.search).length}){" "}

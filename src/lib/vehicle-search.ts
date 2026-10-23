@@ -1,4 +1,5 @@
 import { vehicles, type Vehicle } from "@/data/vehicles";
+import { isSalesOffer } from "@/data/sales-offers";
 import { demoSlug, normalized } from "@/data/demo-vehicle";
 import { glcDetails } from "@/data/product-details";
 export const vehicleSortOptions = [
@@ -122,7 +123,7 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
         )
     )
       return false;
-    if (s.offer && !(v.listPriceEur && v.listPriceEur > v.priceEur)) return false;
+    if (s.offer && !isSalesOffer(v)) return false;
     if (s.certified && !v.certified) return false;
     if (s.color && v.color !== s.color) return false;
     if (!min("minRange", v.rangeKm ?? null) || !min("minCharge", v.chargeKw ?? null)) return false;

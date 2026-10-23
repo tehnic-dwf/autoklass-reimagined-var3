@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Clock3,
   ChevronDown,
   CreditCard,
   Car,
@@ -14,9 +15,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ContactFields } from "@/components/prototype/ContactFields";
-import { OfferDialog } from "@/components/vehicle/OfferDialog";
 import { glcDetails } from "@/data/product-details";
-import { type ContactValues } from "@/lib/contact-validation";
 import { branches } from "@/data/company";
 import { formatPrice, type Vehicle } from "@/data/vehicles";
 import {
@@ -29,7 +28,8 @@ import {
 import logo from "@/assets/autoklass-logo.png";
 import "@/reservation.css";
 
-const faqUrl = "https://www.autoklass.ro/articole/faq.html";
+const faqUrl = "https://www.autoklass.ro/faq";
+const termsUrl = "https://www.autoklass.ro/articole/termeni-si-conditii.html";
 function ReservationCarImage({ vehicle }: { vehicle: Vehicle }) {
   const [failed, setFailed] = useState(false);
   return failed ? (
@@ -57,13 +57,9 @@ export function ReservationCheckout({
   const [termsError, setTermsError] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [payment, setPayment] = useState<"idle" | "processing" | "error" | "done">("idle");
-  const [offerOpen, setOfferOpen] = useState(false);
-  const [offerSession, setOfferSession] = useState(0);
-  const [offerDone, setOfferDone] = useState(false);
-  const offerTrigger = useRef<HTMLButtonElement>(null);
   const isGlc = vehicle.slug === "mercedes-benz-glc-200-4matic-vu149616";
   const consultantName = isGlc ? glcDetails.consultant.name : "Consultant Autoklass";
-  const completed = payment === "done" || offerDone;
+  const completed = payment === "done";
   const attempts = useRef(0);
   const form = useRef<HTMLFormElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -127,10 +123,6 @@ export function ReservationCheckout({
       window.scrollTo({ top: 0, behavior: "instant" });
     });
   };
-  const updateContact = (contact: ContactValues) => {
-    setValues((current) => ({ ...current, ...contact }));
-    setAgreed(false);
-  };
   const consultant = (
     <div className="res-consultant">
       {isGlc ? (
@@ -145,24 +137,6 @@ export function ReservationCheckout({
         <span>Consultant vânzări · {vehicle.branch}</span>
       </div>
     </div>
-  );
-  const alternative = (
-    <aside className="res-alternative" aria-labelledby="res-alternative-title">
-      <h2 id="res-alternative-title">Vrei întâi o ofertă?</h2>
-      <p>Discută cu un consultant, fără rezervare și fără plată.</p>
-      {consultant}
-      <button
-        ref={offerTrigger}
-        type="button"
-        className="res-outline"
-        onClick={() => {
-          setOfferSession((current) => current + 1);
-          setOfferOpen(true);
-        }}
-      >
-        Solicită ofertă <ArrowRight size={18} aria-hidden />
-      </button>
-    </aside>
   );
   const field = (key: "company" | "cui" | "address" | "city", label: string, auto: string) => (
     <label className="v3-field" htmlFor={`res-${key}`}>
@@ -221,7 +195,7 @@ export function ReservationCheckout({
           calendaristice. Rambursarea taxei se solicită separat și se efectuează în maximum 30 de
           zile.
         </p>
-        <a href={faqUrl} target="_blank" rel="noreferrer">
+        <a href={termsUrl} target="_blank" rel="noreferrer">
           Condițiile Autoklass (filă nouă)
         </a>
       </details>
@@ -253,18 +227,15 @@ export function ReservationCheckout({
         ) : completed ? (
           <section className="res-success">
             <span className="res-success-icon">
-              <Check size={28} aria-hidden />
+              <Clock3 size={28} aria-hidden />
             </span>
-            <p className="res-eyebrow">
-              {offerDone ? "Solicitare de ofertă · Demo" : "Rezervare finalizată · Demo"}
-            </p>
+            <p className="res-eyebrow">Rezervare în curs de confirmare</p>
             <h1 ref={successHeading} tabIndex={-1}>
               Mulțumim, {values.firstName}.
             </h1>
             <p>
-              {offerDone
-                ? "Ai ales să discuți oferta cu un consultant. Nu ai rezervat mașina și nu ai nimic de plătit."
-                : "Ai încheiat pașii rezervării. Mai jos găsești mașina aleasă și detaliile confirmării."}
+              Datele rezervării sunt pregătite. Rezervarea se confirmă după autorizarea plății și
+              verificarea disponibilității mașinii.
             </p>
             <div className="res-receipt">
               <div className="res-car">
@@ -276,15 +247,17 @@ export function ReservationCheckout({
               </div>
               <dl>
                 <div>
-                  <dt>{offerDone ? "Tipul solicitării" : "Plată simulată"}</dt>
-                  <dd>{offerDone ? "Ofertă personalizată" : deposit}</dd>
+                  <dt>Taxă de rezervare</dt>
+                  <dd>{deposit}</dd>
                 </div>
-                {!offerDone && (
-                  <div>
-                    <dt>Preluare preferată</dt>
-                    <dd>{values.branch}</dd>
-                  </div>
-                )}
+                <div>
+                  <dt>Status plată</dt>
+                  <dd>În așteptarea confirmării</dd>
+                </div>
+                <div>
+                  <dt>Preluare preferată</dt>
+                  <dd>{values.branch}</dd>
+                </div>
                 <div>
                   <dt>Email de contact</dt>
                   <dd>{values.email}</dd>
@@ -296,13 +269,10 @@ export function ReservationCheckout({
               <li>
                 <Mail size={20} aria-hidden />
                 <div>
-                  <strong>Confirmarea pe email</strong>
+                  <strong>Confirmarea rezervării</strong>
                   <p>
-                    În varianta finală, primești{" "}
-                    {offerDone
-                      ? "detaliile solicitării"
-                      : "confirmarea rezervării și documentul plății"}{" "}
-                    la adresa completată.
+                    După confirmarea plății și a disponibilității, detaliile rezervării și
+                    documentul de plată sunt trimise la adresa completată.
                   </p>
                 </div>
               </li>
@@ -310,22 +280,14 @@ export function ReservationCheckout({
                 <UserRound size={20} aria-hidden />
                 <div>
                   <strong>Discuția cu un consultant</strong>
-                  <p>
-                    {offerDone
-                      ? "Clarificați oferta, finanțarea și întrebările despre mașină."
-                      : "Stabiliți detaliile achiziției și preluării mașinii."}
-                  </p>
+                  <p>Stabiliți detaliile achiziției și preluării mașinii.</p>
                 </div>
               </li>
             </ol>
             {consultant}
-            <p className="res-success-demo">
-              Acesta este un prototip:{" "}
-              {offerDone
-                ? "solicitarea nu a fost trimisă."
-                : "plata de 500 € a fost simulată, iar mașina nu a fost blocată în stoc."}{" "}
-              Nu s-au trimis emailuri.
-            </p>
+            <a className="res-terms-link" href={termsUrl}>
+              Condiții, anulare și rambursare
+            </a>
             <Link to="/autoturisme/$slug" params={{ slug: vehicle.slug }} className="res-primary">
               Înapoi la mașină <ArrowRight size={18} aria-hidden />
             </Link>
@@ -337,11 +299,21 @@ export function ReservationCheckout({
               <h1>Rezervă mașina cu {deposit}.</h1>
               <p>Completezi datele, le verifici și continui la plată.</p>
             </div>
-            <div className="res-layout">
-              <div className="res-sidebar">
-                {summary}
-                {alternative}
+            <div className="res-offer-alternative">
+              {consultant}
+              <div>
+                <p>Nu vrei să rezervi acum?</p>
+                <Link
+                  to="/autoturisme/$slug"
+                  params={{ slug: vehicle.slug }}
+                  search={{ offer: "1" }}
+                >
+                  Solicită ofertă <ArrowRight size={16} aria-hidden />
+                </Link>
               </div>
+            </div>
+            <div className="res-layout">
+              {summary}
               <div className="res-content">
                 <ol className="res-steps" aria-label="Pașii rezervării">
                   {["Datele tale", "Verificare și plată"].map((name, i) => (
@@ -357,9 +329,7 @@ export function ReservationCheckout({
                 {step === 0 ? (
                   <form ref={form} onSubmit={next} noValidate>
                     <fieldset className="res-form-fields" disabled={!ready}>
-                      <p className="res-help">
-                        Date demo precompletate. Le poți modifica pentru a testa formularul.
-                      </p>
+                      <p className="res-help">Verifică datele de contact înainte de a continua.</p>
                       <ContactFields
                         value={values}
                         onChange={(next) => {
@@ -426,9 +396,6 @@ export function ReservationCheckout({
                       <button className="res-primary" type="submit">
                         Verifică datele <ArrowRight size={18} aria-hidden />
                       </button>
-                      <p className="res-demo">
-                        Prototip · nu se trimit date și nu se fac plăți reale.
-                      </p>
                     </fieldset>
                   </form>
                 ) : (
@@ -474,10 +441,10 @@ export function ReservationCheckout({
                       <div>
                         <h3>Plată cu cardul</h3>
                         <p>
-                          {deposit}, echivalent în lei la cursul zilei. În fluxul final, suma exactă
-                          în lei se afișează înainte de autorizarea plății.
+                          {deposit}. Dacă plata se face în lei, suma exactă va fi afișată înainte de
+                          autorizare.
                         </p>
-                        <small>În acest prototip nu introduci date de card.</small>
+                        <small>Datele cardului se introduc în pagina securizată de plată.</small>
                       </div>
                     </div>
                     <label className="res-terms" htmlFor="reservation-terms">
@@ -494,7 +461,7 @@ export function ReservationCheckout({
                       />
                       <span>Am verificat datele și sunt de acord cu condițiile rezervării.</span>
                     </label>
-                    <a className="res-terms-link" href={faqUrl} target="_blank" rel="noreferrer">
+                    <a className="res-terms-link" href={termsUrl} target="_blank" rel="noreferrer">
                       Citește condițiile Autoklass (filă nouă)
                     </a>
                     {termsError && (
@@ -510,7 +477,6 @@ export function ReservationCheckout({
                       <ArrowLeft size={16} aria-hidden />
                       Înapoi la date
                     </button>
-                    <p className="res-demo">Urmează simularea plății. Nu se retrag bani.</p>
                   </form>
                 )}
               </div>
@@ -518,23 +484,14 @@ export function ReservationCheckout({
           </>
         )}
       </main>
-      <OfferDialog
-        key={offerSession}
-        vehicle={vehicle}
-        open={offerOpen}
-        onOpenChange={setOfferOpen}
-        opener={offerTrigger}
-        initialContact={values}
-        onContactChange={updateContact}
-        onSuccess={() => {
-          setOfferOpen(false);
-          setOfferDone(true);
-          requestAnimationFrame(() => {
-            successHeading.current?.focus();
-            window.scrollTo({ top: 0, behavior: "instant" });
-          });
-        }}
-      />
+      <footer className="res-legal-footer res-wrap">
+        <span>Autoklass Center S.R.L.</span>
+        <nav aria-label="Ajutor pentru rezervare">
+          <a href={termsUrl}>Condiții și anulare</a>
+          <a href={faqUrl}>Întrebări frecvente</a>
+          <Link to="/contact">Contact</Link>
+        </nav>
+      </footer>
       <Dialog.Root
         open={paymentOpen}
         onOpenChange={(open) => {
@@ -562,12 +519,12 @@ export function ReservationCheckout({
                 <X size={22} />
               </Dialog.Close>
             </div>
-            <p className="res-eyebrow">Simulare pentru prototip</p>
+            <p className="res-eyebrow">Taxă de rezervare</p>
             <strong className="res-payment-amount">{deposit}</strong>
             <p className="res-payment-car">{vehicle.title}</p>
             <Dialog.Description id="res-payment-description">
-              Acesta este pasul de plată demonstrativ. Nu este conectat la un procesator și nu
-              colectează date de card.
+              Suma se scade din prețul mașinii. Rezervarea se confirmă după autorizarea plății și
+              verificarea disponibilității.
             </Dialog.Description>
             <div
               className="res-payment-status"
@@ -576,9 +533,9 @@ export function ReservationCheckout({
               aria-live="polite"
             >
               {payment === "processing"
-                ? "Se verifică plata demonstrativă…"
+                ? "Se verifică solicitarea…"
                 : payment === "error"
-                  ? "Plata demonstrativă nu a reușit. Nu ai fost taxat. Încearcă din nou sau revino la rezervare."
+                  ? "Nu am putut continua spre plată. Încearcă din nou sau revino la datele rezervării."
                   : ""}
             </div>
             <button className="res-primary" onClick={pay} disabled={payment === "processing"}>
@@ -587,7 +544,7 @@ export function ReservationCheckout({
               ) : (
                 <CreditCard size={18} aria-hidden />
               )}
-              {payment === "error" ? "Reîncearcă plata simulată" : `Simulează plata de ${deposit}`}
+              {payment === "error" ? "Încearcă din nou" : `Continuă către plata de ${deposit}`}
             </button>
             <Dialog.Close className="res-back" disabled={payment === "processing"}>
               Anulează plata

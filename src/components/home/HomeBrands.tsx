@@ -126,7 +126,7 @@ export function HomeOffers() {
               (v) =>
                 v.slug === slug && !v.reserved && !!v.listPriceEur && v.listPriceEur > v.priceEur,
             );
-            return vehicle ? [<VehicleCard key={slug} vehicle={vehicle} compact offerBadge />] : [];
+            return vehicle ? [<VehicleCard key={slug} vehicle={vehicle} compact />] : [];
           })}
         </OfferRail>
       ))}

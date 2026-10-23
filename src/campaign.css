@@ -1,0 +1,563 @@
+.ak-campaign-page {
+  --camp-blue: #075da8;
+  --camp-ink: #202326;
+  --camp-muted: #58616a;
+  color: var(--camp-ink);
+  background: #fff;
+  font-family: var(--font-sans);
+}
+.ak-campaign-page * {
+  min-width: 0;
+}
+.camp-wrap {
+  width: min(100% - 48px, 1120px);
+  margin-inline: auto;
+}
+.camp-header {
+  background: #202326;
+  color: white;
+}
+.camp-header > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 72px;
+}
+.camp-header img {
+  width: 142px;
+  height: 32px;
+  object-fit: contain;
+}
+.camp-header a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+}
+.camp-skip {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 12px;
+  background: white;
+  color: #202326;
+  transform: translateY(-200%);
+}
+.camp-skip:focus {
+  transform: none;
+}
+.ak-campaign-page :is(a, button, input, select, summary):focus-visible {
+  outline: 2px solid var(--camp-blue);
+  outline-offset: 4px;
+}
+.camp-header a:focus-visible {
+  outline-color: white;
+}
+.camp-hero {
+  background: #edf2f6;
+}
+.camp-hero-copy {
+  padding-block: 48px 32px;
+}
+.camp-eyebrow {
+  margin: 0 0 12px;
+  color: var(--camp-muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+.ak-campaign-page h1 {
+  max-width: 20ch;
+  margin: 0;
+  font-size: clamp(32px, 4.8vw, 60px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.camp-intro {
+  max-width: 60ch;
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 20px 0 24px;
+}
+.camp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+}
+.camp-primary,
+.camp-outline {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.camp-primary {
+  background: var(--camp-blue);
+  color: white;
+  border: 1px solid var(--camp-blue);
+}
+.camp-primary:hover {
+  background: #054a86;
+}
+.camp-primary:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+.camp-outline {
+  border: 1px solid #98a5af;
+  background: transparent;
+  color: var(--camp-blue);
+}
+.camp-outline:hover {
+  background: #eaf2fa;
+  border-color: var(--camp-blue);
+}
+.camp-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 16px;
+}
+.camp-notice {
+  color: var(--camp-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 16px 0 0;
+}
+.camp-hero-image {
+  display: block;
+  width: 100%;
+  max-height: 440px;
+  aspect-ratio: 2.25;
+  object-fit: cover;
+}
+.camp-trust {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 20px;
+  border-bottom: 1px solid #dce0e3;
+  font-size: 14px;
+}
+.camp-trust svg {
+  flex-shrink: 0;
+  color: var(--camp-blue);
+}
+.camp-trust p {
+  margin: 0;
+  font-weight: 600;
+}
+.camp-trust span {
+  font-weight: 400;
+}
+.camp-section {
+  padding-block: 56px;
+}
+.ak-campaign-page h2 {
+  margin: 0 0 24px;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.ak-campaign-page h3 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+.camp-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.camp-benefits > div {
+  border-top: 1px solid #c5d0d8;
+  padding-top: 16px;
+}
+.camp-benefits svg {
+  color: var(--camp-blue);
+  margin-bottom: 12px;
+}
+.camp-benefits p {
+  font-size: 15px;
+  color: var(--camp-muted);
+  line-height: 1.45;
+  margin: 8px 0 0;
+}
+.camp-model-section {
+  background: #f3f5f6;
+}
+.camp-section-intro {
+  max-width: 64ch;
+  color: var(--camp-muted);
+  line-height: 1.5;
+  margin: -8px 0 24px;
+}
+.camp-models {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.camp-model {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.camp-model > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.5;
+  height: auto;
+  object-fit: cover;
+}
+.camp-model-copy {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.camp-model-copy > p {
+  color: var(--camp-muted);
+  margin: 8px 0 16px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.camp-model-price {
+  margin: 0 0 8px;
+}
+.camp-model-price strong {
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.camp-model-price span {
+  font-size: 13px;
+  color: var(--camp-muted);
+}
+.camp-model-copy .camp-model-detail {
+  font-size: 14px;
+  margin: 4px 0 20px;
+}
+.camp-model-copy button {
+  margin-top: auto;
+  width: 100%;
+  font-size: 15px;
+  padding-inline: 12px;
+}
+.camp-next {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.camp-next ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 24px;
+}
+.camp-next li {
+  display: flex;
+  gap: 16px;
+}
+.camp-next li > span {
+  font-size: 14px;
+  color: var(--camp-blue);
+  padding-top: 4px;
+}
+.camp-next p:not(.camp-eyebrow) {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--camp-muted);
+  margin: 8px 0 0;
+}
+.camp-faq {
+  border-top: 1px solid #dce0e3;
+  padding-top: 32px;
+}
+.camp-faq details {
+  border-bottom: 1px solid #dce0e3;
+}
+.camp-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  list-style: none;
+  min-height: 56px;
+  padding-block: 16px;
+  font-weight: 600;
+}
+.camp-faq summary::-webkit-details-marker {
+  display: none;
+}
+.camp-faq summary svg {
+  flex: none;
+}
+.camp-faq details[open] summary svg {
+  transform: rotate(180deg);
+}
+.camp-faq details p {
+  max-width: 76ch;
+  line-height: 1.5;
+  font-size: 16px;
+  color: var(--camp-muted);
+  margin: 0 0 20px;
+}
+.camp-contact-section {
+  background: #edf2f6;
+}
+.camp-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+}
+.camp-contact-grid > div > p:not(.camp-eyebrow) {
+  font-size: 17px;
+  line-height: 1.5;
+  max-width: 38ch;
+}
+.camp-contact-grid .camp-contact-note {
+  color: var(--camp-muted);
+  font-size: 14px;
+}
+.camp-contact-grid form {
+  background: white;
+  border: 1px solid #d4dce2;
+  border-radius: 6px;
+  padding: 24px;
+}
+.camp-contact-grid .v3-contact-fields {
+  gap: 16px;
+}
+.camp-contact-grid .v3-field {
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.camp-contact-grid :is(input, select) {
+  font-size: 16px;
+  min-height: 48px;
+  border: 1px solid #87949e;
+  border-radius: 4px;
+  background: white;
+}
+.camp-contact-grid select {
+  width: 100%;
+  padding: 10px;
+}
+.camp-contact-grid .camp-primary {
+  width: 100%;
+}
+.camp-form-note {
+  font-size: 13px;
+  color: var(--camp-muted);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+.camp-form-note a {
+  text-decoration: underline;
+}
+.camp-success {
+  padding: 24px;
+  background: white;
+  border: 1px solid #b5c7d6;
+  border-radius: 6px;
+}
+.camp-success svg {
+  color: var(--camp-blue);
+  margin-bottom: 16px;
+}
+.camp-terms {
+  padding-block: 32px;
+}
+.ak-campaign-page .camp-terms h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.camp-terms p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--camp-muted);
+  margin: 0 0 8px;
+}
+.camp-terms a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--camp-blue);
+  min-height: 44px;
+  text-decoration: underline;
+}
+.camp-terms svg {
+  flex: none;
+}
+.camp-footer {
+  border-top: 1px solid #dce0e3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 20px;
+  font-size: 13px;
+  color: var(--camp-muted);
+}
+.camp-footer a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--camp-ink);
+  font-weight: 600;
+}
+.ak-campaign-page [id] {
+  scroll-margin-block-start: 24px;
+}
+@media (max-width: 800px) {
+  .camp-wrap {
+    width: calc(100% - 40px);
+  }
+  .camp-header > div {
+    min-height: 64px;
+  }
+  .camp-header img {
+    width: 124px;
+    height: 28px;
+  }
+  .camp-header a {
+    font-size: 13px;
+    gap: 6px;
+  }
+  .camp-hero-copy {
+    padding-block: 28px 24px;
+  }
+  .camp-eyebrow {
+    font-size: 13px;
+  }
+  .camp-intro {
+    font-size: 16px;
+    margin-block: 16px 20px;
+  }
+  .camp-hero-actions {
+    gap: 8px 20px;
+  }
+  .camp-hero-image {
+    aspect-ratio: 2.25;
+    object-position: center;
+  }
+  .camp-notice {
+    font-size: 12px;
+  }
+  .camp-trust {
+    padding-block: 16px;
+    font-size: 13px;
+  }
+  .camp-section {
+    padding-block: 32px;
+  }
+  .ak-campaign-page h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+  .camp-benefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+  .camp-benefits h3 {
+    font-size: 18px;
+  }
+  .camp-benefits p {
+    font-size: 14px;
+  }
+  .camp-models {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .camp-model > img {
+    aspect-ratio: 1.8;
+  }
+  .camp-model-copy {
+    padding: 20px;
+  }
+  .camp-model-copy h3 {
+    font-size: 24px;
+  }
+  .camp-model-copy > p {
+    margin-bottom: 12px;
+  }
+  .camp-model-price strong {
+    font-size: 28px;
+  }
+  .camp-next,
+  .camp-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .camp-next h2 {
+    margin-bottom: 0;
+  }
+  .camp-next ol {
+    gap: 20px;
+  }
+  .camp-contact-grid form {
+    padding: 20px;
+  }
+  .camp-contact-grid .v3-contact-fields {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .camp-contact-grid .camp-contact-note {
+    font-size: 14px;
+  }
+  .camp-faq summary {
+    font-size: 16px;
+  }
+  .camp-terms {
+    padding-block: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ak-campaign-page * {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
+
+.ak-campaign-page :is(button, a, summary) {
+  touch-action: manipulation;
+}
+.camp-model-price strong {
+  font-variant-numeric: tabular-nums;
+}
+.camp-primary:active {
+  background: #043d70;
+}
+.camp-outline:active {
+  background: #dceaf6;
+}
+.camp-header a:hover,
+.camp-text-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

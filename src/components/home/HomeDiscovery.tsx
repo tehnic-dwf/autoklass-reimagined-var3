@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, Building2, Users, Route, Zap } from "lucide-react";
 import { useRef } from "react";
+import { MobileRailProgress } from "./MobileRailProgress";
 import { matchingVehicles, type VehicleSearch } from "@/lib/vehicle-search";
 import suv from "@/assets/discovery/suv.webp";
 import sedan from "@/assets/discovery/sedan.webp";
@@ -100,7 +101,7 @@ export function HomeNeedsCategories() {
         <h2 id="needs-title">Alege după nevoile tale.</h2>
         <p>Pornește de la o selecție. Ajustează filtrele după tine.</p>
       </div>
-      <div className="ak-needs-rail" ref={rail}>
+      <div className="ak-needs-rail" ref={rail} aria-label="Selecții: glisează pentru mai multe">
         {needs.map(({ name, image, icon: Icon, tone, criteria, search }) => (
           <Link className={`ak-need-card ${tone}`} key={name} to="/autoturisme" search={search}>
             <div className="ak-need-visual">
@@ -121,6 +122,7 @@ export function HomeNeedsCategories() {
           </Link>
         ))}
       </div>
+      <MobileRailProgress rail={rail} count={needs.length} />
       <div className="ak-discovery-controls">
         <button className="v3-icon" aria-label="Selecțiile precedente" onClick={() => move(-1)}>
           <ArrowLeft aria-hidden />

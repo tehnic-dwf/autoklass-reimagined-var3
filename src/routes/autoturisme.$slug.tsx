@@ -38,8 +38,10 @@ import carVerticalLogo from "@/assets/carvertical.svg";
 import "@/product-mobile.css";
 
 export const Route = createFileRoute("/autoturisme/$slug")({
-  validateSearch: (s: Record<string, unknown>): { demo?: string } =>
-    s["demo"] === "error" ? { demo: "error" } : {},
+  validateSearch: (s: Record<string, unknown>): { demo?: string; offer?: "1" } => ({
+    ...(s["demo"] === "error" ? { demo: "error" } : {}),
+    ...(s["offer"] === "1" ? { offer: "1" as const } : {}),
+  }),
   loader: ({ params }) => {
     const v = getVehicle(params.slug);
     if (!v) throw notFound();
@@ -53,12 +55,12 @@ export const Route = createFileRoute("/autoturisme/$slug")({
 
 function VehiclePage() {
   const v = Route.useLoaderData();
-  const { demo } = Route.useSearch();
+  const { demo, offer } = Route.useSearch();
   const detailed = v.slug === demoSlug;
   const usedExample = v.slug === usedDetails.slug;
   const isUsed = v.condition === "rulat";
   const [requestKind, setRequestKind] = useState<"offer" | "report">("offer");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(offer === "1");
   const [photo, setPhoto] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -645,7 +647,7 @@ function VehiclePage() {
             <div className="v3-panel-body">
               <img src={carVerticalLogo} alt="carVertical" width={173} height={32} />
               <p id="report-preview-description">
-                Previzualizare demonstrativă. Raportul real al mașinii va fi conectat aici.
+                Raportul de verificare nu este disponibil momentan.
               </p>
             </div>
           </Dialog.Content>

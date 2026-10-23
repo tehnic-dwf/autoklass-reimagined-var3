@@ -7,12 +7,11 @@ import { FavoriteButton } from "./FavoriteButton";
 export function VehicleCard({
   vehicle: v,
   compact = false,
-  offerBadge = false,
 }: {
   vehicle: Vehicle;
   compact?: boolean;
-  offerBadge?: boolean;
 }) {
+  const discount = v.listPriceEur && v.listPriceEur > v.priceEur ? v.listPriceEur - v.priceEur : 0;
   return (
     <article className="v3-car">
       <div className="v3-car-image">
@@ -22,11 +21,6 @@ export function VehicleCard({
         <span className={`v3-car-condition ak-badge ${v.condition}`}>
           {v.condition === "nou" ? "Nou" : "Rulat"}
         </span>
-        {!!v.listPriceEur && v.listPriceEur > v.priceEur && (
-          <span className="ak-discount-badge">
-            {offerBadge ? "Ofertă · " : ""}−{formatPrice(v.listPriceEur - v.priceEur)} €
-          </span>
-        )}
         <FavoriteButton slug={v.slug} className="absolute right-3 top-3 bg-white" />
       </div>
       <div className="v3-car-body">
@@ -40,10 +34,13 @@ export function VehicleCard({
         <VehicleFacts vehicle={v} compact />
         <div className="v3-car-price-row">
           <div>
-            {!!v.listPriceEur && v.listPriceEur > v.priceEur && (
+            {v.listPriceEur !== undefined && discount > 0 && (
               <del className="ak-old-price">{formatPrice(v.listPriceEur)} €</del>
             )}
             <p className="v3-price">{formatPrice(v.priceEur)} €</p>
+            {discount > 0 && (
+              <p className="ak-card-saving">Economisești {formatPrice(discount)} €</p>
+            )}
             {!compact && (
               <p className="v3-small v3-muted">
                 TVA inclus{v.vat === "deductibil" ? ", deductibil" : ""}

@@ -6,6 +6,8 @@
 @import "./typography.css";
 @import "./client-refinement.css";
 @import "./discovery.css";
+@import "./menu-polish.css";
+@import "./mobile-rails.css";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -12,7 +12,7 @@ export type ReservationErrors = Partial<Record<keyof ReservationValues, string>>
 export const initialReservation = (branch: string): ReservationValues => ({
   ...testContact,
   entity: "person",
-  company: "Companie Demo SRL",
+  company: "Atelier Popescu SRL",
   cui: "RO12345678",
   address: "Strada Exemplu nr. 10",
   city: "București",

@@ -49,6 +49,23 @@ function Listing() {
   const page = Math.min(pages, Math.max(1, Number(value.page) || 1));
   const shown = items.slice((page - 1) * pageSize, page * pageSize);
   const alternatives = suggestedVehicles(value);
+  const activeFilterLabel = (key: keyof VehicleSearch, selected: string) => {
+    if (key === "offer") return "Oferte vânzări";
+    const displayed =
+      (
+        {
+          nou: "Noi",
+          rulat: "Rulate",
+          unknown: "De confirmat",
+          immediate: "Livrare imediată",
+          stock: "În stoc",
+        } as Record<string, string>
+      )[selected] ||
+      (["minPrice", "maxPrice"].includes(key)
+        ? `${Number(selected).toLocaleString("ro-RO")} €`
+        : selected);
+    return `${filterLabels[key]}: ${displayed}`;
+  };
   const update = (next: VehicleSearch) => {
     const clean = { ...next };
     delete clean.page;
@@ -162,7 +179,7 @@ function Listing() {
               <button
                 className="v3-chip"
                 key={key}
-                aria-label={`Elimină ${filterLabels[key]}: ${v}`}
+                aria-label={`Elimină ${activeFilterLabel(key, v)}`}
                 onClick={() => {
                   const next = { ...value };
                   delete next[key];
@@ -170,19 +187,7 @@ function Listing() {
                   update(next);
                 }}
               >
-                {filterLabels[key]}:{" "}
-                {(
-                  {
-                    nou: "Noi",
-                    rulat: "Rulate",
-                    unknown: "De confirmat",
-                    immediate: "Livrare imediată",
-                    stock: "În stoc",
-                  } as Record<string, string>
-                )[v] ||
-                  (["minPrice", "maxPrice"].includes(key)
-                    ? `${Number(v).toLocaleString("ro-RO")} €`
-                    : v)}
+                {activeFilterLabel(key, v)}
                 <X size={14} />
               </button>
             ))}

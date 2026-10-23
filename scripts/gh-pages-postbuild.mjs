@@ -35,6 +35,8 @@ const requiredPages = [
   "comparatie",
   "rezervare/mercedes-benz-glc-200-4matic-vu149616",
   "rezervare/audi-a7-a7-sportback-nn011329",
+  "campanii/mercedes-benz-start-up-editions",
+  "campanii/suv-winter-edition",
 ];
 for (const page of requiredPages) {
   const file = join(outDir, page, "index.html");
