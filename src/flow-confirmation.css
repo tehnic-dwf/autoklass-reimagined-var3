@@ -1,0 +1,74 @@
+.flow-confirmation {
+  color: #202326;
+}
+
+.flow-confirmation > svg {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.flow-confirmation .flow-confirmation-status {
+  margin: 0 0 10px;
+  color: #267058;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+}
+
+.flow-confirmation > p:not(.flow-confirmation-status) {
+  margin: 12px 0 0;
+  color: #596168;
+  line-height: 1.55;
+}
+
+.flow-confirmation-details {
+  margin: 24px 0 0;
+  border-top: 1px solid #d9dfe3;
+}
+
+.flow-confirmation-details > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.2fr);
+  gap: 8px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e6e8;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.flow-confirmation-details dt {
+  color: #596168;
+}
+
+.flow-confirmation-details dd {
+  margin: 0;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.flow-confirmation .flow-confirmation-note {
+  font-size: 14px;
+}
+
+.flow-confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+  margin-top: 24px;
+}
+
+.flow-confirmation-actions .v3-button {
+  margin-top: 0;
+}
+
+.camp-success.flow-confirmation .camp-outline {
+  margin-top: 24px;
+}
+
+@media (max-width: 420px) {
+  .flow-confirmation-details > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}

@@ -18,6 +18,7 @@ import {
 import { formatPrice } from "@/data/vehicles";
 import { vinVehicles, serviceModels, eligibleServiceRateIds } from "@/data/service-vehicles";
 import "@/service-mobile.css";
+import "@/flow-confirmation.css";
 type ServiceSearch = {
   branch?: string;
   service?: string;
@@ -222,33 +223,61 @@ function ServiceRequest() {
             </Link>
 
             <h1 ref={heading} tabIndex={-1} className="service-page-title">
-              {status === "done" ? "Mulțumim pentru solicitare." : title}
+              {status === "done" ? "Am primit solicitarea de programare." : title}
             </h1>
             {status === "done" ? (
-              <div className="v3-success" role="status">
-                <CheckCircle2 size={40} />
+              <div className="v3-success flow-confirmation" role="status">
+                <CheckCircle2 size={40} aria-hidden />
+                <p className="flow-confirmation-status">Solicitare trimisă</p>
                 <p>
-                  {serviceName(service)} · {branchName(branch)}
+                  Echipa service te va contacta pentru a confirma ziua și ora. Programarea nu este
+                  confirmată până atunci.
                 </p>
+                <dl className="flow-confirmation-details">
+                  <div>
+                    <dt>Serviciu</dt>
+                    <dd>{serviceName(service)}</dd>
+                  </div>
+                  <div>
+                    <dt>Sucursală</dt>
+                    <dd>{branchName(branch)}</dd>
+                  </div>
+                  <div>
+                    <dt>Mașină</dt>
+                    <dd>
+                      {brand} {model}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Zi preferată</dt>
+                    <dd>
+                      {date
+                        ? new Date(`${date}T12:00:00`).toLocaleDateString("ro-RO", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })
+                        : "De stabilit"}
+                      {time ? ` · ${time}` : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Email de contact</dt>
+                    <dd>{contact.email}</dd>
+                  </div>
+                </dl>
                 {rateSummary}
-                <p>
-                  Echipa service te va contacta pentru a confirma ziua și ora. Devizul final se
-                  stabilește după verificarea mașinii.
+                <p className="flow-confirmation-note">
+                  Devizul final se stabilește după verificarea mașinii.
                 </p>
-                <p>
-                  Preferință:{" "}
-                  {date
-                    ? new Date(`${date}T12:00:00`).toLocaleDateString("ro-RO", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })
-                    : "zi de stabilit"}
-                  {time ? ` · ${time}` : ""}.
-                </p>
-                <Link className="v3-button mt-6" to="/service/tarife">
-                  Înapoi la servicii
-                </Link>
+                <div className="flow-confirmation-actions">
+                  <Link className="v3-button mt-6" to="/service/tarife">
+                    Vezi serviciile
+                  </Link>
+                  <Link className="v3-link" to="/contact">
+                    Ai o întrebare? Contactează-ne
+                  </Link>
+                </div>
               </div>
             ) : (
               <>

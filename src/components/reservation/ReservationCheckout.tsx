@@ -229,13 +229,13 @@ export function ReservationCheckout({
             <span className="res-success-icon">
               <Clock3 size={28} aria-hidden />
             </span>
-            <p className="res-eyebrow">Rezervare în curs de confirmare</p>
+            <p className="res-eyebrow">Cerere de rezervare înregistrată</p>
             <h1 ref={successHeading} tabIndex={-1}>
-              Mulțumim, {values.firstName}.
+              Am primit cererea ta, {values.firstName}.
             </h1>
             <p>
-              Datele rezervării sunt pregătite. Rezervarea se confirmă după autorizarea plății și
-              verificarea disponibilității mașinii.
+              Verificăm plata și disponibilitatea mașinii. Rezervarea nu este confirmată încă; te
+              anunțăm după finalizarea acestor verificări.
             </p>
             <div className="res-receipt">
               <div className="res-car">
@@ -251,15 +251,15 @@ export function ReservationCheckout({
                   <dd>{deposit}</dd>
                 </div>
                 <div>
-                  <dt>Status plată</dt>
-                  <dd>În așteptarea confirmării</dd>
+                  <dt>Plată</dt>
+                  <dd>În curs de verificare</dd>
                 </div>
                 <div>
                   <dt>Preluare preferată</dt>
                   <dd>{values.branch}</dd>
                 </div>
                 <div>
-                  <dt>Email de contact</dt>
+                  <dt>Email pentru confirmare</dt>
                   <dd>{values.email}</dd>
                 </div>
               </dl>
@@ -269,10 +269,10 @@ export function ReservationCheckout({
               <li>
                 <Mail size={20} aria-hidden />
                 <div>
-                  <strong>Confirmarea rezervării</strong>
+                  <strong>Primești răspunsul pe email</strong>
                   <p>
-                    După confirmarea plății și a disponibilității, detaliile rezervării și
-                    documentul de plată sunt trimise la adresa completată.
+                    După verificarea plății și a disponibilității, primești confirmarea rezervării
+                    și documentul de plată la adresa de mai sus.
                   </p>
                 </div>
               </li>

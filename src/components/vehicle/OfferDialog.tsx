@@ -107,14 +107,30 @@ export function OfferDialog({
               requestKind === "report" ? (
                 <div className="offer-confirmation" role="status">
                   <CheckCircle2 className="offer-confirmation-icon" size={34} strokeWidth={1.75} />
+                  <p className="offer-confirmation-kicker">Solicitare trimisă</p>
                   <h2 ref={successHeading} tabIndex={-1}>
-                    Am primit solicitarea ta.
+                    Am primit cererea pentru raport.
                   </h2>
                   <Dialog.Description id="offer-description">
-                    Consultantul te va contacta în legătură cu raportul carVertical pentru{" "}
-                    {vehicle.title}.
+                    Un consultant verifică raportul carVertical și te contactează folosind datele
+                    completate.
                   </Dialog.Description>
-                  <p className="offer-confirmation-email">Date de contact: {value.email}</p>
+                  <div className="offer-confirmation-car">
+                    <img src={vehicle.image} alt="" width={104} height={78} />
+                    <div>
+                      <span>Raport solicitat pentru</span>
+                      <strong>{vehicle.title}</strong>
+                    </div>
+                  </div>
+                  <dl className="offer-confirmation-details">
+                    <div>
+                      <dt>Email de contact</dt>
+                      <dd>{value.email}</dd>
+                    </div>
+                  </dl>
+                  <p className="offer-confirmation-help">
+                    Ai o întrebare? <Link to="/contact">Contactează-ne</Link>.
+                  </p>
                 </div>
               ) : (
                 <div className="offer-confirmation" role="status">

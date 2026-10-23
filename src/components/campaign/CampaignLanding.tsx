@@ -6,6 +6,7 @@ import type { Campaign } from "@/data/campaigns";
 import { ContactFields } from "@/components/prototype/ContactFields";
 import { emptyContact, validateContact, type ContactValues } from "@/lib/contact-validation";
 import "@/campaign.css";
+import "@/flow-confirmation.css";
 
 export function CampaignLanding({ campaign }: { campaign: Campaign }) {
   const [model, setModel] = useState("");
@@ -189,26 +190,55 @@ export function CampaignLanding({ campaign }: { campaign: Campaign }) {
             <div>
               <p className="camp-eyebrow">Oferta ta personalizată</p>
               <h2 id="camp-contact-title">
-                Hai să găsim
-                <br />
-                varianta potrivită.
+                {state === "done" ? (
+                  "Poți compara în continuare modelele."
+                ) : (
+                  <>
+                    Hai să găsim
+                    <br />
+                    varianta potrivită.
+                  </>
+                )}
               </h2>
-              <p>Lasă datele de contact și modelul care te interesează.</p>
-              <p className="camp-contact-note">
-                Solicitarea unei oferte nu rezervă un autovehicul și nu presupune o achiziție.
-              </p>
+              {state !== "done" && (
+                <>
+                  <p>Lasă datele de contact și modelul care te interesează.</p>
+                  <p className="camp-contact-note">
+                    Solicitarea unei oferte nu rezervă un autovehicul și nu presupune o achiziție.
+                  </p>
+                </>
+              )}
             </div>
             {state === "done" ? (
-              <div className="camp-success" ref={statusRef} role="status" tabIndex={-1}>
+              <div
+                className="camp-success flow-confirmation"
+                ref={statusRef}
+                role="status"
+                tabIndex={-1}
+              >
                 <Check size={32} aria-hidden />
-                <h3>Mulțumim pentru solicitare.</h3>
+                <p className="flow-confirmation-status">Solicitare trimisă</p>
+                <h3>Am primit cererea ta de ofertă.</h3>
                 <p>
-                  Un consultant te va contacta în legătură cu oferta
-                  {model ? ` pentru ${model}` : " potrivită pentru tine"}.
+                  Un consultant verifică opțiunile și te contactează folosind datele completate.
                 </p>
-                <button className="camp-outline" onClick={() => setState("idle")}>
-                  Înapoi la formular
-                </button>
+                <dl className="flow-confirmation-details">
+                  <div>
+                    <dt>Campanie</dt>
+                    <dd>{campaign.name}</dd>
+                  </div>
+                  <div>
+                    <dt>Model</dt>
+                    <dd>{model || "Doresc o recomandare"}</dd>
+                  </div>
+                  <div>
+                    <dt>Email de contact</dt>
+                    <dd>{values.email}</dd>
+                  </div>
+                </dl>
+                <a className="camp-outline" href="#camp-models">
+                  Vezi modelele
+                </a>
               </div>
             ) : (
               <form ref={formRef} onSubmit={submit} noValidate>

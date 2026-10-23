@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ContactFields } from "@/components/prototype/ContactFields";
 import { testContact, validateContact, type ContactValues } from "@/lib/contact-validation";
 import { contactBranches } from "@/data/contact-branches";
+import "@/flow-confirmation.css";
 export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [{ title: "Contact | Autoklass" }] }),
   component: ContactPage,
@@ -40,16 +41,20 @@ function ContactPage() {
       <SiteHeader />
       <main id="main-content" className="v3-wrap v3-section ak-contact-page">
         {done ? (
-          <div className="v3-success" role="status">
+          <div className="v3-success flow-confirmation" role="status">
             <CheckCircle2 size={40} strokeWidth={1.5} aria-hidden />
             <h1 tabIndex={-1} ref={success}>
-              Mulțumim pentru solicitare.
+              Am primit mesajul tău.
             </h1>
-            <p>Un consultant te va contacta pentru a discuta detaliile.</p>
-            <dl className="ak-contact-recap">
+            <p>Un consultant îți va răspunde folosind datele completate.</p>
+            <dl className="flow-confirmation-details">
               <div>
                 <dt>Subiect</dt>
                 <dd>{subject.trim()}</dd>
+              </div>
+              <div>
+                <dt>Email de contact</dt>
+                <dd>{value.email}</dd>
               </div>
               {branch && (
                 <div>
