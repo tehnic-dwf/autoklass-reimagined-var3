@@ -1,16 +1,81 @@
-import { Check, ChevronDown, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Check, ChevronDown, Search, X } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ClassicSelect } from "@/components/ui/ClassicSelect";
+import { SelectedVehicleFilters } from "./SelectedVehicleFilters";
 import { vehicles } from "@/data/vehicles";
 import {
   modelOf,
-  cityOf,
+  macroColorOf,
+  vehicleBranchGroups,
   unique,
   matchingVehicles,
+  suggestedVehicles,
+  removeVehicleFilterChip,
+  resetVehicleFilters,
+  vehicleFilterChips,
   type SearchKey,
   type VehicleSearch,
 } from "@/lib/vehicle-search";
 type Props = { value: VehicleSearch; onChange: (value: VehicleSearch) => void };
+
+const equipmentGroups = [
+  {
+    name: "Confort și interior",
+    options: [
+      "Scaune față încălzite",
+      "Trapă panoramică",
+      "Volan încălzit",
+      "Iluminare ambientală",
+      "Scaune față reglabile electric",
+      "Banchetă spate rabatabilă",
+      "Climatizare",
+    ],
+  },
+  {
+    name: "Siguranță și asistență",
+    options: [
+      "Cameră 360°",
+      "Monitorizarea unghiului mort",
+      "Recunoașterea semnelor de circulație",
+      "Asistent activ la frânare",
+      "Asistent activ pentru menținerea benzii",
+      "Monitorizarea presiunii în anvelope",
+      "Faruri DIGITAL LIGHT",
+    ],
+  },
+  {
+    name: "Multimedia și conectivitate",
+    options: [
+      "Apple CarPlay",
+      "Android Auto",
+      "Navigație",
+      "Încărcare wireless pentru telefon",
+      "Sistem multimedia MBUX",
+      "Radio digital",
+      "Pachet USB",
+    ],
+  },
+] as const;
+
+const popularEquipment = [
+  "Cameră 360°",
+  "Scaune față încălzite",
+  "Apple CarPlay",
+  "Trapă panoramică",
+  "Navigație",
+  "Faruri DIGITAL LIGHT",
+];
+const equipmentOptionCount = equipmentGroups.reduce(
+  (count, group) => count + group.options.length,
+  0,
+);
+
+const normalizeEquipment = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("ro-RO");
 
 export function ConditionTabs({ value, onChange }: Props) {
   return (
@@ -32,17 +97,6 @@ export function ConditionTabs({ value, onChange }: Props) {
               delete next.minKm;
               delete next.maxKm;
             }
-            const candidates = vehicles.filter((v) => !key || v.condition === key);
-            if (next.brand && !candidates.some((v) => v.brand === next.brand)) {
-              delete next.brand;
-              delete next.model;
-            } else if (
-              next.model &&
-              !candidates.some(
-                (v) => (!next.brand || v.brand === next.brand) && modelOf(v) === next.model,
-              )
-            )
-              delete next.model;
             onChange(next);
           }}
         >
@@ -58,10 +112,28 @@ const budgets = [
   ["60000", "60.000 €"],
   ["", "Orice buget"],
 ] as const;
+const budgetIntervals = [
+  [":25000", "Maximum 25.000 €"],
+  [":40000", "Maximum 40.000 €"],
+  [":60000", "Maximum 60.000 €"],
+  ["25000:40000", "25.000–40.000 €"],
+  ["40000:60000", "40.000–60.000 €"],
+  ["60000:80000", "60.000–80.000 €"],
+  ["80000:100000", "80.000–100.000 €"],
+  ["100000:", "Peste 100.000 €"],
+] as const;
 export function BudgetFilter({ value, onChange }: Props) {
+  const selectedRange = `${value.minPrice || ""}:${value.maxPrice || ""}`;
+  const customRange =
+    (value.minPrice || value.maxPrice) &&
+    !budgetIntervals.some(([range]) => range === selectedRange);
+  const formatted = (amount: string | undefined) =>
+    amount ? Number(amount).toLocaleString("ro-RO") : "";
   return (
     <fieldset className="ak-budget">
-      <legend>Buget maxim</legend>
+      <legend>
+        Buget maxim <span className="ak-budget-tax">TVA inclus</span>
+      </legend>
       <div>
         {budgets.map(([max, label]) => (
           <button
@@ -79,9 +151,9 @@ export function BudgetFilter({ value, onChange }: Props) {
           </button>
         ))}
       </div>
-      <details className="ak-budget-interval" open={Boolean(value.minPrice)}>
+      <details className="ak-budget-interval" open={Boolean(value.minPrice || customRange)}>
         <summary>
-          <span>Alege alt interval de preț</span>
+          <span>Interval de preț</span>
           <ChevronDown size={18} aria-hidden="true" />
         </summary>
         <label className="v3-field">
@@ -95,24 +167,23 @@ export function BudgetFilter({ value, onChange }: Props) {
             }}
           >
             <option value=":">Orice buget</option>
-            {[
-              [":25000", "Maximum 25.000 €"],
-              [":40000", "Maximum 40.000 €"],
-              [":60000", "Maximum 60.000 €"],
-              ["25000:40000", "25.000–40.000 €"],
-              ["40000:60000", "40.000–60.000 €"],
-              ["60000:80000", "60.000–80.000 €"],
-              ["80000:100000", "80.000–100.000 €"],
-              ["100000:", "Peste 100.000 €"],
-            ].map(([value, label]) => (
+            {budgetIntervals.map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
+            {customRange && (
+              <option value={selectedRange}>
+                {value.minPrice && value.maxPrice
+                  ? `${formatted(value.minPrice)}–${formatted(value.maxPrice)} €`
+                  : value.minPrice
+                    ? `De la ${formatted(value.minPrice)} €`
+                    : `Maximum ${formatted(value.maxPrice)} €`}
+              </option>
+            )}
           </select>
         </label>
       </details>
-      <p>Prețuri cu TVA inclus</p>
     </fieldset>
   );
 }
@@ -130,24 +201,15 @@ export function BasicFilters({ value, onChange }: Props) {
           label="Marcă"
           value={value.brand || ""}
           placeholder="Toate mărcile"
-          options={unique(
-            vehicles
+          options={unique([
+            ...vehicles
               .filter((v) => !value.condition || v.condition === value.condition)
               .map((v) => v.brand),
-          ).map((brand) => ({ value: brand, label: brand }))}
+            ...(value.brand ? [value.brand] : []),
+          ]).map((brand) => ({ value: brand, label: brand }))}
           onChange={(brand) => {
             const next = { ...value, brand };
-            for (const key of [
-              "model",
-              "fuel",
-              "body",
-              "gearbox",
-              "drive",
-              "branch",
-              "color",
-              "equipment",
-            ] as const)
-              delete next[key];
+            delete next.model;
             onChange(next);
           }}
         />
@@ -157,27 +219,60 @@ export function BasicFilters({ value, onChange }: Props) {
           value={value.model || ""}
           placeholder={value.brand ? "Toate modelele" : "Alege marca"}
           disabled={!value.brand}
-          options={unique(
-            vehicles
+          options={unique([
+            ...vehicles
               .filter(
                 (v) =>
                   (!value.brand || v.brand === value.brand) &&
                   (!value.condition || v.condition === value.condition),
               )
               .map(modelOf),
-          ).map((model) => ({ value: model, label: model }))}
+            ...(value.model ? [value.model] : []),
+          ]).map((model) => ({ value: model, label: model }))}
           onChange={(model) => onChange({ ...value, model })}
+        />
+        <ClassicSelect
+          className="ak-branch-field"
+          label="Sucursală"
+          value={value.branch || ""}
+          placeholder="Toate"
+          groups={vehicleBranchGroups()}
+          onChange={(branch) => {
+            const next = { ...value, branch };
+            delete next.city;
+            onChange(next);
+          }}
         />
       </div>
     </div>
   );
 }
 export function AdvancedFilters({ value, onChange }: Props) {
+  const selectedEquipment = (value.equipment || "").split(",").filter(Boolean);
+  const [showAllEquipment, setShowAllEquipment] = useState(() =>
+    selectedEquipment.some((term) => !popularEquipment.includes(term)),
+  );
+  const [equipmentQuery, setEquipmentQuery] = useState("");
+  const visibleEquipmentGroups = showAllEquipment
+    ? equipmentGroups
+        .map((group) => ({
+          ...group,
+          options: group.options.filter((option) =>
+            normalizeEquipment(option).includes(normalizeEquipment(equipmentQuery.trim())),
+          ),
+        }))
+        .filter((group) => group.options.length > 0)
+    : [{ name: "Cele mai căutate", options: popularEquipment }];
   const set = (key: SearchKey, v: string) => onChange({ ...value, [key]: v });
+  const toggleEquipment = (term: string, checked: boolean) => {
+    const terms = checked
+      ? [...selectedEquipment, term]
+      : selectedEquipment.filter((item) => item !== term);
+    set("equipment", terms.join(","));
+  };
   const candidates = (key: SearchKey) => {
     const next = { ...value };
     delete next[key];
-    delete next.q;
     return matchingVehicles(next);
   };
   const select = (key: SearchKey, label: string, options: string[] | string[][]) => (
@@ -190,7 +285,12 @@ export function AdvancedFilters({ value, onChange }: Props) {
         onChange={(e) => set(key, e.target.value)}
       >
         <option value="">Toate</option>
-        {options.map((o) => {
+        {[
+          ...options,
+          ...(value[key] && !options.some((o) => (Array.isArray(o) ? o[0] : o) === value[key])
+            ? [value[key]!]
+            : []),
+        ].map((o) => {
           const [val, text] = Array.isArray(o) ? o : [o, o];
           return (
             <option key={val} value={val}>
@@ -219,6 +319,17 @@ export function AdvancedFilters({ value, onChange }: Props) {
             {text}
           </option>
         ))}
+        {value[low] || value[high]
+          ? !options.some(([key]) => key === `${value[low] || ""}:${value[high] || ""}`) && (
+              <option value={`${value[low] || ""}:${value[high] || ""}`}>
+                {value[low] && value[high]
+                  ? `${value[low]}–${value[high]}`
+                  : value[low]
+                    ? `De la ${value[low]}`
+                    : `Până la ${value[high]}`}
+              </option>
+            )
+          : null}
       </select>
     </label>
   );
@@ -251,7 +362,7 @@ export function AdvancedFilters({ value, onChange }: Props) {
           value.gearbox || value.drive || value.color || value.certified || value.equipment,
         )}
       >
-        <summary>Echipare și confort</summary>
+        <summary>Caracteristici și dotări</summary>
         <div className="v3-grid">
           {select("gearbox", "Transmisie", unique(candidates("gearbox").map((v) => v.gearbox)))}
           {select(
@@ -269,16 +380,71 @@ export function AdvancedFilters({ value, onChange }: Props) {
           {select(
             "color",
             "Culoare",
-            unique(candidates("color").flatMap((v) => (v.color ? [v.color] : []))),
+            unique([
+              ...candidates("color").flatMap((v) => (v.color ? [macroColorOf(v.color)] : [])),
+              ...(value.color ? [value.color] : []),
+            ]),
           )}
-          {select("certified", "Certificare", [["yes", "Mercedes-Benz Certified"]])}
-          {select(
-            "equipment",
-            "Dotare esențială",
-            ["Cameră", "Scaune", "CarPlay", "Panoramic", "Navigație", "LED"].filter(
-              (term) => matchingVehicles({ ...value, equipment: term }).length > 0,
-            ),
-          )}
+          {select("certified", "Certificare", [
+            ["mercedes", "Mercedes-Benz Certified"],
+            ["dwa", "Das WeltAuto"],
+          ])}
+          <fieldset className="ak-equipment-field">
+            <legend>
+              Dotări{selectedEquipment.length ? ` (${selectedEquipment.length})` : ""}
+            </legend>
+            <p className="ak-equipment-hint">Poți alege mai multe dotări pentru aceeași mașină.</p>
+            {showAllEquipment && (
+              <label className="ak-filter-equipment-search">
+                <span className="sr-only">Caută o dotare</span>
+                <Search size={18} aria-hidden="true" />
+                <input
+                  type="search"
+                  value={equipmentQuery}
+                  onChange={(event) => setEquipmentQuery(event.target.value)}
+                  placeholder="Caută o dotare"
+                />
+              </label>
+            )}
+            <div className="ak-equipment-groups">
+              {visibleEquipmentGroups.map((group) => (
+                <div className="ak-equipment-group-filter" key={group.name}>
+                  <p className="ak-equipment-group-title">{group.name}</p>
+                  <div className="ak-equipment-options">
+                    {group.options.map((term) => (
+                      <label key={term} className="ak-equipment-option">
+                        <input
+                          type="checkbox"
+                          checked={selectedEquipment.includes(term)}
+                          onChange={(event) => toggleEquipment(term, event.target.checked)}
+                        />
+                        <span>{term}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {showAllEquipment && visibleEquipmentGroups.length === 0 && (
+              <p className="ak-equipment-no-match" role="status">
+                Nicio dotare găsită. Încearcă alt termen.
+              </p>
+            )}
+            <button
+              type="button"
+              className="ak-equipment-toggle"
+              aria-expanded={showAllEquipment}
+              onClick={() => {
+                setShowAllEquipment((current) => !current);
+                setEquipmentQuery("");
+              }}
+            >
+              {showAllEquipment
+                ? "Arată mai puține"
+                : `Vezi toate cele ${equipmentOptionCount} de dotări`}
+              <ChevronDown size={17} aria-hidden="true" />
+            </button>
+          </fieldset>
         </div>
       </details>
       <details
@@ -300,13 +466,12 @@ export function AdvancedFilters({ value, onChange }: Props) {
             ["250:400", "250–400 CP"],
             ["400:", "Peste 400 CP"],
           ])}
-          {value.fuel !== "Electric" &&
-            range("minEngine", "maxEngine", "Cilindree", [
-              [":1600", "Maximum 1.600 cm³"],
-              ["1600:2000", "1.600–2.000 cm³"],
-              ["2000:", "Peste 2.000 cm³"],
-            ])}
-          {candidates("minRange").some((v) => v.rangeKm) && (
+          {range("minEngine", "maxEngine", "Cilindree", [
+            [":1600", "Maximum 1.600 cm³"],
+            ["1600:2000", "1.600–2.000 cm³"],
+            ["2000:", "Peste 2.000 cm³"],
+          ])}
+          {(candidates("minRange").some((v) => v.rangeKm) || value.minRange || value.minCharge) && (
             <>
               {select("minRange", "Autonomie WLTP", [
                 ["400", "Cel puțin 400 km"],
@@ -323,11 +488,10 @@ export function AdvancedFilters({ value, onChange }: Props) {
       </details>
       <details
         className="v3-disclosure"
-        open={Boolean(value.branch || value.availability || value.vat || value.offer)}
+        open={Boolean(value.availability || value.vat || value.offer)}
       >
         <summary>Locație și disponibilitate</summary>
         <div className="v3-grid">
-          {select("city", "Oraș", unique(candidates("city").map(cityOf)))}
           {select("availability", "Disponibilitate", [
             ["immediate", "Livrare imediată"],
             ["stock", "În stoc"],
@@ -354,41 +518,123 @@ export function FilterPanel({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   returnFocus: React.RefObject<HTMLButtonElement | null>;
-  onApply?: () => void;
+  onApply?: ((value: VehicleSearch) => void) | undefined;
 }) {
-  const count = matchingVehicles(value).length;
+  const draftRef = useRef(value);
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      const changed = Object.keys({ ...value, ...draftRef.current }).some(
+        (key) => value[key as SearchKey] !== draftRef.current[key as SearchKey],
+      );
+      if (changed) onChange(draftRef.current);
+    }
+    onOpenChange(nextOpen);
+  };
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="v3-shell-overlay" />
-        <Dialog.Content
-          className="v3 v3-panel"
-          aria-describedby={undefined}
-          onCloseAutoFocus={(e) => {
-            e.preventDefault();
-            returnFocus.current?.focus();
-          }}
-        >
-          <div className="v3-panel-head">
-            <Dialog.Title>Filtrează mașinile</Dialog.Title>
-            <Dialog.Close className="v3-icon" aria-label="Închide filtrele">
-              <X size={22} />
-            </Dialog.Close>
-          </div>
-          <div className="v3-panel-body">
-            <BasicFilters value={value} onChange={onChange} />
-            <AdvancedFilters value={value} onChange={onChange} />
-            <button className="v3-link mt-4" onClick={() => onChange({})}>
-              Resetează toate filtrele
-            </button>
-          </div>
-          <div className="v3-panel-foot">
-            <Dialog.Close className="v3-button" onClick={onApply}>
-              {count ? `Vezi ${count} ${count === 1 ? "mașină" : "mașini"}` : "Vezi alternative"}
-            </Dialog.Close>
-          </div>
-        </Dialog.Content>
+        {open && (
+          <FilterPanelContent
+            value={value}
+            draftRef={draftRef}
+            returnFocus={returnFocus}
+            onApply={onApply}
+          />
+        )}
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+function FilterPanelContent({
+  value,
+  draftRef,
+  returnFocus,
+  onApply,
+}: {
+  value: VehicleSearch;
+  draftRef: React.MutableRefObject<VehicleSearch>;
+  returnFocus: React.RefObject<HTMLButtonElement | null>;
+  onApply?: ((value: VehicleSearch) => void) | undefined;
+}) {
+  const [draft, setDraftState] = useState(value);
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft, draftRef]);
+  const setDraft = (next: VehicleSearch) => {
+    draftRef.current = next;
+    setDraftState(next);
+  };
+  const count = matchingVehicles(draft).length;
+  const hasAlternatives = count === 0 && suggestedVehicles(draft).length > 0;
+  const selectedChips = vehicleFilterChips(draft);
+  const selectedCount = selectedChips.length;
+  const recoveryChip =
+    count === 0
+      ? [...selectedChips]
+          .reverse()
+          .find((chip) => matchingVehicles(removeVehicleFilterChip(draft, chip)).length > 0)
+      : undefined;
+  return (
+    <Dialog.Content
+      className="v3 v3-panel"
+      aria-describedby={undefined}
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        returnFocus.current?.focus();
+      }}
+    >
+      <div className="v3-panel-head">
+        <div className="ak-filter-panel-title">
+          <Dialog.Title>Filtre</Dialog.Title>
+        </div>
+        <Dialog.Close className="v3-icon" aria-label="Închide filtrele">
+          <X size={22} />
+        </Dialog.Close>
+      </div>
+      <div className="v3-panel-body">
+        <SelectedVehicleFilters value={draft} onChange={setDraft} className="ak-panel-selected" />
+        <BasicFilters value={draft} onChange={setDraft} />
+        <AdvancedFilters value={draft} onChange={setDraft} />
+      </div>
+      <div className="v3-panel-foot">
+        {count === 0 && selectedCount > 0 && (
+          <div className="ak-filter-panel-zero" role="status">
+            <p>Nicio mașină cu aceste filtre.</p>
+            {recoveryChip && (
+              <button
+                type="button"
+                onClick={() => setDraft(removeVehicleFilterChip(draft, recoveryChip))}
+              >
+                Elimină {recoveryChip.label}
+              </button>
+            )}
+            {!recoveryChip && (
+              <button type="button" onClick={() => setDraft(resetVehicleFilters(draft))}>
+                Șterge filtrele
+              </button>
+            )}
+          </div>
+        )}
+        <Dialog.Close
+          type="button"
+          className="v3-button"
+          onClick={() => {
+            const next = count || hasAlternatives ? draft : resetVehicleFilters(draft);
+            draftRef.current = next;
+            onApply?.(next);
+          }}
+        >
+          <span aria-live="polite">
+            {count
+              ? `Vezi ${count} ${count === 1 ? "mașină" : "mașini"}`
+              : hasAlternatives
+                ? "Vezi variante similare"
+                : "Vezi toate mașinile"}
+          </span>
+        </Dialog.Close>
+      </div>
+    </Dialog.Content>
   );
 }

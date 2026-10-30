@@ -1,16 +1,50 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, SlidersHorizontal } from "lucide-react";
 import { BasicFilters, FilterPanel } from "./VehicleFilters";
-import { matchingVehicles, activeFilters, type VehicleSearch } from "@/lib/vehicle-search";
+import { SelectedVehicleFilters } from "./SelectedVehicleFilters";
+import {
+  matchingVehicles,
+  validateVehicleSearch,
+  vehicleFilterChips,
+  type VehicleSearch,
+} from "@/lib/vehicle-search";
+
+const homeSearchKey = "autoklass-home-search";
+
 export function HomeSearch() {
   const [value, setValue] = useState<VehicleSearch>({});
   const [open, setOpen] = useState(false);
   const filterTrigger = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(homeSearchKey);
+      if (!stored) return;
+      const parsed: unknown = JSON.parse(stored);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        setValue(validateVehicleSearch(parsed as Record<string, unknown>));
+      }
+    } catch {
+      // Search still works when browser storage is unavailable.
+    }
+  }, []);
+
+  const updateValue = (next: VehicleSearch) => {
+    setValue(next);
+    try {
+      sessionStorage.setItem(homeSearchKey, JSON.stringify(next));
+    } catch {
+      // Search still works when browser storage is unavailable.
+    }
+  };
+  const showResults = (next: VehicleSearch) => {
+    updateValue(next);
+    void navigate({ to: "/autoturisme", search: next });
+  };
   const count = matchingVehicles(value).length;
-  const extra = activeFilters(value).filter(
-    ([key]) => !["condition", "brand", "maxPrice"].includes(key),
+  const extra = vehicleFilterChips(value).filter(
+    (chip) => !["condition", "brand", "model", "branch", "price"].includes(chip.id),
   );
   return (
     <section
@@ -23,10 +57,10 @@ export function HomeSearch() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            void navigate({ to: "/autoturisme", search: value });
+            showResults(value);
           }}
         >
-          <BasicFilters value={value} onChange={setValue} />
+          <BasicFilters value={value} onChange={updateValue} />
           <div className="ak-search-actions">
             <button
               type="button"
@@ -38,9 +72,20 @@ export function HomeSearch() {
               <SlidersHorizontal size={20} aria-hidden />
               <span>Alte filtre{extra.length ? ` (${extra.length})` : ""}</span>
             </button>
-            <button className="v3-button" type="submit">
+            <SelectedVehicleFilters
+              value={value}
+              onChange={updateValue}
+              className="ak-home-selected"
+            />
+            <button
+              className="v3-button"
+              type={count ? "submit" : "button"}
+              onClick={count ? undefined : () => setOpen(true)}
+            >
               <span aria-live="polite">
-                Vezi {count} {count === 1 ? "mașină" : "mașini"}
+                {count
+                  ? `Vezi ${count} ${count === 1 ? "mașină" : "mașini"}`
+                  : "Ajustează filtrele"}
               </span>
               <ArrowRight size={20} aria-hidden />
             </button>
@@ -48,11 +93,11 @@ export function HomeSearch() {
         </form>
         <FilterPanel
           value={value}
-          onChange={setValue}
+          onChange={updateValue}
           open={open}
           onOpenChange={setOpen}
           returnFocus={filterTrigger}
-          onApply={() => void navigate({ to: "/autoturisme", search: value })}
+          onApply={showResults}
         />
       </div>
     </section>

@@ -11,6 +11,7 @@ export type Vehicle = {
   model?: string;
   color?: string;
   certified?: boolean;
+  certification?: "Mercedes-Benz Certified" | "Das WeltAuto";
   rangeKm?: number;
   chargeKw?: number;
   source?: string;
@@ -420,7 +421,6 @@ export const vehicles: Vehicle[] = [
   {
     slug: "mercedes-benz-glc-200-4matic-vu149616",
     color: "Verde silver",
-    certified: true,
     hybrid: true,
     title: "Mercedes-Benz GLC 200 4MATIC",
     co2: 185,

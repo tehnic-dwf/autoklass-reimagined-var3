@@ -192,6 +192,12 @@
   text-align: left;
   cursor: pointer;
 }
+.ak-classic-trigger > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .v3-field .ak-classic-trigger:disabled {
   background: var(--v3-tint);
   color: var(--v3-muted);

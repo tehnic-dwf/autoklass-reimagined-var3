@@ -1,18 +1,22 @@
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
-import { Search, SlidersHorizontal, X, ArrowRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 import { FilterPanel } from "@/components/search/VehicleFilters";
+import { SelectedVehicleFilters } from "@/components/search/SelectedVehicleFilters";
+import { ClassicSelect } from "@/components/ui/ClassicSelect";
 import {
   matchingVehicles,
   vehicleSortOptions,
   suggestedVehicles,
   validateVehicleSearch,
-  activeFilters,
-  filterLabels,
-  interpretQuery,
+  vehicleFilterChips,
+  removeVehicleFilterChip,
+  resetVehicleFilters,
+  resolveVehicleSearch,
+  vehicleBranchGroups,
   type VehicleSearch,
 } from "@/lib/vehicle-search";
 import { vehicles } from "@/data/vehicles";
@@ -43,35 +47,24 @@ function Listing() {
   }, [searchHash]);
   const { slugs } = useFavorites();
   const items = matchingVehicles(value);
-  const active = activeFilters(value);
+  const active = vehicleFilterChips(value);
   const pageSize = 8;
   const pages = Math.max(1, Math.ceil(items.length / pageSize));
   const page = Math.min(pages, Math.max(1, Number(value.page) || 1));
   const shown = items.slice((page - 1) * pageSize, page * pageSize);
   const alternatives = suggestedVehicles(value);
-  const activeFilterLabel = (key: keyof VehicleSearch, selected: string) => {
-    if (key === "offer") return "Oferte vânzări";
-    const displayed =
-      (
-        {
-          nou: "Noi",
-          rulat: "Rulate",
-          unknown: "De confirmat",
-          immediate: "Livrare imediată",
-          stock: "În stoc",
-        } as Record<string, string>
-      )[selected] ||
-      (["minPrice", "maxPrice"].includes(key)
-        ? `${Number(selected).toLocaleString("ro-RO")} €`
-        : selected);
-    return `${filterLabels[key]}: ${displayed}`;
-  };
+  const recoveryChip =
+    items.length === 0
+      ? [...active]
+          .reverse()
+          .find((chip) => matchingVehicles(removeVehicleFilterChip(value, chip)).length > 0)
+      : undefined;
   const update = (next: VehicleSearch) => {
     const clean = { ...next };
     delete clean.page;
     void navigate({ search: clean, replace: true, resetScroll: false });
   };
-  const headingFilters = { ...value, ...interpretQuery(value.q || "") };
+  const headingFilters = resolveVehicleSearch(value).search;
   const listingTitle = [
     headingFilters.body || "Autoturisme",
     headingFilters.condition === "nou"
@@ -94,6 +87,45 @@ function Listing() {
       <SiteHeader catalog onSearch={revealSearch} />
       <main id="main-content" className="v3-wrap v3-section ak-listing">
         <h1>{listingTitle}</h1>
+
+        <div className="ak-catalog-branch-row">
+          <ClassicSelect
+            label="Sucursală"
+            value={value.branch || ""}
+            placeholder="Toate"
+            groups={vehicleBranchGroups()}
+            onChange={(branch) => {
+              const next = { ...value, branch };
+              delete next.city;
+              update(next);
+            }}
+          />
+        </div>
+
+        {headingFilters.condition === "rulat" && (
+          <section className="ak-used-certification" aria-labelledby="used-certification-title">
+            <div className="ak-used-certification-intro">
+              <h2 id="used-certification-title">Autoturisme rulate certificate</h2>
+            </div>
+            <nav className="ak-used-certification-links" aria-label="Programe de certificare">
+              <a href="https://www.autoklass.ro/search/filtre/mercedes-certified-da">
+                <span>Mercedes-Benz Certified</span>
+                <ArrowUpRight size={18} aria-hidden />
+              </a>
+              <div className="ak-used-certification-network">
+                <strong>Das WeltAuto</strong>
+                <span>
+                  <a href="https://www.dasweltauto.ro/haendler/ploiesti/10267/s">
+                    Ploiești <ArrowUpRight size={16} aria-hidden />
+                  </a>
+                  <a href="https://www.dasweltauto.ro/haendler/brasov/10272/s">
+                    Brașov <ArrowUpRight size={16} aria-hidden />
+                  </a>
+                </span>
+              </div>
+            </nav>
+          </section>
+        )}
 
         <div className="ak-catalog-controls">
           <form
@@ -123,6 +155,21 @@ function Listing() {
                 onChange={(e) => update({ ...value, q: e.target.value })}
               />
             </label>
+            {value.q && (
+              <button
+                type="button"
+                className="ak-catalog-search-clear"
+                aria-label="Șterge căutarea"
+                onClick={() => {
+                  const next = { ...value };
+                  delete next.q;
+                  update(next);
+                  searchInput.current?.focus();
+                }}
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            )}
             <datalist id="vehicle-suggestions">
               {vehicles
                 .filter((v) => !value.brand || v.brand === value.brand)
@@ -158,7 +205,9 @@ function Listing() {
               Filtre{active.length ? ` (${active.length})` : ""}
             </button>
             <label className="v3-field flex-1 sm:flex-none">
-              <span className="sr-only">Sortează mașinile</span>
+              <span className="ak-sort-visible" aria-hidden="true">
+                Sortează
+              </span>
               <select
                 aria-label="Sortează mașinile"
                 value={value.sort || "recommended"}
@@ -173,33 +222,13 @@ function Listing() {
             </label>
           </div>
         </div>
-        {active.length > 0 && (
-          <div className="flex flex-wrap gap-2 pb-6" aria-label="Filtre active">
-            {active.map(([key, v]) => (
-              <button
-                className="v3-chip"
-                key={key}
-                aria-label={`Elimină ${activeFilterLabel(key, v)}`}
-                onClick={() => {
-                  const next = { ...value };
-                  delete next[key];
-                  if (key === "brand") delete next.model;
-                  update(next);
-                }}
-              >
-                {activeFilterLabel(key, v)}
-                <X size={14} />
-              </button>
-            ))}
-            <button className="v3-link px-2 text-[14px]" onClick={() => update({})}>
-              Resetează
-            </button>
-          </div>
-        )}
+        <SelectedVehicleFilters value={value} onChange={update} className="ak-listing-selected" />
         <div className="v3-row v3-rule pt-6">
           <p role="status">
             {items.length
-              ? `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, items.length)} din ${items.length} mașini`
+              ? items.length === 1
+                ? "1 mașină"
+                : `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, items.length)} din ${items.length} mașini`
               : "0 mașini"}
           </p>
           <Link className="v3-link v3-small" to="/comparatie">
@@ -239,6 +268,20 @@ function Listing() {
                 ? "Alte opțiuni, cu criterii diferite:"
                 : "Alege altă marcă sau vezi toate mașinile."}
             </p>
+            {recoveryChip && (
+              <button
+                className="v3-button secondary"
+                onClick={() => update(removeVehicleFilterChip(value, recoveryChip))}
+              >
+                Elimină {recoveryChip.label}
+              </button>
+            )}
+            <button
+              className="v3-button secondary"
+              onClick={() => update(resetVehicleFilters(value))}
+            >
+              Resetează filtrele
+            </button>
             {!!alternatives.length && (
               <div className="v3-cards">
                 {alternatives.map((v) => (
@@ -246,9 +289,24 @@ function Listing() {
                 ))}
               </div>
             )}
-            <button className="v3-button secondary" onClick={() => update({})}>
-              Resetează filtrele
-            </button>
+            {value.certified === "mercedes" && (
+              <a
+                className="v3-link"
+                href="https://www.autoklass.ro/search/filtre/mercedes-certified-da"
+              >
+                Vezi stocul Mercedes-Benz Certified <ArrowUpRight size={16} aria-hidden />
+              </a>
+            )}
+            {value.certified === "dwa" && (
+              <div className="ak-certified-empty-links">
+                <a className="v3-link" href="https://www.dasweltauto.ro/haendler/ploiesti/10267/s">
+                  Das WeltAuto Ploiești <ArrowUpRight size={16} aria-hidden />
+                </a>
+                <a className="v3-link" href="https://www.dasweltauto.ro/haendler/brasov/10272/s">
+                  Das WeltAuto Brașov <ArrowUpRight size={16} aria-hidden />
+                </a>
+              </div>
+            )}
           </div>
         ) : (
           <div className="v3-cards">

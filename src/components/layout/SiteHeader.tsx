@@ -148,12 +148,17 @@ export function SiteHeader({
                         !/Campanii|Oferte service|Promoții service/i.test(item.label) &&
                         !(item.kind === "internal" && item.to === "/comparatie"),
                     );
-                    const vehicleLinks = moreLinks
-                      .filter((item) => item.section === "Mărci și vehicule comerciale")
-                      .sort(
-                        (a, b) => Number(a.kind === "external") - Number(b.kind === "external"),
-                      );
-                    const purchaseLinks = moreLinks.filter((item) => !vehicleLinks.includes(item));
+                    const carLinks = moreLinks.filter((item) => item.section === "Autoturisme");
+                    const vanLinks = moreLinks.filter((item) => item.section === "Autoutilitare");
+                    const certifiedLinks = moreLinks.filter(
+                      (item) => item.section === "Rulate certificate",
+                    );
+                    const purchaseLinks = moreLinks.filter(
+                      (item) =>
+                        !carLinks.includes(item) &&
+                        !vanLinks.includes(item) &&
+                        !certifiedLinks.includes(item),
+                    );
                     return primary ? (
                       <Fragment key={group.id}>
                         <section className="ak-menu-primary">
@@ -178,15 +183,25 @@ export function SiteHeader({
                             </Link>
                           </div>
                           {group.id === "autovehicule" ? (
-                            <details className="v3-disclosure">
-                              <summary>Mărci și servicii de achiziție</summary>
-                              <div className="ak-menu-subgroups">
-                                <h3>Mărci și autoutilitare</h3>
-                                <MenuLinks items={vehicleLinks} onClick={closeMenu} />
-                                <h3>Servicii de achiziție</h3>
+                            <>
+                              <details className="v3-disclosure">
+                                <summary>Autoturisme și Autoutilitare</summary>
+                                <div className="ak-menu-subgroups">
+                                  <h3>Autoturisme</h3>
+                                  <MenuLinks items={carLinks} onClick={closeMenu} />
+                                  <h3>Autoutilitare</h3>
+                                  <MenuLinks items={vanLinks} onClick={closeMenu} />
+                                </div>
+                              </details>
+                              <details className="v3-disclosure">
+                                <summary>Autoturisme rulate certificate</summary>
+                                <MenuLinks items={certifiedLinks} onClick={closeMenu} />
+                              </details>
+                              <details className="v3-disclosure">
+                                <summary>Servicii de achiziție</summary>
                                 <MenuLinks items={purchaseLinks} onClick={closeMenu} />
-                              </div>
-                            </details>
+                              </details>
+                            </>
                           ) : (
                             <details className="v3-disclosure">
                               <summary>Servicii și garanții</summary>

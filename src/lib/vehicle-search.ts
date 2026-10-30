@@ -74,7 +74,9 @@ export function validateVehicleSearch(raw: Record<string, unknown>): VehicleSear
   for (const key of searchKeys) {
     const v = raw[key];
     if ((typeof v === "string" || typeof v === "number") && String(v).trim()) {
-      const value = String(v).trim().slice(0, 160);
+      const value = String(v)
+        .trim()
+        .slice(0, key === "equipment" ? 1200 : 160);
       if (/^(min|max)(Price|Year|Km|Power|Engine|Range|Charge)$/.test(key) || key === "page") {
         const numeric = value.replace(/^["']|["']$/g, "");
         if (/^\d+(\.\d+)?$/.test(numeric) && Number.isFinite(Number(numeric)))
@@ -97,6 +99,18 @@ export const cityOf = (v: Vehicle) => {
   if (/București|Bucuresti|Pipera|Sud/.test(v.branch)) return "București";
   return v.branch.replace(/^Autoklass\s+/, "");
 };
+export const macroColorOf = (color?: string) => {
+  const raw = normalized(color || "");
+  if (!raw) return "";
+  if (/\b(albastru|albastra|albastre|blue)\b/.test(raw)) return "Albastru";
+  if (/\b(verde|green)\b/.test(raw)) return "Verde";
+  if (/\b(rosu|rosie|red)\b/.test(raw)) return "Roșu";
+  if (/\b(maro|brown)\b/.test(raw)) return "Maro";
+  if (/\b(alb|alba|white)\b/.test(raw)) return "Alb";
+  if (/\b(negru|neagra|black)\b/.test(raw)) return "Negru";
+  if (/\b(gri|argintiu|argintie|silver|grey|gray)\b/.test(raw)) return "Gri / Argintiu";
+  return "Altă culoare";
+};
 export const availabilityOf = (v: Vehicle) =>
   v.reserved ? "Indisponibil" : v.availability || "Disponibilitate de confirmat";
 export const shortTitle = (v: Vehicle) =>
@@ -107,8 +121,30 @@ export const shortTitle = (v: Vehicle) =>
     .replace(/Clasa ([A-Z]) \1 /, "Clasa $1 ");
 export const unique = (values: string[]) =>
   [...new Set(values)].sort((a, b) => a.localeCompare(b, "ro"));
+export function vehicleBranchGroups() {
+  const branches = unique(vehicles.map((vehicle) => vehicle.branch));
+  return [
+    {
+      label: "București și Ilfov",
+      options: branches.filter((branch) => /București|Chitila|Pipera/.test(branch)),
+    },
+    ...unique(vehicles.map(cityOf))
+      .filter((city) => city !== "București" && city !== "Chitila")
+      .map((city) => ({
+        label: city,
+        options: branches.filter((branch) =>
+          vehicles.some((vehicle) => vehicle.branch === branch && cityOf(vehicle) === city),
+        ),
+      })),
+  ].map((group) => ({
+    label: group.label,
+    options: group.options.map((branch) => ({ value: branch, label: branch })),
+  }));
+}
 export function matchingVehicles(s: VehicleSearch, source = vehicles) {
-  s = { ...s, ...interpretQuery(s.q || "") };
+  const resolved = resolveVehicleSearch(s);
+  if (resolved.conflict) return [];
+  s = resolved.search;
   const min = (key: SearchKey, value: number | null) =>
     !s[key] || (value !== null && value >= Number(s[key]));
   const max = (key: SearchKey, value: number | null) =>
@@ -124,8 +160,14 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
     )
       return false;
     if (s.offer && !isSalesOffer(v)) return false;
-    if (s.certified && !v.certified) return false;
-    if (s.color && v.color !== s.color) return false;
+    if (s.certified === "dwa" && v.certification !== "Das WeltAuto") return false;
+    if (
+      s.certified &&
+      s.certified !== "dwa" &&
+      !(v.certification === "Mercedes-Benz Certified" || v.certified)
+    )
+      return false;
+    if (s.color && macroColorOf(v.color) !== s.color) return false;
     if (!min("minRange", v.rangeKm ?? null) || !min("minCharge", v.chargeKw ?? null)) return false;
     if (s.condition && v.condition !== s.condition) return false;
     if (s.brand && v.brand !== s.brand) return false;
@@ -164,7 +206,10 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
     )
       return false;
     if (s.equipment) {
-      const terms = normalized(s.equipment).split(/[ ,]+/).filter(Boolean);
+      const terms = s.equipment
+        .split(",")
+        .map((term) => normalized(term.trim()))
+        .filter(Boolean);
       const installed =
         v.slug === demoSlug
           ? [...glcDetails.groups.flatMap((group) => group.items), ...glcDetails.fullEquipment]
@@ -219,6 +264,99 @@ export const activeFilters = (s: VehicleSearch) =>
     ([key, value]) => key !== "sort" && key !== "page" && key !== "demo" && value,
   ) as [SearchKey, string][];
 
+export type VehicleFilterChip = { id: string; label: string; keys: SearchKey[] };
+
+export function vehicleFilterChips(s: VehicleSearch): VehicleFilterChip[] {
+  const chips: VehicleFilterChip[] = [];
+  const add = (id: string, label: string, keys: SearchKey[]) => chips.push({ id, label, keys });
+  const number = (value: string, group = true) =>
+    group ? Number(value).toLocaleString("ro-RO") : String(Number(value));
+  const range = (
+    id: string,
+    min: SearchKey,
+    max: SearchKey,
+    label: string,
+    unit = "",
+    group = true,
+  ) => {
+    const low = s[min];
+    const high = s[max];
+    if (!low && !high) return;
+    const suffix = unit ? ` ${unit}` : "";
+    const text =
+      low && high
+        ? `${number(low, group)}–${number(high, group)}${suffix}`
+        : low
+          ? `de la ${number(low, group)}${suffix}`
+          : `până la ${number(high!, group)}${suffix}`;
+    add(id, `${label}: ${text}`, [min, max]);
+  };
+
+  if (s.q) add("q", `Căutare: ${s.q}`, ["q"]);
+  range("price", "minPrice", "maxPrice", "Preț", "€");
+  if (s.condition)
+    add("condition", `Stare: ${s.condition === "nou" ? "Noi" : "Rulate"}`, ["condition"]);
+  if (s.brand) add("brand", `Marcă: ${s.brand}`, ["brand", "model"]);
+  if (s.model) add("model", `Model: ${s.model}`, ["model"]);
+  if (s.branch) add("branch", `Sucursală: ${s.branch}`, ["branch"]);
+  if (s.city) add("city", `Oraș: ${s.city}`, ["city"]);
+  if (s.fuel) add("fuel", `Motorizare: ${s.fuel}`, ["fuel"]);
+  if (s.body) add("body", `Caroserie: ${s.body}`, ["body"]);
+  range("year", "minYear", "maxYear", "An", "", false);
+  range("km", "minKm", "maxKm", "Kilometraj", "km");
+  if (s.gearbox) add("gearbox", `Transmisie: ${s.gearbox}`, ["gearbox"]);
+  if (s.drive)
+    add(
+      "drive",
+      `Tracțiune: ${{ AWD: "Integrală", FWD: "Față", RWD: "Spate" }[s.drive] || s.drive}`,
+      ["drive"],
+    );
+  if (s.color) add("color", `Culoare: ${s.color}`, ["color"]);
+  if (s.certified)
+    add(
+      "certified",
+      `Certificare: ${s.certified === "dwa" ? "Das WeltAuto" : "Mercedes-Benz Certified"}`,
+      ["certified"],
+    );
+  for (const term of (s.equipment || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean))
+    add(`equipment-${term}`, term, ["equipment"]);
+  range("power", "minPower", "maxPower", "Putere", "CP");
+  range("engine", "minEngine", "maxEngine", "Cilindree", "cm³");
+  if (s.minRange) add("minRange", `Autonomie: de la ${number(s.minRange)} km`, ["minRange"]);
+  if (s.minCharge) add("minCharge", `Încărcare DC: de la ${number(s.minCharge)} kW`, ["minCharge"]);
+  if (s.availability)
+    add(
+      "availability",
+      `Disponibilitate: ${
+        { immediate: "Livrare imediată", stock: "În stoc", unknown: "De confirmat" }[
+          s.availability
+        ] || s.availability
+      }`,
+      ["availability"],
+    );
+  if (s.vat) add("vat", `TVA: ${s.vat}`, ["vat"]);
+  if (s.offer) add("offer", "Cu preț redus", ["offer"]);
+  return chips;
+}
+
+export function removeVehicleFilterChip(s: VehicleSearch, chip: VehicleFilterChip): VehicleSearch {
+  const next = { ...s };
+  if (chip.id.startsWith("equipment-")) {
+    next.equipment = (next.equipment || "")
+      .split(",")
+      .filter((term) => term.trim() !== chip.id.slice("equipment-".length))
+      .join(",");
+  } else for (const key of chip.keys) delete next[key];
+  delete next.page;
+  return next;
+}
+
+export const resetVehicleFilters = (s: VehicleSearch): VehicleSearch =>
+  s.sort ? { sort: s.sort } : {};
+
 export function interpretQuery(input: string): VehicleSearch {
   let q = normalized(input);
   const result: VehicleSearch = {};
@@ -248,8 +386,21 @@ export function interpretQuery(input: string): VehicleSearch {
   result.q = q.replace(/\s+/g, " ").trim();
   return result;
 }
+export function resolveVehicleSearch(s: VehicleSearch): {
+  search: VehicleSearch;
+  conflict: boolean;
+} {
+  const parsed = interpretQuery(s.q || "");
+  const conflict = (["condition", "fuel"] as const).some((key) =>
+    Boolean(parsed[key] && s[key] && parsed[key] !== s[key]),
+  );
+  const search = { ...parsed, ...s, q: parsed.q || "" };
+  if (parsed.maxPrice && s.maxPrice)
+    search.maxPrice = String(Math.min(Number(parsed.maxPrice), Number(s.maxPrice)));
+  return { search, conflict };
+}
 export function suggestedVehicles(s: VehicleSearch) {
-  const parsed = { ...s, ...interpretQuery(s.q || "") };
+  const parsed = resolveVehicleSearch(s).search;
   const relaxed: VehicleSearch = {};
   if (s.brand) relaxed.brand = s.brand;
   if (s.model) relaxed.model = s.model;

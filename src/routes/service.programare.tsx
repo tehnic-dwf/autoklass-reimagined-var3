@@ -110,10 +110,13 @@ function ServiceRequest() {
       </p>
     </div>
   ) : (
-    <p className="service-price-unavailable">Costul se stabilește după verificarea mașinii.</p>
+    <p className="service-price-unavailable">
+      Costul final vă va fi comunicat în urma devizului de reparații întocmit în sucursală.
+    </p>
   );
   const [km, setKm] = useState("35000");
   const [problem, setProblem] = useState("Revizie periodică.");
+  const [pickupDelivery, setPickupDelivery] = useState(false);
   const [date, setDate] = useState("");
   useEffect(() => {
     const preferred = new Date();
@@ -125,6 +128,7 @@ function ServiceRequest() {
   }, []);
   const [time, setTime] = useState("Dimineața");
   const [contact, setContact] = useState<ContactValues>(testContact);
+  const [preferredContact, setPreferredContact] = useState<"Telefon" | "E-mail">("Telefon");
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "error" | "done">("idle");
@@ -157,7 +161,13 @@ function ServiceRequest() {
       if (km && (!/^\d+$/.test(km) || Number(km) > 2000000))
         errs["km"] = "Introdu kilometrajul în cifre.";
     } else {
-      Object.assign(errs, validateContact(contact));
+      Object.assign(
+        errs,
+        validateContact(contact, {
+          email: preferredContact === "E-mail",
+          phone: preferredContact === "Telefon",
+        }),
+      );
       if (date && date < minDate) errs["date"] = "Alege o zi viitoare.";
     }
     setErrors(errs);
@@ -262,14 +272,27 @@ function ServiceRequest() {
                     </dd>
                   </div>
                   <div>
-                    <dt>Email de contact</dt>
-                    <dd>{contact.email}</dd>
+                    <dt>Preferință de contact</dt>
+                    <dd>
+                      {preferredContact === "Telefon"
+                        ? `Telefon · ${contact.phone}`
+                        : `E-mail · ${contact.email}`}
+                    </dd>
                   </div>
+                  {pickupDelivery && (
+                    <div>
+                      <dt>Pick-up & Delivery</dt>
+                      <dd>Solicitat</dd>
+                    </div>
+                  )}
                 </dl>
                 {rateSummary}
-                <p className="flow-confirmation-note">
-                  Devizul final se stabilește după verificarea mașinii.
-                </p>
+                {priceRange && priceUnit && (
+                  <p className="flow-confirmation-note">
+                    Costul final vă va fi comunicat în urma devizului de reparații întocmit în
+                    sucursală.
+                  </p>
+                )}
                 <div className="flow-confirmation-actions">
                   <Link className="v3-button mt-6" to="/service/tarife">
                     Vezi serviciile
@@ -424,6 +447,21 @@ function ServiceRequest() {
                           {err("service")}
                         </label>
                         {rateSummary}
+                        <label className="ak-service-pickup">
+                          <input
+                            type="checkbox"
+                            name="pickupDelivery"
+                            checked={pickupDelivery}
+                            onChange={(event) => setPickupDelivery(event.target.checked)}
+                          />
+                          <span>
+                            <strong>Pick-up & Delivery</strong>
+                            <small>
+                              Solicită preluarea și returnarea mașinii. Detaliile se confirmă cu
+                              sucursala.
+                            </small>
+                          </span>
+                        </label>
                         <label className="v3-field">
                           <span>
                             {service === "other"
@@ -462,6 +500,12 @@ function ServiceRequest() {
                           <br />
                           {vin}
                           {km ? ` · ${formatPrice(Number(km))} km` : ""}
+                          {pickupDelivery && (
+                            <>
+                              <br />
+                              Pick-up & Delivery solicitat
+                            </>
+                          )}
                         </div>
 
                         <label className="v3-field">
@@ -491,11 +535,32 @@ function ServiceRequest() {
                         <p className="v3-small v3-muted">
                           Programarea este confirmată după discuția cu echipa service.
                         </p>
+                        <fieldset className="ak-service-contact-preference">
+                          <legend>Cum preferi să te contactăm?</legend>
+                          <div>
+                            {(["Telefon", "E-mail"] as const).map((option) => (
+                              <label key={option}>
+                                <input
+                                  type="radio"
+                                  name="preferredContact"
+                                  value={option}
+                                  checked={preferredContact === option}
+                                  onChange={() => setPreferredContact(option)}
+                                />
+                                <span>{option}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </fieldset>
                         <ContactFields
                           value={contact}
                           onChange={setContact}
                           errors={errors}
                           prefix="service"
+                          requiredFields={{
+                            email: preferredContact === "E-mail",
+                            phone: preferredContact === "Telefon",
+                          }}
                         />
                       </>
                     )}

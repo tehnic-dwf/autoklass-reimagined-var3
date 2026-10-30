@@ -4,11 +4,13 @@ export function ContactFields({
   onChange,
   errors,
   prefix = "contact",
+  requiredFields,
 }: {
   value: ContactValues;
   onChange: (v: ContactValues) => void;
   errors: Partial<Record<keyof ContactValues, string>>;
   prefix?: string;
+  requiredFields?: { email: boolean; phone: boolean };
 }) {
   return (
     <div className="v3-contact-fields">
@@ -22,7 +24,12 @@ export function ContactFields({
         const id = `${prefix}-${key}`;
         return (
           <label className="v3-field" key={key} htmlFor={id}>
-            <span id={`${id}-label`}>{f.label}</span>
+            <span id={`${id}-label`}>
+              {f.label}
+              {requiredFields && (key === "email" || key === "phone") && !requiredFields[key]
+                ? " (opțional)"
+                : ""}
+            </span>
             <input
               id={id}
               aria-labelledby={`${id}-label`}
@@ -30,7 +37,9 @@ export function ContactFields({
               type={f.type}
               spellCheck={key === "email" ? false : undefined}
               autoComplete={f.auto}
-              required
+              required={
+                requiredFields && (key === "email" || key === "phone") ? requiredFields[key] : true
+              }
               maxLength={key === "phone" ? 25 : 100}
               value={value[key]}
               aria-invalid={Boolean(errors[key])}

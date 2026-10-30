@@ -66,6 +66,13 @@ export function HomeBrands() {
               </a>
             </nav>
           </div>
+          <a
+            className="ak-used-certified"
+            href="https://www.autoklass.ro/search/filtre/mercedes-certified-da"
+          >
+            <span>Mercedes-Benz Certified</span>
+            <ArrowUpRight size={18} aria-hidden />
+          </a>
         </div>
       </section>
     </section>
