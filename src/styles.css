@@ -9,6 +9,7 @@
 @import "./menu-polish.css";
 @import "./mobile-rails.css";
 @import "./raluca-refinement.css";
+@import "./search-refinement.css";
 
 @custom-variant dark (&:is(.dark *));
 

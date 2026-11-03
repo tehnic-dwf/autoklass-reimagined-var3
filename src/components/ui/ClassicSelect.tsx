@@ -2,7 +2,7 @@ import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import { useId } from "react";
 
-type Option = { value: string; label: string };
+type Option = { value: string; label: string; count?: number };
 type Group = { label: string; options: Option[] };
 
 export function ClassicSelect({
@@ -25,9 +25,18 @@ export function ClassicSelect({
   className?: string;
 }) {
   const id = useId();
+  const selectedLabel =
+    [...(options || []), ...(groups || []).flatMap((group) => group.options)].find(
+      (option) => option.value === value,
+    )?.label || placeholder;
   const renderOption = (option: Option) => (
     <Select.Item key={option.value} value={option.value} className="ak-classic-option">
       <Select.ItemText>{option.label}</Select.ItemText>
+      {option.count !== undefined && (
+        <span className="ak-classic-count" aria-label={`${option.count} mașini`}>
+          {option.count}
+        </span>
+      )}
       <Select.ItemIndicator>
         <Check size={16} aria-hidden />
       </Select.ItemIndicator>
@@ -43,7 +52,7 @@ export function ClassicSelect({
         disabled={disabled}
       >
         <Select.Trigger id={id} className="ak-classic-trigger" aria-label={label}>
-          <Select.Value placeholder={placeholder} />
+          <Select.Value>{selectedLabel}</Select.Value>
           <Select.Icon>
             <ChevronDown size={18} aria-hidden />
           </Select.Icon>

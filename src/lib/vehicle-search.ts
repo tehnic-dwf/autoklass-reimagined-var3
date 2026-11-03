@@ -121,6 +121,132 @@ export const shortTitle = (v: Vehicle) =>
     .replace(/Clasa ([A-Z]) \1 /, "Clasa $1 ");
 export const unique = (values: string[]) =>
   [...new Set(values)].sort((a, b) => a.localeCompare(b, "ro"));
+
+const searchAliases: Record<string, string> = {
+  vw: "volkswagen",
+  mb: "mercedes",
+  merc: "mercedes",
+  mercedesbenz: "mercedes",
+  phev: "hibrid",
+  hybrid: "hibrid",
+  "4x4": "integrala",
+};
+
+const searchStopWords = new Set([
+  "masina",
+  "masini",
+  "auto",
+  "autoturism",
+  "autoturisme",
+  "vehicul",
+  "vehicule",
+  "caut",
+  "vreau",
+  "un",
+  "o",
+  "de",
+  "cu",
+  "in",
+  "pentru",
+]);
+
+const searchTerms = (query: string) =>
+  normalized(query)
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+    .filter((term) => !searchStopWords.has(term))
+    .map((term) => searchAliases[term] || term);
+
+const vehicleSearchText = (vehicle: Vehicle) =>
+  normalized(
+    [
+      vehicle.title,
+      vehicle.slug,
+      vehicle.brand,
+      modelOf(vehicle),
+      vehicle.bodyType,
+      vehicle.fuel,
+      vehicle.hybrid ? "hibrid phev plug-in" : "",
+      vehicle.gearbox,
+      vehicle.drive === "AWD" ? "integrala 4x4" : vehicle.drive,
+      vehicle.branch,
+    ].join(" "),
+  );
+
+const searchRelevance = (vehicle: Vehicle, query: string) => {
+  const title = normalized(vehicle.title);
+  const brand = normalized(vehicle.brand);
+  const model = normalized(modelOf(vehicle));
+  const terms = searchTerms(query);
+  return terms.reduce(
+    (score, term) =>
+      score +
+      (brand === term ? 8 : brand.startsWith(term) ? 5 : 0) +
+      (model === term ? 8 : model.startsWith(term) ? 5 : 0) +
+      (title.startsWith(term) ? 4 : title.includes(` ${term}`) ? 2 : 0),
+    title.includes(normalized(query)) ? 12 : 0,
+  );
+};
+
+// Only suggest a correction when it produces matches. The original query stays editable.
+export function suggestSearchCorrection(query: string, filters: VehicleSearch = {}) {
+  const dictionary = new Map<string, string>();
+  for (const vehicle of vehicles) {
+    for (const word of [vehicle.brand, modelOf(vehicle), vehicle.title, vehicle.bodyType]
+      .join(" ")
+      .split(/[^\p{L}\p{N}]+/u)) {
+      const key = normalized(word);
+      if (key.length >= 3 && !dictionary.has(key)) dictionary.set(key, word);
+    }
+  }
+  const editDistance = (left: string, right: string) => {
+    if (Math.abs(left.length - right.length) > 2) return 3;
+    const rows = Array.from({ length: left.length + 1 }, (_, row) =>
+      Array.from({ length: right.length + 1 }, (_, column) =>
+        row === 0 ? column : column === 0 ? row : 0,
+      ),
+    );
+    for (let row = 1; row <= left.length; row++) {
+      for (let column = 1; column <= right.length; column++) {
+        rows[row]![column] = Math.min(
+          rows[row - 1]![column]! + 1,
+          rows[row]![column - 1]! + 1,
+          rows[row - 1]![column - 1]! + (left[row - 1] === right[column - 1] ? 0 : 1),
+        );
+        if (
+          row > 1 &&
+          column > 1 &&
+          left[row - 1] === right[column - 2] &&
+          left[row - 2] === right[column - 1]
+        ) {
+          rows[row]![column] = Math.min(rows[row]![column]!, rows[row - 2]![column - 2]! + 1);
+        }
+      }
+    }
+    return rows[left.length]![right.length]!;
+  };
+  let changed = false;
+  const corrected = query.replace(/[\p{L}\p{N}]+/gu, (word) => {
+    const key = normalized(word);
+    if (key.length < 3 || dictionary.has(key) || searchAliases[key]) return word;
+    const threshold = key.length >= 7 ? 2 : 1;
+    let best: string | undefined;
+    let distance = threshold + 1;
+    for (const [candidate, display] of dictionary) {
+      if (candidate[0] !== key[0]) continue;
+      const current = editDistance(key, candidate);
+      if (current < distance) {
+        best = display;
+        distance = current;
+      }
+    }
+    if (!best || distance > threshold) return word;
+    changed = true;
+    return best;
+  });
+  if (!changed || !matchingVehicles({ ...filters, q: corrected }).length) return null;
+  return corrected;
+}
 export function vehicleBranchGroups() {
   const branches = unique(vehicles.map((vehicle) => vehicle.branch));
   return [
@@ -145,19 +271,13 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
   const resolved = resolveVehicleSearch(s);
   if (resolved.conflict) return [];
   s = resolved.search;
+  const queryTerms = s.q ? searchTerms(s.q) : [];
   const min = (key: SearchKey, value: number | null) =>
     !s[key] || (value !== null && value >= Number(s[key]));
   const max = (key: SearchKey, value: number | null) =>
     !s[key] || (value !== null && value <= Number(s[key]));
   const results = source.filter((v) => {
-    if (
-      s.q &&
-      !normalized(s.q)
-        .split(/\s+/)
-        .every((term) =>
-          normalized(v.title + " " + v.slug + " " + v.bodyType + " " + v.fuel).includes(term),
-        )
-    )
+    if (queryTerms.length && !queryTerms.every((term) => vehicleSearchText(v).includes(term)))
       return false;
     if (s.offer && !isSalesOffer(v)) return false;
     if (s.certified === "dwa" && v.certification !== "Das WeltAuto") return false;
@@ -223,6 +343,13 @@ export function matchingVehicles(s: VehicleSearch, source = vehicles) {
   else if (s.sort === "km-asc") results.sort((a, b) => (a.km ?? Infinity) - (b.km ?? Infinity));
   else if (s.sort === "year-desc") results.sort((a, b) => b.year - a.year);
   else if (s.sort === "power-desc") results.sort((a, b) => b.powerHp - a.powerHp);
+  else if (queryTerms.length)
+    results.sort(
+      (a, b) =>
+        Number(Boolean(a.reserved)) - Number(Boolean(b.reserved)) ||
+        searchRelevance(b, s.q!) - searchRelevance(a, s.q!) ||
+        a.priceEur - b.priceEur,
+    );
   else return recommendedVehicles(results);
   return results;
 }
@@ -371,7 +498,7 @@ export function interpretQuery(input: string): VehicleSearch {
     q = q.replace(budget[0], "");
   }
   for (const [pattern, key, val] of [
-    [/\b(?:rulat[ae]?|uzat[ae]?|second hand)\b/, "condition", "rulat"],
+    [/\b(?:rulat[ae]?|uzat[ae]?|second[ -]hand|sh)\b/, "condition", "rulat"],
     [/\b(?:nou[ae]?|noi)\b/, "condition", "nou"],
     [/\b(?:electric[ae]?|electrice)\b/, "fuel", "Electric"],
     [/\b(?:hibrid[ae]?|hybrid)\b/, "fuel", "Hibrid"],

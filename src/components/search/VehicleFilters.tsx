@@ -96,6 +96,19 @@ export function ConditionTabs({ value, onChange }: Props) {
             if (key === "nou") {
               delete next.minKm;
               delete next.maxKm;
+              delete next.certified;
+            }
+            const available = vehicles.filter((vehicle) => !key || vehicle.condition === key);
+            if (next.brand && !available.some((vehicle) => vehicle.brand === next.brand)) {
+              delete next.brand;
+              delete next.model;
+            } else if (
+              next.model &&
+              !available.some(
+                (vehicle) => vehicle.brand === next.brand && modelOf(vehicle) === next.model,
+              )
+            ) {
+              delete next.model;
             }
             onChange(next);
           }}
@@ -153,7 +166,7 @@ export function BudgetFilter({ value, onChange }: Props) {
       </div>
       <details className="ak-budget-interval" open={Boolean(value.minPrice || customRange)}>
         <summary>
-          <span>Interval de preț</span>
+          <span>Alege alt interval de preț</span>
           <ChevronDown size={18} aria-hidden="true" />
         </summary>
         <label className="v3-field">
@@ -188,6 +201,14 @@ export function BudgetFilter({ value, onChange }: Props) {
   );
 }
 export function BasicFilters({ value, onChange }: Props) {
+  const brandBase = { ...value };
+  delete brandBase.brand;
+  delete brandBase.model;
+  const modelBase = { ...value };
+  delete modelBase.model;
+  const branchBase = { ...value };
+  delete branchBase.branch;
+  delete branchBase.city;
   return (
     <div className="ak-basic-filters">
       <BudgetFilter value={value} onChange={onChange} />
@@ -206,7 +227,11 @@ export function BasicFilters({ value, onChange }: Props) {
               .filter((v) => !value.condition || v.condition === value.condition)
               .map((v) => v.brand),
             ...(value.brand ? [value.brand] : []),
-          ]).map((brand) => ({ value: brand, label: brand }))}
+          ]).map((brand) => ({
+            value: brand,
+            label: brand,
+            count: matchingVehicles({ ...brandBase, brand }).length,
+          }))}
           onChange={(brand) => {
             const next = { ...value, brand };
             delete next.model;
@@ -228,7 +253,11 @@ export function BasicFilters({ value, onChange }: Props) {
               )
               .map(modelOf),
             ...(value.model ? [value.model] : []),
-          ]).map((model) => ({ value: model, label: model }))}
+          ]).map((model) => ({
+            value: model,
+            label: model,
+            count: matchingVehicles({ ...modelBase, model }).length,
+          }))}
           onChange={(model) => onChange({ ...value, model })}
         />
         <ClassicSelect
@@ -236,7 +265,13 @@ export function BasicFilters({ value, onChange }: Props) {
           label="Sucursală"
           value={value.branch || ""}
           placeholder="Toate"
-          groups={vehicleBranchGroups()}
+          groups={vehicleBranchGroups().map((group) => ({
+            ...group,
+            options: group.options.map((branch) => ({
+              ...branch,
+              count: matchingVehicles({ ...branchBase, branch: branch.value }).length,
+            })),
+          }))}
           onChange={(branch) => {
             const next = { ...value, branch };
             delete next.city;
@@ -335,29 +370,37 @@ export function AdvancedFilters({ value, onChange }: Props) {
   );
   return (
     <div className="ak-advanced-filters">
-      <div className="v3-grid">
-        {range("minYear", "maxYear", "An fabricație", [
-          ["2025:", "2025 sau mai recent"],
-          ["2022:2024", "2022–2024"],
-          ["2019:2021", "2019–2021"],
-          [":2018", "2018 sau anterior"],
-        ])}
-        {value.condition !== "nou" &&
-          range("minKm", "maxKm", "Kilometraj", [
-            [":25000", "Sub 25.000 km"],
-            ["25000:50000", "25.000–50.000 km"],
-            ["50000:100000", "50.000–100.000 km"],
-            ["100000:", "Peste 100.000 km"],
-          ])}
-        {select(
-          "fuel",
-          "Motorizare",
-          unique(candidates("fuel").map((v) => (v.hybrid ? "Hibrid" : v.fuel))),
-        )}
-        {select("body", "Caroserie", unique(candidates("body").map((v) => v.bodyType)))}
-      </div>
       <details
-        className="v3-disclosure"
+        className="v3-disclosure ak-filter-section"
+        open={Boolean(
+          value.minYear || value.maxYear || value.minKm || value.maxKm || value.fuel || value.body,
+        )}
+      >
+        <summary>Alte criterii</summary>
+        <div className="v3-grid">
+          {range("minYear", "maxYear", "An fabricație", [
+            ["2025:", "2025 sau mai recent"],
+            ["2022:2024", "2022–2024"],
+            ["2019:2021", "2019–2021"],
+            [":2018", "2018 sau anterior"],
+          ])}
+          {value.condition !== "nou" &&
+            range("minKm", "maxKm", "Kilometraj", [
+              [":25000", "Sub 25.000 km"],
+              ["25000:50000", "25.000–50.000 km"],
+              ["50000:100000", "50.000–100.000 km"],
+              ["100000:", "Peste 100.000 km"],
+            ])}
+          {select(
+            "fuel",
+            "Motorizare",
+            unique(candidates("fuel").map((v) => (v.hybrid ? "Hibrid" : v.fuel))),
+          )}
+          {select("body", "Caroserie", unique(candidates("body").map((v) => v.bodyType)))}
+        </div>
+      </details>
+      <details
+        className="v3-disclosure ak-filter-section"
         open={Boolean(
           value.gearbox || value.drive || value.color || value.certified || value.equipment,
         )}
@@ -448,7 +491,7 @@ export function AdvancedFilters({ value, onChange }: Props) {
         </div>
       </details>
       <details
-        className="v3-disclosure"
+        className="v3-disclosure ak-filter-section"
         open={Boolean(
           value.minPower ||
           value.maxPower ||
@@ -487,10 +530,10 @@ export function AdvancedFilters({ value, onChange }: Props) {
         </div>
       </details>
       <details
-        className="v3-disclosure"
+        className="v3-disclosure ak-filter-section"
         open={Boolean(value.availability || value.vat || value.offer)}
       >
-        <summary>Locație și disponibilitate</summary>
+        <summary>Disponibilitate, TVA și oferte</summary>
         <div className="v3-grid">
           {select("availability", "Disponibilitate", [
             ["immediate", "Livrare imediată"],
@@ -587,7 +630,12 @@ function FilterPanelContent({
     >
       <div className="v3-panel-head">
         <div className="ak-filter-panel-title">
-          <Dialog.Title>Filtre</Dialog.Title>
+          <div>
+            <Dialog.Title>Filtre{selectedCount ? ` (${selectedCount})` : ""}</Dialog.Title>
+            <p>
+              {count} {count === 1 ? "mașină disponibilă" : "mașini disponibile"}
+            </p>
+          </div>
         </div>
         <Dialog.Close className="v3-icon" aria-label="Închide filtrele">
           <X size={22} />

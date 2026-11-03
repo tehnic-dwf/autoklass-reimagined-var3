@@ -1,0 +1,639 @@
+/* A calm, task-first search surface within the existing Autoklass palette. */
+.ak-listing .ak-catalog-controls {
+  gap: 14px;
+  margin: 24px 0 0;
+  padding: 0;
+}
+
+.ak-catalog-search {
+  position: relative;
+  width: min(100%, 760px);
+  z-index: 12;
+}
+
+.ak-listing .ak-catalog-controls .ak-catalog-search {
+  display: block;
+  order: 0;
+  margin: 0;
+}
+
+.ak-catalog-search > label {
+  display: block;
+  margin-bottom: 8px;
+  color: #202326;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ak-catalog-search-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 58px;
+  padding: 5px 5px 5px 16px;
+  border: 1px solid #929da4;
+  border-radius: 8px;
+  background: #fff;
+  transition:
+    border-color 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ak-catalog-search-control:focus-within {
+  border-color: #0d5a9d;
+  box-shadow: 0 0 0 3px #0d5a9d24;
+}
+
+.ak-catalog-search-control > svg {
+  flex: 0 0 auto;
+  color: #4c5b64;
+}
+
+.ak-catalog-search-control input[type="search"] {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 4px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #202326;
+  font: inherit;
+  font-size: 16px;
+  appearance: none;
+}
+
+.ak-catalog-search-control input::placeholder {
+  color: #606a70;
+  opacity: 1;
+}
+.ak-catalog-search-control input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.ak-catalog-search-control .ak-catalog-search-clear {
+  position: static;
+  flex: 0 0 42px;
+  min-height: 42px;
+  color: #43515a;
+}
+
+.ak-catalog-search-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 0 17px;
+  border: 1px solid #202326;
+  border-radius: 5px;
+  background: #202326;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ak-catalog-search-submit:hover {
+  background: #3b4045;
+}
+.ak-catalog-search-submit:focus-visible {
+  outline: 2px solid #0d5a9d;
+  outline-offset: 3px;
+}
+
+.ak-catalog-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(430px, 58svh);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid #ccd4d8;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 20px 48px #17212a2b;
+}
+
+.ak-suggestion-all,
+.ak-suggestion-correction,
+.ak-suggestion-vehicle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #202326;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ak-suggestion-correction {
+  background: #eaf2f8;
+  color: #154d79;
+}
+.ak-suggestion-all {
+  font-weight: 700;
+}
+.ak-suggestion-all small,
+.ak-suggestion-correction small {
+  flex: 0 0 auto;
+  color: #4c5b64;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.ak-suggestion-all:hover,
+.ak-suggestion-correction:hover,
+.ak-suggestion-vehicle:hover {
+  background: #f2f6f8;
+}
+
+.ak-suggestion-label {
+  margin: 4px 12px 2px;
+  padding-top: 10px;
+  border-top: 1px solid #e1e5e7;
+  color: #566169;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ak-suggestion-vehicle {
+  justify-content: flex-start;
+  min-height: 68px;
+}
+
+.ak-suggestion-vehicle img {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #eff1f2;
+}
+
+.ak-suggestion-vehicle > span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.ak-suggestion-vehicle .ak-suggestion-brand {
+  color: #59636a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+.ak-suggestion-vehicle strong {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.ak-suggestion-vehicle small {
+  color: #59636a;
+  font-size: 13px;
+}
+.ak-suggestion-vehicle b {
+  margin-left: auto;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.ak-suggestion-empty {
+  margin: 8px 12px 10px;
+  color: #59636a;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.ak-search-correction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0b548e;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.ak-home-no-results {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #c9d5dc;
+  border-radius: 6px;
+  background: #fff;
+  color: #3a4850;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.ak-classic-option .ak-classic-count {
+  margin-left: auto;
+  color: #59636a;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ak-classic-option[data-state="checked"] .ak-classic-count {
+  color: #12558d;
+}
+
+.ak-listing .ak-catalog-controls .ak-listing-toolbar {
+  display: flex;
+  order: 1;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.ak-listing .ak-catalog-controls .ak-listing-toolbar > button {
+  flex: 0 0 auto;
+  min-width: 126px;
+}
+
+.ak-listing .ak-catalog-controls .ak-listing-toolbar > label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(250px, 100%);
+  min-width: 0;
+}
+
+.ak-listing .ak-catalog-controls .ak-listing-toolbar .ak-sort-visible {
+  display: block;
+  flex: 0 0 auto;
+  color: #4d5961;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.v3-panel .v3-panel-head {
+  padding: 14px 20px;
+  background: #fff;
+}
+
+.v3-panel .ak-filter-panel-title h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.ak-filter-panel-title p {
+  margin: 2px 0 0;
+  color: #59636a;
+  font-size: 14px;
+}
+
+.v3-panel .v3-panel-body {
+  padding: 16px 18px 28px;
+  background: #f5f7f8;
+}
+
+.v3-panel .ak-panel-selected {
+  margin-bottom: 12px;
+  border-color: #b9cbd7;
+  background: #eaf2f8;
+}
+
+.v3-panel .ak-basic-filters,
+.v3-panel .ak-filter-section {
+  border: 1px solid #dce2e5;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.v3-panel .ak-basic-filters {
+  padding: 20px;
+}
+
+.v3-panel .ak-basic-filters .v3-search-fields {
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.v3-panel .ak-advanced-filters {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.v3-panel .ak-filter-section {
+  padding: 0 20px;
+}
+.v3-panel .ak-filter-section > summary {
+  min-height: 58px;
+  color: #252b2f;
+  font-size: 16px;
+  font-weight: 700;
+}
+.v3-panel .ak-filter-section > summary:hover {
+  color: #0b548e;
+}
+.v3-panel .ak-filter-section[open] > summary {
+  color: #0b548e;
+}
+.v3-panel .ak-filter-section > .v3-grid {
+  gap: 16px;
+  padding-bottom: 20px;
+}
+
+.v3-panel .v3-panel-foot {
+  box-shadow: 0 -8px 24px #17212a0c;
+}
+
+@media (max-width: 640px) {
+  .ak-catalog-search {
+    width: 100%;
+  }
+  .ak-catalog-search-control {
+    padding-left: 12px;
+  }
+  .ak-catalog-search-submit {
+    padding-inline: 11px;
+  }
+  .ak-suggestion-vehicle b {
+    font-size: 13px;
+  }
+  .ak-listing .ak-catalog-controls .ak-listing-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+  }
+  .ak-listing .ak-catalog-controls .ak-listing-toolbar > button,
+  .ak-listing .ak-catalog-controls .ak-listing-toolbar > label {
+    width: 100%;
+    min-width: 0;
+    grid-column: auto;
+  }
+  .ak-listing .ak-catalog-controls .ak-listing-toolbar > label {
+    gap: 6px;
+  }
+  .ak-listing .ak-catalog-controls .ak-listing-toolbar .ak-sort-visible {
+    display: none;
+  }
+  .ak-listing .ak-catalog-controls .ak-listing-toolbar select {
+    font-size: 14px;
+  }
+  .v3-panel .v3-panel-body {
+    padding: 12px 14px 24px;
+  }
+  .v3-panel .ak-basic-filters {
+    padding: 18px 16px;
+  }
+  .v3-panel .ak-filter-section {
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .ak-catalog-search-control {
+    gap: 4px;
+  }
+  .ak-catalog-search-control > svg {
+    width: 18px;
+  }
+  .ak-catalog-search-submit {
+    font-size: 14px;
+  }
+  .ak-suggestion-vehicle {
+    gap: 8px;
+  }
+  .ak-suggestion-vehicle img {
+    flex-basis: 60px;
+    width: 60px;
+    height: 48px;
+  }
+  .ak-suggestion-vehicle b {
+    font-size: 12px;
+  }
+}
+
+.ak-listing .ak-used-certification {
+  margin-top: 28px;
+}
+
+.ak-listing > .ak-listing-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #dce2e5;
+  background: #fff;
+}
+
+.ak-listing > .ak-listing-toolbar > button {
+  min-width: 130px;
+  min-height: 52px;
+  padding-inline: 20px;
+  background: #fff;
+}
+
+.ak-listing > .ak-listing-toolbar > label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: min(220px, 50%);
+}
+
+.ak-listing > .ak-listing-toolbar .ak-catalog-sort-field {
+  min-width: 0;
+  margin: 0;
+}
+
+.ak-listing > .ak-listing-toolbar .ak-catalog-sort-field > span {
+  color: #202326;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.ak-listing > .ak-listing-toolbar .ak-catalog-sort-field select {
+  min-height: 52px;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.ak-listing .ak-listing-selected {
+  margin: 24px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.ak-listing > .ak-listing-selected + .ak-listing-toolbar {
+  margin-top: 16px;
+}
+
+.ak-listing .ak-listing-selected .ak-selected-filters-head {
+  margin-bottom: 8px;
+}
+
+.ak-listing > .v3-rule {
+  margin-top: 18px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.ak-listing > .v3-cards {
+  margin-top: 18px;
+}
+
+@media (max-width: 640px) {
+  .ak-listing .ak-used-certification {
+    margin-top: 22px;
+  }
+
+  .ak-listing .ak-listing-selected {
+    margin-top: 22px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ak-listing > .ak-listing-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 10px;
+    margin-inline: -24px;
+    padding: 10px 24px;
+    border-bottom: 1px solid #dce2e5;
+    box-shadow: 0 6px 18px rgb(25 34 42 / 8%);
+  }
+
+  .ak-listing > .ak-listing-toolbar > button,
+  .ak-listing > .ak-listing-toolbar > label {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+  }
+
+  .ak-listing > .ak-listing-toolbar > button {
+    padding-inline: 8px;
+  }
+
+  .ak-listing > .ak-listing-toolbar .ak-catalog-sort-field > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .ak-listing > .ak-listing-toolbar .ak-catalog-sort-field select {
+    min-height: 48px;
+  }
+}
+
+.ak-catalog-search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgb(15 20 24 / 58%);
+}
+
+.ak-catalog-search-dialog {
+  position: fixed;
+  top: min(18vh, 130px);
+  left: 50%;
+  z-index: 81;
+  width: min(720px, calc(100vw - 32px));
+  min-height: 0;
+  padding: 24px;
+  transform: translateX(-50%);
+  border: 1px solid #dce2e5;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 24px 64px rgb(15 20 24 / 22%);
+}
+
+.ak-catalog-search-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.ak-catalog-search-dialog-head h2 {
+  margin: 0;
+  color: #202326;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.ak-catalog-search-dialog-head button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #202326;
+  cursor: pointer;
+}
+
+.ak-catalog-search-dialog-head button:hover {
+  background: #edf1f3;
+}
+
+.ak-catalog-search-dialog .ak-catalog-search {
+  width: 100%;
+}
+
+.ak-catalog-search-dialog .ak-catalog-search > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 640px) {
+  .ak-catalog-search-dialog {
+    top: max(16px, env(safe-area-inset-top));
+    padding: 18px;
+  }
+
+  .ak-catalog-search-dialog-head h2 {
+    font-size: 22px;
+  }
+
+  .ak-catalog-search-dialog .ak-catalog-search-control {
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 6px;
+  }
+
+  .ak-catalog-search-dialog .ak-catalog-search-control input[type="search"] {
+    flex: 1 1 160px;
+  }
+
+  .ak-catalog-search-dialog .ak-catalog-search-submit {
+    flex-basis: 100%;
+    margin-top: 2px;
+  }
+}

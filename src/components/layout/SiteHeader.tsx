@@ -87,7 +87,7 @@ export function SiteHeader({
             <button
               type="button"
               aria-label="Caută o mașină"
-              className="flex size-11 items-center justify-center lg:hidden"
+              className="flex size-11 items-center justify-center"
               onClick={onSearch}
             >
               <Search size={20} strokeWidth={1.5} aria-hidden />

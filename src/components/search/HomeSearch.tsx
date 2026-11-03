@@ -77,6 +77,11 @@ export function HomeSearch() {
               onChange={updateValue}
               className="ak-home-selected"
             />
+            {count === 0 && vehicleFilterChips(value).length > 0 && (
+              <p className="ak-home-no-results" role="status">
+                Nicio mașină cu aceste filtre. Elimină un criteriu de mai sus sau modifică selecția.
+              </p>
+            )}
             <button
               className="v3-button"
               type={count ? "submit" : "button"}

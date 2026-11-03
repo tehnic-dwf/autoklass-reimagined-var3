@@ -1,12 +1,14 @@
-import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
-import { Search, SlidersHorizontal, X, ArrowRight, ArrowUpRight } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Search, SlidersHorizontal, ArrowRight, ArrowUpRight, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 import { FilterPanel } from "@/components/search/VehicleFilters";
+import { CatalogSearch } from "@/components/search/CatalogSearch";
 import { SelectedVehicleFilters } from "@/components/search/SelectedVehicleFilters";
-import { ClassicSelect } from "@/components/ui/ClassicSelect";
+import { suggestSearchCorrection } from "@/lib/vehicle-search";
 import {
   matchingVehicles,
   vehicleSortOptions,
@@ -16,10 +18,8 @@ import {
   removeVehicleFilterChip,
   resetVehicleFilters,
   resolveVehicleSearch,
-  vehicleBranchGroups,
   type VehicleSearch,
 } from "@/lib/vehicle-search";
-import { vehicles } from "@/data/vehicles";
 import { useFavorites } from "@/lib/favorites";
 export const Route = createFileRoute("/autoturisme/")({
   validateSearch: validateVehicleSearch,
@@ -30,21 +30,19 @@ function Listing() {
   const value = Route.useSearch();
   const navigate = Route.useNavigate();
   const [open, setOpen] = useState(false);
-  const searchHash = useLocation({ select: (location) => location.hash });
-  const [searchOpen, setSearchOpen] = useState(Boolean(value.q) || searchHash === "catalog-search");
+  const [searchOpen, setSearchOpen] = useState(
+    () => typeof window !== "undefined" && window.location.hash === "#catalog-search",
+  );
   const searchInput = useRef<HTMLInputElement>(null);
-  const searchTrigger = useRef<HTMLButtonElement>(null);
   const filterTrigger = useRef<HTMLButtonElement>(null);
-  const revealSearch = () => {
-    setSearchOpen(true);
-    requestAnimationFrame(() => {
-      searchInput.current?.focus({ preventScroll: true });
-      searchInput.current?.scrollIntoView({ block: "center" });
-    });
-  };
   useEffect(() => {
-    if (searchHash === "catalog-search") revealSearch();
-  }, [searchHash]);
+    const openFromHash = () => {
+      if (window.location.hash === "#catalog-search") setSearchOpen(true);
+    };
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, []);
   const { slugs } = useFavorites();
   const items = matchingVehicles(value);
   const active = vehicleFilterChips(value);
@@ -53,6 +51,7 @@ function Listing() {
   const page = Math.min(pages, Math.max(1, Number(value.page) || 1));
   const shown = items.slice((page - 1) * pageSize, page * pageSize);
   const alternatives = suggestedVehicles(value);
+  const correction = value.q && items.length === 0 ? suggestSearchCorrection(value.q, value) : null;
   const recoveryChip =
     items.length === 0
       ? [...active]
@@ -84,23 +83,37 @@ function Listing() {
     .join(" ");
   return (
     <div className="v3">
-      <SiteHeader catalog onSearch={revealSearch} />
+      <SiteHeader catalog onSearch={() => setSearchOpen(true)} />
+      <Dialog.Root open={searchOpen} onOpenChange={setSearchOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="ak-catalog-search-overlay" />
+          <Dialog.Content
+            className="v3 ak-catalog-search-dialog"
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              searchInput.current?.focus();
+            }}
+          >
+            <div className="ak-catalog-search-dialog-head">
+              <Dialog.Title>Caută în stoc</Dialog.Title>
+              <Dialog.Close aria-label="Închide căutarea">
+                <X size={22} aria-hidden="true" />
+              </Dialog.Close>
+            </div>
+            <Dialog.Description className="sr-only">
+              Caută după marcă, model sau alte caracteristici ale mașinii.
+            </Dialog.Description>
+            <CatalogSearch
+              value={value}
+              inputRef={searchInput}
+              onSearch={(query) => update({ ...value, q: query })}
+              onCommit={() => setSearchOpen(false)}
+            />
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
       <main id="main-content" className="v3-wrap v3-section ak-listing">
         <h1>{listingTitle}</h1>
-
-        <div className="ak-catalog-branch-row">
-          <ClassicSelect
-            label="Sucursală"
-            value={value.branch || ""}
-            placeholder="Toate"
-            groups={vehicleBranchGroups()}
-            onChange={(branch) => {
-              const next = { ...value, branch };
-              delete next.city;
-              update(next);
-            }}
-          />
-        </div>
 
         {headingFilters.condition === "rulat" && (
           <section className="ak-used-certification" aria-labelledby="used-certification-title">
@@ -127,102 +140,32 @@ function Listing() {
           </section>
         )}
 
-        <div className="ak-catalog-controls">
-          <form
-            id="catalog-search"
-            className={`relative my-8 max-w-xl ak-catalog-search ${searchOpen ? "is-open" : ""}`}
-            onSubmit={(e) => {
-              e.preventDefault();
-              searchInput.current?.blur();
-            }}
-          >
-            <label className="v3-field">
-              <span>Caută o mașină</span>
-              <input
-                ref={searchInput}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    setSearchOpen(false);
-                    searchTrigger.current?.focus();
-                  }
-                }}
-                type="search"
-                placeholder="Ex. GLC rulat sub 60k"
-                list="vehicle-suggestions"
-                name="q"
-                autoComplete="off"
-                value={value.q || ""}
-                onChange={(e) => update({ ...value, q: e.target.value })}
-              />
-            </label>
-            {value.q && (
-              <button
-                type="button"
-                className="ak-catalog-search-clear"
-                aria-label="Șterge căutarea"
-                onClick={() => {
-                  const next = { ...value };
-                  delete next.q;
-                  update(next);
-                  searchInput.current?.focus();
-                }}
-              >
-                <X size={18} aria-hidden="true" />
-              </button>
-            )}
-            <datalist id="vehicle-suggestions">
-              {vehicles
-                .filter((v) => !value.brand || v.brand === value.brand)
-                .map((v) => (
-                  <option key={v.slug} value={v.title} />
-                ))}
-            </datalist>
-          </form>
-          <div className="v3-row py-6 ak-listing-toolbar">
-            <button
-              type="button"
-              className="v3-button secondary ak-search-toggle"
-              ref={searchTrigger}
-              aria-label={searchOpen ? "Închide căutarea" : "Deschide căutarea"}
-              aria-expanded={searchOpen}
-              aria-controls="catalog-search"
-              onClick={() => {
-                const next = !searchOpen;
-                setSearchOpen(next);
-                if (next) requestAnimationFrame(() => searchInput.current?.focus());
-              }}
-            >
-              <Search size={18} aria-hidden />
-              <span>Caută</span>
-            </button>
-            <button
-              className="v3-button secondary"
-              aria-haspopup="dialog"
-              ref={filterTrigger}
-              onClick={() => setOpen(true)}
-            >
-              <SlidersHorizontal size={18} />
-              Filtre{active.length ? ` (${active.length})` : ""}
-            </button>
-            <label className="v3-field flex-1 sm:flex-none">
-              <span className="ak-sort-visible" aria-hidden="true">
-                Sortează
-              </span>
-              <select
-                aria-label="Sortează mașinile"
-                value={value.sort || "recommended"}
-                onChange={(e) => update({ ...value, sort: e.target.value })}
-              >
-                {vehicleSortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </div>
         <SelectedVehicleFilters value={value} onChange={update} className="ak-listing-selected" />
+        <div className="ak-listing-toolbar">
+          <button
+            className="v3-button secondary"
+            aria-haspopup="dialog"
+            ref={filterTrigger}
+            onClick={() => setOpen(true)}
+          >
+            <SlidersHorizontal size={18} />
+            Filtre{active.length ? ` (${active.length})` : ""}
+          </button>
+          <label className="v3-field ak-catalog-sort-field">
+            <span>Sortează</span>
+            <select
+              aria-label="Sortează mașinile"
+              value={value.sort || "recommended"}
+              onChange={(e) => update({ ...value, sort: e.target.value })}
+            >
+              {vehicleSortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <div className="v3-row v3-rule pt-6">
           <p role="status">
             {items.length
@@ -263,6 +206,15 @@ function Listing() {
           <div className="v3-empty">
             <Search className="mx-auto mb-6" size={32} strokeWidth={1} />
             <h2>Nicio mașină pentru aceste filtre.</h2>
+            {correction && (
+              <button
+                type="button"
+                className="ak-search-correction"
+                onClick={() => update({ ...value, q: correction })}
+              >
+                Ai vrut să cauți „{correction}”? <ArrowRight size={17} aria-hidden="true" />
+              </button>
+            )}
             <p className="v3-muted">
               {alternatives.length
                 ? "Alte opțiuni, cu criterii diferite:"
