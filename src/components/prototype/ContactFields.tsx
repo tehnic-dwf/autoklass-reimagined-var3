@@ -5,12 +5,14 @@ export function ContactFields({
   errors,
   prefix = "contact",
   requiredFields,
+  markRequired = false,
 }: {
   value: ContactValues;
   onChange: (v: ContactValues) => void;
   errors: Partial<Record<keyof ContactValues, string>>;
   prefix?: string;
   requiredFields?: { email: boolean; phone: boolean };
+  markRequired?: boolean;
 }) {
   return (
     <div className="v3-contact-fields">
@@ -22,6 +24,8 @@ export function ContactFields({
       ].map((f) => {
         const key = f.key as keyof ContactValues;
         const id = `${prefix}-${key}`;
+        const isRequired =
+          key === "email" || key === "phone" ? (requiredFields?.[key] ?? true) : true;
         return (
           <label className="v3-field" key={key} htmlFor={id}>
             <span id={`${id}-label`}>
@@ -29,6 +33,7 @@ export function ContactFields({
               {requiredFields && (key === "email" || key === "phone") && !requiredFields[key]
                 ? " (opțional)"
                 : ""}
+              {markRequired && isRequired && <span aria-hidden="true"> *</span>}
             </span>
             <input
               id={id}
@@ -37,9 +42,7 @@ export function ContactFields({
               type={f.type}
               spellCheck={key === "email" ? false : undefined}
               autoComplete={f.auto}
-              required={
-                requiredFields && (key === "email" || key === "phone") ? requiredFields[key] : true
-              }
+              required={isRequired}
               maxLength={key === "phone" ? 25 : 100}
               value={value[key]}
               aria-invalid={Boolean(errors[key])}

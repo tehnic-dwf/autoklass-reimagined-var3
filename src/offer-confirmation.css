@@ -158,6 +158,10 @@
   overflow-wrap: anywhere;
 }
 
+.ak-offer-dialog .ak-offer-contact-preference {
+  margin: 0 0 20px;
+}
+
 @media (max-width: 400px) {
   .ak-offer-dialog .offer-confirmation h2 {
     font-size: 25px;

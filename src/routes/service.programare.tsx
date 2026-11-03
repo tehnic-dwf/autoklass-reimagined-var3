@@ -312,12 +312,13 @@ function ServiceRequest() {
                 <h2 className="v3-form-step-title">
                   {step === 1 ? "1. Mașina și serviciul" : "2. Datele tale de contact"}
                 </h2>
+                <p className="v3-small v3-muted">* Câmpuri obligatorii</p>
                 <form ref={form} noValidate onSubmit={submit}>
                   <div className="v3-stack">
                     {step === 1 ? (
                       <>
                         <label className="v3-field">
-                          <span>VIN (serie de șasiu)</span>
+                          <span>VIN (serie de șasiu) <span aria-hidden="true">*</span></span>
                           <input
                             {...a11y("vin")}
                             value={vin}
@@ -343,7 +344,7 @@ function ServiceRequest() {
                         )}
                         <div className="ak-service-vehicle-fields">
                           <label className="v3-field">
-                            <span>Marca mașinii</span>
+                            <span>Marca mașinii <span aria-hidden="true">*</span></span>
                             <select
                               {...a11y("brand")}
                               required
@@ -369,7 +370,7 @@ function ServiceRequest() {
                             {err("brand")}
                           </label>
                           <label className="v3-field">
-                            <span>Modelul mașinii</span>
+                            <span>Modelul mașinii <span aria-hidden="true">*</span></span>
                             <select
                               {...a11y("model")}
                               required
@@ -409,7 +410,7 @@ function ServiceRequest() {
                           {err("km")}
                         </label>
                         <label className="v3-field">
-                          <span>Sucursală</span>
+                          <span>Sucursală <span aria-hidden="true">*</span></span>
                           <select
                             {...a11y("branch")}
                             value={branch}
@@ -426,7 +427,7 @@ function ServiceRequest() {
                           {err("branch")}
                         </label>
                         <label className="v3-field">
-                          <span>Serviciu</span>
+                          <span>Serviciu <span aria-hidden="true">*</span></span>
                           <select
                             {...a11y("service")}
                             value={service}
@@ -467,6 +468,7 @@ function ServiceRequest() {
                             {service === "other"
                               ? "Ce ai observat la mașină?"
                               : "Detalii despre lucrare (opțional)"}
+                            {service === "other" && <span aria-hidden="true"> *</span>}
                           </span>
                           <textarea
                             {...a11y("problem")}
@@ -536,7 +538,7 @@ function ServiceRequest() {
                           Programarea este confirmată după discuția cu echipa service.
                         </p>
                         <fieldset className="ak-service-contact-preference">
-                          <legend>Cum preferi să te contactăm?</legend>
+                          <legend>Cum preferi să te contactăm? <span aria-hidden="true">*</span></legend>
                           <div>
                             {(["Telefon", "E-mail"] as const).map((option) => (
                               <label key={option}>
@@ -561,6 +563,7 @@ function ServiceRequest() {
                             email: preferredContact === "E-mail",
                             phone: preferredContact === "Telefon",
                           }}
+                          markRequired
                         />
                       </>
                     )}

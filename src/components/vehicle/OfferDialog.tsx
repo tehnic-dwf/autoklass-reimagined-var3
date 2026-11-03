@@ -31,6 +31,7 @@ export function OfferDialog({
   onSuccess?: (value: ContactValues) => void;
 }) {
   const [value, setValue] = useState<ContactValues>(initialContact);
+  const [preferredContact, setPreferredContact] = useState<"Telefon" | "E-mail">("Telefon");
   const [errors, setErrors] = useState<Partial<Record<keyof ContactValues, string>>>({});
   const [state, setState] = useState<"idle" | "sending" | "error" | "done">("idle");
   const [reference, setReference] = useState("");
@@ -48,7 +49,10 @@ export function OfferDialog({
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const next = validateContact(value);
+    const next = validateContact(value, {
+      email: preferredContact === "E-mail",
+      phone: preferredContact === "Telefon",
+    });
     setErrors(next);
     if (Object.keys(next).length) {
       form.querySelector<HTMLInputElement>(`[name="${Object.keys(next)[0]}"]`)?.focus();
@@ -112,8 +116,8 @@ export function OfferDialog({
                     Am primit cererea pentru raport.
                   </h2>
                   <Dialog.Description id="offer-description">
-                    Un consultant verifică raportul carVertical și te contactează folosind datele
-                    completate.
+                    Un consultant verifică raportul carVertical și te contactează prin
+                    {preferredContact === "Telefon" ? " telefon." : " e-mail."}
                   </Dialog.Description>
                   <div className="offer-confirmation-car">
                     <img src={vehicle.image} alt="" width={104} height={78} />
@@ -124,8 +128,8 @@ export function OfferDialog({
                   </div>
                   <dl className="offer-confirmation-details">
                     <div>
-                      <dt>Email de contact</dt>
-                      <dd>{value.email}</dd>
+                      <dt>Contact preferat</dt>
+                      <dd>{preferredContact === "Telefon" ? value.phone : value.email}</dd>
                     </div>
                   </dl>
                   <p className="offer-confirmation-help">
@@ -140,8 +144,8 @@ export function OfferDialog({
                     Am primit solicitarea ta, {value.firstName}.
                   </h2>
                   <Dialog.Description id="offer-description">
-                    Am preluat cererea pentru mașina de mai jos. Vei primi confirmarea la adresa de
-                    email completată.
+                    Am preluat cererea pentru mașina de mai jos. Consultantul te va contacta
+                    {preferredContact === "Telefon" ? " telefonic." : " prin e-mail."}
                   </Dialog.Description>
 
                   <div className="offer-confirmation-car">
@@ -158,8 +162,8 @@ export function OfferDialog({
                       <dd>{reference}</dd>
                     </div>
                     <div>
-                      <dt>Email de confirmare</dt>
-                      <dd>{value.email}</dd>
+                      <dt>Contact preferat</dt>
+                      <dd>{preferredContact === "Telefon" ? value.phone : value.email}</dd>
                     </div>
                   </dl>
 
@@ -203,6 +207,23 @@ export function OfferDialog({
                     ? "Soliciți raportul carVertical pentru această mașină."
                     : "Consultantul te contactează pentru oferta acestei mașini."}
                 </p>
+                <fieldset className="ak-service-contact-preference ak-offer-contact-preference">
+                  <legend>Cum preferi să te contactăm?</legend>
+                  <div>
+                    {(["Telefon", "E-mail"] as const).map((option) => (
+                      <label key={option}>
+                        <input
+                          type="radio"
+                          name="preferredContact"
+                          value={option}
+                          checked={preferredContact === option}
+                          onChange={() => setPreferredContact(option)}
+                        />
+                        <span>{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
                 <ContactFields
                   value={value}
                   onChange={(next) => {
@@ -211,6 +232,10 @@ export function OfferDialog({
                   }}
                   errors={errors}
                   prefix="offer"
+                  requiredFields={{
+                    email: preferredContact === "E-mail",
+                    phone: preferredContact === "Telefon",
+                  }}
                 />
                 {state === "error" && (
                   <p role="alert" className="v3-error mt-6">

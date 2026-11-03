@@ -75,8 +75,8 @@ function Tariffs() {
             <p className="v3-kicker">Service Autoklass</p>
             <h1 className="service-page-title">Tarife service</h1>
             <p className="v3-intro">
-              Alege sucursala și vezi tarifele pentru manoperă sau ITP. Costul final al lucrărilor
-              se stabilește în deviz.
+              Alege sucursala și vezi tarifele pentru manoperă sau ITP. Costul final vă va fi
+              comunicat în urma devizului de reparații întocmit în sucursală.
             </p>
             <Link className="v3-button service-primary" to="/service/programare">
               Programare service <ArrowRight size={20} aria-hidden />
